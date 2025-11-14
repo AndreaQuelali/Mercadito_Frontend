@@ -1,9 +1,8 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductCard, ProductCardComponent } from '../../components/product-card/product-card.component';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { ProductService } from '../../services/products.service';
+import { SearchService } from '../../services/search.service';
 
 const CATEGORIES = [
   { key: 'all', label: 'Todo' },
@@ -17,19 +16,21 @@ const CATEGORIES = [
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent, MatChipsModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, ProductCardComponent],
   template: `
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <mat-chip-listbox class="flex flex-wrap gap-2" aria-label="Categorías">
-      <mat-chip-option
+    <div class="flex flex-wrap gap-2">
+      <button
         *ngFor="let c of categories"
-        [selected]="activeCategory() === c.key"
         (click)="selectCategory(c.key)"
+        class="px-3 py-1 rounded-full border text-sm"
+        [class.bg-slate-900]="activeCategory() === c.key"
+        [class.text-white]="activeCategory() === c.key"
+        [class.border-slate-900]="activeCategory() === c.key"
       >
-        <mat-icon *ngIf="c.key==='all'" class="!text-base mr-1">category</mat-icon>
         {{ c.label }}
-      </mat-chip-option>
-    </mat-chip-listbox>
+      </button>
+    </div>
 
     <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <app-product-card
@@ -40,20 +41,17 @@ const CATEGORIES = [
   </main>
   `
 })
-export class HomeComponent {
-  @Input() query = '';
+export class HomeComponent implements OnInit {
+  private searchSvc = inject(SearchService);
 
   categories = CATEGORIES;
   activeCategory = signal<string>('all');
 
-  products = signal<ProductCard[]>([
-    { id: 1, name: 'Tomates Frescos', description: 'Tomates orgánicos cultivados localmente, perfectos para ensaladas', price: 2.5, unit: 'kg', image: 'https://images.unsplash.com/photo-1546470427-ae4c07f17fd5?q=80&w=1470&auto=format&fit=crop', featured: true, seller: 'María González', location: 'Mercado Central, 2km' },
-    { id: 2, name: 'Pan Artesanal', description: 'Pan de masa madre horneado esta mañana', price: 3, unit: 'unidad', image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=1470&auto=format&fit=crop', featured: true, seller: 'Panadería El Sol', location: 'Barrio Norte, 1.3km' },
-    { id: 3, name: 'Frutas Tropicales', description: 'Mix de frutas frescas: mango, piña y papaya', price: 4.5, unit: 'kg', image: 'https://images.unsplash.com/photo-1541984956-bc40f571d7d1?q=80&w=1470&auto=format&fit=crop', featured: true, seller: 'Frutas Don Pedro', location: 'Plaza Sur, 3km' },
-  ]);
+  products = signal<ProductCard[]>([]);
+  private productService = inject(ProductService);
 
   filtered = computed(() => {
-    const q = this.query.toLowerCase().trim();
+    const q = this.searchSvc.query().toLowerCase().trim();
     const cat = this.activeCategory();
     return this.products().filter(p => {
       const matchesQuery = q ? (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)) : true;
@@ -76,5 +74,12 @@ export class HomeComponent {
     };
     const tokens = (p.name + ' ' + p.description).toLowerCase();
     return (map[cat] || []).some(word => tokens.includes(word));
+  }
+
+  ngOnInit(): void {
+    this.productService.list().subscribe({
+      next: (items) => this.products.set(items),
+      error: () => this.products.set([])
+    });
   }
 }
