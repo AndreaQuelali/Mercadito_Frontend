@@ -48,7 +48,6 @@ export class ProductService {
             image: p.image,
             featured: false,
             seller: typeof p.seller === 'string' ? p.seller : undefined,
-            location: undefined,
           }))
         )
       );
@@ -68,7 +67,6 @@ export class ProductService {
           image: p.image,
           featured: false,
           seller: typeof p.seller === 'string' ? p.seller : undefined,
-          location: undefined,
         })))
       );
   }
