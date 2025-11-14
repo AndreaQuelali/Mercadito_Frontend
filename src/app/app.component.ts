@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { HeaderComponent } from './components/header/header.component';
-import { HomeComponent } from './pages/home/home.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [HeaderComponent, HomeComponent],
+  imports: [HeaderComponent, RouterOutlet],
   template: `
     <app-header (search)="query = $event"></app-header>
-    <app-home [query]="query"></app-home>
+    <router-outlet></router-outlet>
   `,
   styleUrls: ['./app.component.css'],
 })
