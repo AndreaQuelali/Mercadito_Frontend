@@ -2,25 +2,29 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ProductCard } from '../components/product-card/product-card.component';
+import { environment } from '../../environments/environment';
 
-const API_BASE = 'http://localhost:3001';
+const API_BASE = environment.apiUrl;
+
+export type ProductUnit = 'kilogramo' | 'unidad' | 'frasco' | 'litro';
+export type ProductCategory = 'verduras' | 'frutas' | 'panaderia' | 'lacteos' | 'artesanias';
+
+export interface ProductDto {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  unit: ProductUnit;
+  category: ProductCategory;
+  description: string;
+  image: string;
+  seller?: { id?: number; firstName?: string; lastName?: string } | string;
+}
 
 interface ApiResponse<T> {
   ok: boolean;
   message: string;
   data: T;
-}
-
-interface ProductDto {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  unit: string;
-  category: string;
-  description: string;
-  image: string;
-  seller?: { firstName?: string; lastName?: string } | string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,12 +49,22 @@ export class ProductService {
             description: p.description,
             price: p.price,
             unit: p.unit,
+            stock: p.stock,
+            category: p.category,
             image: p.image,
             featured: false,
-            seller: typeof p.seller === 'string' ? p.seller : undefined,
+            seller: typeof p.seller === 'object' && p.seller
+              ? `${p.seller.firstName ?? ''} ${p.seller.lastName ?? ''}`.trim()
+              : typeof p.seller === 'string' ? p.seller : undefined,
           }))
         )
       );
+  }
+
+  getById(id: number): Observable<ProductDto> {
+    return this.http
+      .get<ApiResponse<ProductDto>>(`${API_BASE}/product/${id}`)
+      .pipe(map((res) => res.data));
   }
 
   listSeller(): Observable<ProductCard[]> {
@@ -64,9 +78,10 @@ export class ProductService {
           description: p.description,
           price: p.price,
           unit: p.unit,
+          stock: p.stock,
+          category: p.category,
           image: p.image,
           featured: false,
-          seller: typeof p.seller === 'string' ? p.seller : undefined,
         })))
       );
   }
@@ -75,12 +90,24 @@ export class ProductService {
     name: string;
     description: string;
     price: number;
-    unit: 'Kilogramo' | 'Unidad' | 'Frasco' | 'Litro';
+    unit: ProductUnit;
     stock: number;
-    category: 'Verduras' | 'Frutas' | 'Panadería' | 'Lácteos' | 'Artesanías';
+    category: ProductCategory;
     image: string;
   }): Observable<ApiResponse<ProductDto>> {
-    return this.http.post<ApiResponse<ProductDto>>(`${API_BASE}/product`, payload as any);
+    return this.http.post<ApiResponse<ProductDto>>(`${API_BASE}/product`, payload);
+  }
+
+  update(id: number, payload: Partial<{
+    name: string;
+    description: string;
+    price: number;
+    unit: ProductUnit;
+    stock: number;
+    category: ProductCategory;
+    image: string;
+  }>): Observable<ApiResponse<ProductDto>> {
+    return this.http.put<ApiResponse<ProductDto>>(`${API_BASE}/product/${id}`, payload);
   }
 
   delete(id: number) {
