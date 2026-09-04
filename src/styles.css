@@ -2,5 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { @apply bg-slate-50 text-slate-800; }
+@layer base {
+  html, body { height: 100%; }
+  body {
+    @apply bg-warm-50 text-warm-800;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3 {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 700;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-warm-300 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-warm-400; }
+}
+
+@layer components {
+  /* Skeleton pulse utility */
+  .skeleton {
+    @apply animate-pulse bg-slate-200 rounded-lg;
+  }
+
+  /* Product card hover lift */
+  .product-card-hover {
+    @apply transition-all duration-200;
+  }
+  .product-card-hover:hover {
+    @apply shadow-card-hover -translate-y-0.5;
+  }
+}
+
+@layer utilities {
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
