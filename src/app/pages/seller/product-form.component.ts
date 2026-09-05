@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService, ProductCategory, ProductUnit } from '../../services/products.service';
+import { AuthService } from '../../services/auth.service';
+import { SellerService } from '../../services/seller.service';
 
 const CATEGORY_OPTIONS: { value: ProductCategory; label: string }[] = [
   { value: 'verduras', label: 'Verduras' },
@@ -25,6 +27,12 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
   <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div *ngIf="!auth.canManageStore()"
+         class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      Tu puesto está suspendido. No puedes crear ni editar productos.
+      <a routerLink="/seller" class="underline ml-1">Volver al panel</a>
+    </div>
+
     <div class="bg-white rounded-2xl border border-slate-200 p-6">
       <h2 class="text-xl font-semibold text-slate-900">{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
 
@@ -32,7 +40,7 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
         <div class="h-8 w-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
 
-      <form *ngIf="!loading()" (ngSubmit)="onSubmit()" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form *ngIf="!loading() && auth.canManageStore()" (ngSubmit)="onSubmit()" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm text-slate-600 mb-1">Nombre del Producto</label>
           <input [(ngModel)]="model.name" name="name" type="text"
@@ -95,8 +103,10 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
 })
 export class ProductFormComponent implements OnInit {
   private productService = inject(ProductService);
+  private sellerSvc = inject(SellerService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  auth = inject(AuthService);
 
   categories = CATEGORY_OPTIONS;
   units = UNIT_OPTIONS;
@@ -118,33 +128,43 @@ export class ProductFormComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.sellerSvc.getMine().subscribe({
+      next: () => {
+        if (!this.auth.canManageStore()) return;
+        this.loadProductIfEdit();
+      },
+      error: () => this.loadProductIfEdit(),
+    });
+  }
+
+  private loadProductIfEdit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEdit = true;
-      this.editId = Number(id);
-      this.loading.set(true);
-      this.productService.getById(this.editId).subscribe({
-        next: (p) => {
-          this.model = {
-            name: p.name,
-            description: p.description,
-            price: p.price,
-            unit: p.unit,
-            stock: p.stock,
-            category: p.category,
-            image: p.image,
-          };
-          this.loading.set(false);
-        },
-        error: () => {
-          this.errorMsg.set('No se pudo cargar el producto.');
-          this.loading.set(false);
-        }
-      });
-    }
+    if (!id) return;
+    this.isEdit = true;
+    this.editId = Number(id);
+    this.loading.set(true);
+    this.productService.getById(this.editId).subscribe({
+      next: (p) => {
+        this.model = {
+          name: p.name,
+          description: p.description,
+          price: p.price,
+          unit: p.unit,
+          stock: p.stock,
+          category: p.category,
+          image: p.image,
+        };
+        this.loading.set(false);
+      },
+      error: () => {
+        this.errorMsg.set('No se pudo cargar el producto.');
+        this.loading.set(false);
+      }
+    });
   }
 
   onSubmit() {
+    if (!this.auth.canManageStore()) return;
     const { name, description, price, unit, stock, category, image } = this.model;
     this.saving.set(true);
     this.errorMsg.set(null);

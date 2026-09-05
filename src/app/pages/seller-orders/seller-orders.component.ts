@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService, Order, OrderStatus } from '../../services/order.service';
 import { ToastService } from '../../services/toast.service';
+import { AuthService } from '../../services/auth.service';
+import { SellerService } from '../../services/seller.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string }> = {
   pending:   { label: 'Pendiente',   classes: 'bg-amber-50 text-amber-700 border-amber-200' },
@@ -47,6 +49,11 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
       </a>
     </div>
 
+    <div *ngIf="!auth.canManageStore()"
+         class="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      Tu puesto está suspendido. Puedes ver las órdenes pero no cambiar su estado.
+    </div>
+
     <!-- Skeleton -->
     <div *ngIf="loading()" class="space-y-4 animate-pulse">
       <div *ngFor="let i of [1,2,3]" class="bg-white rounded-xl h-36 border border-slate-200"></div>
@@ -80,7 +87,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 
           <!-- Advance status button -->
           <button
-            *ngIf="nextStatus(order.status)"
+            *ngIf="auth.canManageStore() && nextStatus(order.status)"
             (click)="advanceStatus(order)"
             [disabled]="updating() === order.id"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-700 text-white text-sm font-medium transition disabled:opacity-50"
@@ -107,12 +114,15 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 })
 export class SellerOrdersComponent implements OnInit {
   private orderSvc = inject(OrderService);
+  private sellerSvc = inject(SellerService);
   private toast = inject(ToastService);
+  auth = inject(AuthService);
   orders = signal<Order[]>([]);
   loading = signal(true);
   updating = signal<number | null>(null);
 
   ngOnInit(): void {
+    this.sellerSvc.getMine().subscribe({ error: () => undefined });
     this.orderSvc.listSeller().subscribe({
       next: (orders) => { this.orders.set(orders); this.loading.set(false); },
       error: () => this.loading.set(false),
@@ -124,6 +134,7 @@ export class SellerOrdersComponent implements OnInit {
   nextStatusLabel(s: OrderStatus): string { return NEXT_STATUS_LABEL[s]; }
 
   advanceStatus(order: Order): void {
+    if (!this.auth.canManageStore()) return;
     const next = NEXT_STATUS[order.status];
     if (!next) return;
     this.updating.set(order.id);

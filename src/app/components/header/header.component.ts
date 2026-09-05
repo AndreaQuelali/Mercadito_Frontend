@@ -58,13 +58,29 @@ import { CartService } from '../../services/cart.service';
 
         <!-- Logged in -->
         <ng-container *ngIf="auth.isLoggedIn()">
+          <!-- Admin sellers -->
+          <a *ngIf="auth.isAdmin()" routerLink="/admin/sellers"
+             class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
+            Sellers
+          </a>
+
+          <!-- Become seller -->
+          <a *ngIf="!auth.hasSeller() && !auth.isAdmin()" routerLink="/seller/onboarding"
+             class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 transition">
+            Quiero vender
+          </a>
+
           <!-- Seller dashboard link -->
-          <a *ngIf="auth.isSeller()" routerLink="/seller"
+          <a *ngIf="auth.hasSeller()" routerLink="/seller"
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
               <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h15A1.5 1.5 0 0 1 21 7.5V9a3 3 0 0 1-3 3v6a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18v-6a3 3 0 0 1-3-3V7.5Z"/>
             </svg>
             Mi tienda
+            <span *ngIf="auth.sellerStatus() === 'suspended'"
+                  class="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">
+              Suspendida
+            </span>
           </a>
 
           <!-- Orders -->
@@ -98,9 +114,21 @@ import { CartService } from '../../services/cart.service';
               </span>
             </button>
             <div class="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-              <a *ngIf="auth.isSeller()" routerLink="/seller/orders"
+              <a *ngIf="!auth.hasSeller() && !auth.isAdmin()" routerLink="/seller/onboarding"
+                 class="flex items-center gap-2 px-4 py-2 text-sm text-brand-700 hover:bg-brand-50">
+                Quiero vender
+              </a>
+              <a *ngIf="auth.isAdmin()" routerLink="/admin/sellers"
+                 class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                Sellers
+              </a>
+              <a *ngIf="auth.hasSeller()" routerLink="/seller/orders"
                  class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
                 Órdenes de mi tienda
+              </a>
+              <a *ngIf="auth.hasSeller()" routerLink="/seller/settings"
+                 class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                Configuración del puesto
               </a>
               <a routerLink="/orders"
                  class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">

@@ -47,7 +47,7 @@ export type SellerProduct = {
         </div>
       </div>
 
-      <div class="flex items-center gap-2 pt-3">
+      <div *ngIf="canManage" class="flex items-center gap-2 pt-3">
         <button (click)="edit.emit(product?.id!)" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-50">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4"><path d="M16.862 4.487a1.875 1.875 0 1 1 2.651 2.651L7.128 19.523l-3.495.388a.75.75 0 0 1-.826-.826l.388-3.495L16.862 4.487Z"/><path d="M19.5 7.125 16.875 4.5"/></svg>
           Editar
@@ -63,6 +63,7 @@ export type SellerProduct = {
 })
 export class SellerProductCardComponent {
   @Input() product?: SellerProduct;
+  @Input() canManage = true;
   @Output() edit = new EventEmitter<number>();
   @Output() remove = new EventEmitter<number>();
 }

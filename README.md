@@ -69,30 +69,25 @@ cp .env.example .env
 docker compose up -d
 
 # 3. Aplicar migraciones de base de datos
-npx prisma migrate dev
+npx prisma migrate deploy
 
 # 4. Iniciar el servidor
-npm run dev
+npm run start:dev
 ```
 
 El backend escucha en **http://localhost:3000**.
 
 ---
 
-## 5. Crear un usuario vendedor
+## 5. Comprar y vender con la misma cuenta
 
-El registro crea usuarios con rol `client` por defecto. Para probar la experiencia de vendedor, cambia el rol directamente en la base de datos:
+El registro crea usuarios con rol `user`. **Cualquier usuario autenticado puede comprar.**
 
-```sql
-UPDATE "User" SET role = 'seller' WHERE email = 'tu@correo.com';
-```
+Para vender, usa el CTA **“Quiero vender”** en el header (ruta `/seller/onboarding`). Eso llama a `POST /seller`, crea el perfil y el backend responde con un JWT que incluye `sellerId`.
 
-O usa Prisma Studio:
+Roles JWT: `user | admin`. La capacidad de vender no es un rol: es tener un perfil `Seller` (`sellerId` en el token).
 
-```bash
-cd Mercadito_Backend
-npx prisma studio
-```
+Admins gestionan sellers en `/admin/sellers` (suspender / reactivar).
 
 ---
 
@@ -107,10 +102,13 @@ npx prisma studio
 | `/cart` | Autenticado | Carrito de compras |
 | `/checkout` | Autenticado | Confirmar pedido |
 | `/orders` | Autenticado | Mis pedidos |
-| `/seller` | Seller/Admin | Panel del vendedor |
-| `/seller/new` | Seller/Admin | Publicar nuevo producto |
-| `/seller/edit/:id` | Seller/Admin | Editar producto existente |
-| `/seller/orders` | Seller/Admin | Órdenes recibidas |
+| `/seller/onboarding` | Autenticado sin Seller | Crear perfil de vendedor |
+| `/seller` | Con Seller | Panel del vendedor |
+| `/seller/settings` | Con Seller | Configuración del puesto |
+| `/seller/new` | Seller activo | Publicar nuevo producto |
+| `/seller/edit/:id` | Seller activo | Editar producto existente |
+| `/seller/orders` | Con Seller | Órdenes recibidas |
+| `/admin/sellers` | Admin | Listar / suspender sellers |
 
 ---
 
@@ -131,10 +129,10 @@ npx prisma studio
 src/
 ├── app/
 │   ├── components/       # Componentes reutilizables (header, product-card, toast…)
-│   ├── guards/           # authGuard, sellerGuard
+│   ├── guards/           # authGuard, sellerGuard, noSellerGuard, adminGuard
 │   ├── interceptors/     # AuthInterceptor (adjunta JWT a peticiones)
-│   ├── pages/            # Páginas por ruta (auth, home, cart, checkout, orders, seller…)
-│   └── services/         # AuthService, CartService, OrderService, SocketService, ToastService…
+│   ├── pages/            # auth, home, cart, seller, admin…
+│   └── services/         # AuthService, SellerService, CartService, OrderService…
 └── environments/
     ├── environment.ts        # Desarrollo (apiUrl: localhost:3000)
     └── environment.prod.ts   # Producción

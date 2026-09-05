@@ -5,25 +5,27 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export type UserRole = 'client' | 'seller' | 'admin';
+export type UserRole = 'user' | 'admin';
+export type SellerStatus = 'active' | 'suspended';
 
 export interface AuthUser {
-  sub: number;
+  sub: string;
   email: string;
   name: string;
   role: UserRole;
+  sellerId: string | null;
 }
 
 export interface LoginResponse {
   ok: boolean;
   message: string;
-  data: { token: string; user: { id: number; firstName: string; lastName: string; email: string; role: UserRole } };
+  data: { token: string; id: string; email: string };
 }
 
 export interface RegisterResponse {
   ok: boolean;
   message: string;
-  data: { id: number; email: string; firstName: string; lastName: string; role: UserRole };
+  data: { id: string; email: string };
 }
 
 const TOKEN_KEY = 'mercadito_token';
@@ -32,11 +34,13 @@ function parseJwt(token: string): AuthUser | null {
   try {
     const payload = token.split('.')[1];
     const decoded = JSON.parse(atob(payload));
+    const role: UserRole = decoded.role === 'admin' ? 'admin' : 'user';
     return {
       sub: decoded.sub,
       email: decoded.email,
       name: decoded.name,
-      role: decoded.role ?? 'client',
+      role,
+      sellerId: decoded.sellerId ?? null,
     };
   } catch {
     return null;
@@ -49,19 +53,37 @@ export class AuthService {
   private router = inject(Router);
 
   private _token = signal<string | null>(localStorage.getItem(TOKEN_KEY));
+  private _sellerStatus = signal<SellerStatus | null>(null);
+
   readonly currentUser = computed<AuthUser | null>(() => {
     const t = this._token();
     return t ? parseJwt(t) : null;
   });
 
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
-  readonly isSeller = computed(() => {
-    const u = this.currentUser();
-    return u?.role === 'seller' || u?.role === 'admin';
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  readonly hasSeller = computed(() => !!this.currentUser()?.sellerId);
+  readonly sellerStatus = computed(() => this._sellerStatus());
+  readonly isSellerActive = computed(() => {
+    if (!this.hasSeller()) return false;
+    const status = this._sellerStatus();
+    return status === null || status === 'active';
   });
+  readonly canManageStore = computed(() => this.isSellerActive());
+
+  /** @deprecated use hasSeller / canManageStore */
+  readonly isSeller = computed(() => this.hasSeller());
 
   getToken(): string | null {
     return this._token();
+  }
+
+  setToken(token: string): void {
+    this._setToken(token);
+  }
+
+  setSellerStatus(status: SellerStatus | null): void {
+    this._sellerStatus.set(status);
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
@@ -71,6 +93,7 @@ export class AuthService {
         tap((res) => {
           if (res.ok && res.data?.token) {
             this._setToken(res.data.token);
+            this._sellerStatus.set(null);
           }
         })
       );
@@ -88,6 +111,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     this._token.set(null);
+    this._sellerStatus.set(null);
     this.router.navigateByUrl('/');
   }
 

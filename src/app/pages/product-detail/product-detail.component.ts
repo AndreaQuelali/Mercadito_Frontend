@@ -79,7 +79,7 @@ const UNIT_LABELS: Record<string, string> = {
           </div>
 
           <!-- Add to cart -->
-          <div *ngIf="auth.isLoggedIn() && !auth.isSeller(); else authPrompt" class="flex items-center gap-3 mt-2">
+          <div *ngIf="auth.isLoggedIn(); else authPrompt" class="flex items-center gap-3 mt-2">
             <div class="flex items-center border border-slate-300 rounded-full overflow-hidden">
               <button (click)="decrementQty()" class="px-3 py-2 hover:bg-slate-50 transition font-bold text-lg leading-none">−</button>
               <span class="px-4 py-2 text-slate-900 font-semibold min-w-[3rem] text-center">{{ qty }}</span>
