@@ -50,7 +50,7 @@ export class CartService {
 
   addItem(productId: number, quantity = 1): Observable<Cart> {
     return this.http
-      .post<ApiResponse<Cart>>(`${environment.apiUrl}/cart/item`, { productId, quantity })
+      .post<ApiResponse<Cart>>(`${environment.apiUrl}/cart/add`, { productId, quantity })
       .pipe(
         map((r) => r.data),
         tap((cart) => this._cart.set(cart))
