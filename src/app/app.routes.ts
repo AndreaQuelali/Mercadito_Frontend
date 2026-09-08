@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { LandingComponent } from './pages/landing/landing.component';
 import { SellerDashboardComponent } from './pages/seller/seller-dashboard.component';
 import { ProductFormComponent } from './pages/seller/product-form.component';
 import { SellerOnboardingComponent } from './pages/seller/seller-onboarding.component';
@@ -16,7 +17,8 @@ import { authGuard, sellerGuard, noSellerGuard, adminGuard } from './guards/auth
 
 export const appRoutes: Routes = [
   // Public
-  { path: '', component: HomeComponent },
+  { path: '', component: LandingComponent },
+  { path: 'productos', component: HomeComponent },
   { path: 'product/:id', component: ProductDetailComponent },
 
   // Auth

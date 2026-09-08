@@ -12,8 +12,12 @@
   }
 
   h1, h2, h3 {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Fraunces', Georgia, serif;
     font-weight: 700;
+  }
+
+  .font-display {
+    font-family: 'Fraunces', Georgia, serif;
   }
 
   /* Scrollbar styling */

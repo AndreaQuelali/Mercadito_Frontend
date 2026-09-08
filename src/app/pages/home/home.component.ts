@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { ProductCard, ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ProductService } from '../../services/products.service';
 import { SearchService } from '../../services/search.service';
@@ -12,6 +13,10 @@ const CATEGORIES = [
   { key: 'lacteos',    label: 'Lácteos' },
   { key: 'artesanias', label: 'Artesanías' },
 ];
+
+const VALID_CATEGORIES = new Set(
+  CATEGORIES.map((c) => c.key).filter((k) => k !== 'all')
+);
 
 @Component({
   selector: 'app-home',
@@ -77,6 +82,7 @@ const CATEGORIES = [
 export class HomeComponent implements OnInit {
   private searchSvc = inject(SearchService);
   private productService = inject(ProductService);
+  private route = inject(ActivatedRoute);
 
   categories = CATEGORIES;
   activeCategory = signal<string>('all');
@@ -102,6 +108,20 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const cat = this.route.snapshot.queryParamMap.get('category');
+    if (cat && VALID_CATEGORIES.has(cat)) {
+      this.activeCategory.set(cat);
+    }
+
+    this.route.queryParamMap.subscribe((params) => {
+      const next = params.get('category');
+      if (next && VALID_CATEGORIES.has(next)) {
+        this.activeCategory.set(next);
+      } else if (!next) {
+        // keep current chip unless navigating without category from landing intentionally
+      }
+    });
+
     this.productService.list().subscribe({
       next: (items) => { this.products.set(items); this.loading.set(false); },
       error: () => { this.products.set([]); this.loading.set(false); },

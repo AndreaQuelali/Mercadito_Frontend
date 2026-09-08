@@ -23,6 +23,10 @@ module.exports = {
           800: '#166534',
           900: '#14532d',
         },
+        citrus: {
+          DEFAULT: '#E8B923',
+          ink: '#3D3208',
+        },
         // Warm neutrals to replace cold slate where we want market warmth
         warm: {
           50:  '#fafaf9',
