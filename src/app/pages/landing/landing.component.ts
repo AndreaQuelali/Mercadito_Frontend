@@ -122,7 +122,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.host.nativeElement
         .querySelectorAll('.fade-up')
-        .forEach((el) => el.classList.add('is-visible'));
+        .forEach((el: Element) => el.classList.add('is-visible'));
       return;
     }
 
@@ -140,7 +140,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.host.nativeElement
       .querySelectorAll('.fade-up')
-      .forEach((el) => this.observer?.observe(el));
+      .forEach((el: Element) => this.observer?.observe(el));
   }
 
   ngOnDestroy(): void {

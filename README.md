@@ -95,7 +95,8 @@ Admins gestionan sellers en `/admin/sellers` (suspender / reactivar).
 
 | Ruta | Acceso | Descripción |
 |------|--------|-------------|
-| `/` | Público | Catálogo de productos |
+| `/` | Público | Landing marketing |
+| `/productos` | Público | Catálogo de productos |
 | `/product/:id` | Público | Detalle de producto + reviews |
 | `/auth/login` | Público | Iniciar sesión |
 | `/auth/register` | Público | Crear cuenta |

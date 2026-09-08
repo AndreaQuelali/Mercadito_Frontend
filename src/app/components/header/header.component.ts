@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
@@ -20,7 +20,7 @@ import { CartService } from '../../services/cart.service';
             <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h15A1.5 1.5 0 0 1 21 7.5V9a3 3 0 0 1-3 3v6a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18v-6a3 3 0 0 1-3-3V7.5Z"/>
           </svg>
         </span>
-        <span class="text-lg hidden sm:inline">Mercadito</span>
+        <span class="text-lg hidden sm:inline font-display font-bold tracking-tight">Mercadito</span>
       </a>
 
       <!-- Search -->
@@ -44,6 +44,12 @@ import { CartService } from '../../services/cart.service';
       <!-- Nav -->
       <nav class="flex items-center gap-1 shrink-0">
 
+        <a routerLink="/productos"
+           routerLinkActive="bg-slate-100 text-slate-900"
+           class="hidden sm:inline-flex px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
+          Productos
+        </a>
+
         <!-- Not logged in -->
         <ng-container *ngIf="!auth.isLoggedIn()">
           <a routerLink="/auth/login"
@@ -58,19 +64,16 @@ import { CartService } from '../../services/cart.service';
 
         <!-- Logged in -->
         <ng-container *ngIf="auth.isLoggedIn()">
-          <!-- Admin sellers -->
           <a *ngIf="auth.isAdmin()" routerLink="/admin/sellers"
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
             Sellers
           </a>
 
-          <!-- Become seller -->
           <a *ngIf="!auth.hasSeller() && !auth.isAdmin()" routerLink="/seller/onboarding"
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 transition">
             Quiero vender
           </a>
 
-          <!-- Seller dashboard link -->
           <a *ngIf="auth.hasSeller()" routerLink="/seller"
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
@@ -83,7 +86,6 @@ import { CartService } from '../../services/cart.service';
             </span>
           </a>
 
-          <!-- Orders -->
           <a routerLink="/orders"
              class="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
@@ -93,7 +95,6 @@ import { CartService } from '../../services/cart.service';
             Mis pedidos
           </a>
 
-          <!-- Cart -->
           <a routerLink="/cart" class="relative p-2 rounded-full border border-slate-200 hover:bg-slate-50 transition" aria-label="Carrito">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 text-slate-700">
               <path d="M2.25 2.25a.75.75 0 0 0 0 1.5H4.5l.401 1.605 1.2 4.8A2.25 2.25 0 0 0 7.875 11.25h8.4a2.25 2.25 0 0 0 2.174-1.644l1.101-4.141A.75.75 0 0 0 18.825 4.5H6.226l-.3-1.2A1.5 1.5 0 0 0 4.5 2.25H2.25Z"/>
@@ -105,7 +106,6 @@ import { CartService } from '../../services/cart.service';
             </span>
           </a>
 
-          <!-- Avatar / logout -->
           <div class="relative group">
             <button class="flex items-center gap-2 pl-3 pr-2 py-2 rounded-full border border-slate-200 hover:bg-slate-50 transition text-sm">
               <span class="hidden sm:inline text-slate-700 font-medium max-w-[80px] truncate">{{ auth.currentUser()?.name }}</span>
@@ -152,10 +152,14 @@ import { CartService } from '../../services/cart.service';
 })
 export class HeaderComponent {
   private searchSvc = inject(SearchService);
+  private router = inject(Router);
   auth = inject(AuthService);
   cartSvc = inject(CartService);
 
   onSearch(q: string) {
     this.searchSvc.setQuery(q);
+    if (!this.router.url.startsWith('/productos')) {
+      this.router.navigateByUrl('/productos');
+    }
   }
 }
