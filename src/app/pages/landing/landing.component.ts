@@ -82,8 +82,16 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   testimonials = TESTIMONIALS;
   faq = FAQ;
 
-  products = signal<ProductCard[]>([]);
+  allProducts = signal<ProductCard[]>([]);
+  selectedCategory = signal<string | null>(null);
   loadingProducts = signal(true);
+  activeMode = signal<'buyer' | 'seller'>('buyer');
+  addedToast = signal<string | null>(null);
+
+  // Cursor Aura tracking
+  auraX = signal(0);
+  auraY = signal(0);
+  showAura = signal(false);
 
   private observer?: IntersectionObserver;
 
@@ -104,14 +112,45 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     return 'Quiero vender';
   }
 
+  filteredProducts(): ProductCard[] {
+    const cat = this.selectedCategory();
+    const items = this.allProducts();
+    if (!cat) return items.slice(0, 4);
+    const filtered = items.filter(
+      (p) => p.category?.toLowerCase() === cat.toLowerCase()
+    );
+    return filtered.length > 0 ? filtered.slice(0, 4) : items.slice(0, 4);
+  }
+
+  selectCategory(catKey: string | null): void {
+    this.selectedCategory.set(catKey);
+  }
+
+  setMode(mode: 'buyer' | 'seller'): void {
+    this.activeMode.set(mode);
+  }
+
+  addToQuickCart(productName: string, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.addedToast.set(`¡${productName} agregado al carrito!`);
+    setTimeout(() => this.addedToast.set(null), 2500);
+  }
+
+  onMouseMove(e: MouseEvent): void {
+    this.auraX.set(e.clientX);
+    this.auraY.set(e.clientY);
+    if (!this.showAura()) this.showAura.set(true);
+  }
+
   ngOnInit(): void {
     this.productSvc.list().subscribe({
       next: (items) => {
-        this.products.set(items.slice(0, 4));
+        this.allProducts.set(items);
         this.loadingProducts.set(false);
       },
       error: () => {
-        this.products.set([]);
+        this.allProducts.set([]);
         this.loadingProducts.set(false);
       },
     });
@@ -135,7 +174,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+      { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
     );
 
     this.host.nativeElement

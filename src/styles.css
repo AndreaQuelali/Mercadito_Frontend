@@ -20,11 +20,19 @@
     font-family: 'Fraunces', Georgia, serif;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .font-mono {
+    font-family: 'DM Mono', monospace;
+  }
+
   /* Scrollbar styling */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-warm-300 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-warm-400; }
+  ::-webkit-scrollbar-track { background: #0a0f0c; }
+  ::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.25); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(34, 197, 94, 0.5); }
 }
 
 @layer components {
