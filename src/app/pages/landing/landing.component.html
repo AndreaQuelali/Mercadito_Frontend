@@ -27,13 +27,7 @@
 </header>
 
 <!-- Interactive Cursor Aura Decorator -->
-<div
-  class="cursor-aura"
-  *ngIf="showAura()"
-  [style.left.px]="auraX()"
-  [style.top.px]="auraY()"
-  aria-hidden="true"
-></div>
+<div class="cursor-aura" *ngIf="showAura()" [style.left.px]="auraX()" [style.top.px]="auraY()" aria-hidden="true"></div>
 
 <!-- Main Container (Dark Mode Forced Subtree) -->
 <div class="landing-root" (mousemove)="onMouseMove($event)">
@@ -47,12 +41,8 @@
   <!-- Hero Section -->
   <section class="landing-hero" aria-label="Mercadito Hero">
     <!-- Full Background Media & Dark Veil Overlay -->
-    <div
-      class="landing-hero__media"
-      [style.backgroundImage]="'url(' + heroImage + ')'"
-      role="img"
-      aria-label="Puesto de mercado con frutas y verduras frescas"
-    ></div>
+    <div class="landing-hero__media" [style.backgroundImage]="'url(' + heroImage + ')'" role="img"
+      aria-label="Puesto de mercado con frutas y verduras frescas"></div>
     <div class="landing-hero__veil" aria-hidden="true"></div>
     <div class="landing-hero__grain" aria-hidden="true"></div>
 
@@ -75,32 +65,32 @@
   <div class="suite-strip">
     <div class="marquee-track">
       <div class="marquee-content">
-        <span class="marquee-item"><span class="m-icon">🥬</span> 100% PRODUCTOS FRESCOS</span>
+        <span class="marquee-item">100% PRODUCTOS FRESCOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🏪</span> PUESTOS LOCALES VERIFICADOS</span>
+        <span class="marquee-item">PUESTOS LOCALES VERIFICADOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">⚡</span> ENTREGA & RETIRO EL MISMO DÍA</span>
+        <span class="marquee-item">ENTREGA & RETIRO EL MISMO DÍA</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🤝</span> TRATO DIRECTO SIN INTERMEDIARIOS</span>
+        <span class="marquee-item">TRATO DIRECTO SIN INTERMEDIARIOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🛍️</span> UNIFICACIÓN DE PEDIDOS</span>
+        <span class="marquee-item">UNIFICACIÓN DE PEDIDOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">⭐</span> CALIFICACIONES REALES DE VECINOS</span>
+        <span class="marquee-item">CALIFICACIONES REALES DE VECINOS</span>
         <span class="marquee-bullet">•</span>
       </div>
       <!-- Duplicate content for infinite loop -->
       <div class="marquee-content" aria-hidden="true">
-        <span class="marquee-item"><span class="m-icon">🥬</span> 100% PRODUCTOS FRESCOS</span>
+        <span class="marquee-item">100% PRODUCTOS FRESCOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🏪</span> PUESTOS LOCALES VERIFICADOS</span>
+        <span class="marquee-item">PUESTOS LOCALES VERIFICADOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">⚡</span> ENTREGA & RETIRO EL MISMO DÍA</span>
+        <span class="marquee-item">ENTREGA & RETIRO EL MISMO DÍA</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🤝</span> TRATO DIRECTO SIN INTERMEDIARIOS</span>
+        <span class="marquee-item">TRATO DIRECTO SIN INTERMEDIARIOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">🛍️</span> UNIFICACIÓN DE PEDIDOS</span>
+        <span class="marquee-item">UNIFICACIÓN DE PEDIDOS</span>
         <span class="marquee-bullet">•</span>
-        <span class="marquee-item"><span class="m-icon">⭐</span> CALIFICACIONES REALES DE VECINOS</span>
+        <span class="marquee-item">CALIFICACIONES REALES DE VECINOS</span>
         <span class="marquee-bullet">•</span>
       </div>
     </div>
@@ -124,7 +114,8 @@
           <span class="bento-tag">Verificación garantizada</span>
           <h3 class="bento-title font-display">Puestos de Confianza y Calificación Vecinal</h3>
           <p class="bento-text">
-            Conoce a cada comerciante antes de pedir. Accede a opiniones reales de vecinos de tu zona, calificaciones de puntualidad y fotos del puesto real.
+            Conoce a cada comerciante antes de pedir. Accede a opiniones reales de vecinos de tu zona, calificaciones de
+            puntualidad y fotos del puesto real.
           </p>
           <div class="bento-mini-list mt-4">
             <div class="bento-mini-item">
@@ -145,7 +136,8 @@
           <span class="bento-tag">Stock al momento</span>
           <h3 class="bento-title font-display">Productos Frescos del Día</h3>
           <p class="bento-text">
-            Los puestos actualizan su inventario diariamente a primera hora. Lo que ves disponible es exactamente lo que se encuentra en exhibición.
+            Los puestos actualizan su inventario diariamente a primera hora. Lo que ves disponible es exactamente lo que
+            se encuentra en exhibición.
           </p>
           <div class="bento-stock-gauge mt-4">
             <div class="gauge-bar">
@@ -163,11 +155,12 @@
           <span class="bento-tag">Un solo perfil</span>
           <h3 class="bento-title font-display">Compra y Vende en la misma plataforma</h3>
           <p class="bento-text">
-            Sin cuentas separadas. Haz tus compras matutinas como vecino y activa tu puesto para vender tus productos en cualquier momento.
+            Sin cuentas separadas. Haz tus compras matutinas como vecino y activa tu puesto para vender tus productos en
+            cualquier momento.
           </p>
           <div class="mode-preview-pill mt-4">
-            <span class="mode-tab active">🛍️ Comprador</span>
-            <span class="mode-tab">🏪 Vendedor</span>
+            <span class="mode-tab active">Comprador</span>
+            <span class="mode-tab">Vendedor</span>
           </div>
         </div>
       </div>
@@ -179,7 +172,8 @@
           <span class="bento-tag">Trato Directo</span>
           <h3 class="bento-title font-display">Precios Transparentes de Mercado</h3>
           <p class="bento-text">
-            Sin comisiones infladas por intermediarios. Pagas los mismos precios del mostrador físico con acuerdos directos entre tú y el comerciante.
+            Sin comisiones infladas por intermediarios. Pagas los mismos precios del mostrador físico con acuerdos
+            directos entre tú y el comerciante.
           </p>
           <div class="flex items-center gap-4 mt-4">
             <div class="price-badge-chip">
@@ -204,18 +198,10 @@
 
       <!-- Buyer / Seller Toggle -->
       <div class="toggle-mode-container mt-6">
-        <button
-          class="toggle-btn"
-          [class.active]="activeMode() === 'buyer'"
-          (click)="setMode('buyer')"
-        >
+        <button class="toggle-btn" [class.active]="activeMode() === 'buyer'" (click)="setMode('buyer')">
           Para Compradores
         </button>
-        <button
-          class="toggle-btn"
-          [class.active]="activeMode() === 'seller'"
-          (click)="setMode('seller')"
-        >
+        <button class="toggle-btn" [class.active]="activeMode() === 'seller'" (click)="setMode('seller')">
           Para Vendedores
         </button>
       </div>
@@ -227,7 +213,8 @@
         <span class="step-num font-mono">01</span>
         <h3 class="step-title font-display">Explora el mercado digital</h3>
         <p class="step-desc">
-          Navega entre puestos verificado de tu barrio o filtra por tu categoría favorita (verduras, panadería, lácteos).
+          Navega entre puestos verificado de tu barrio o filtra por tu categoría favorita (verduras, panadería,
+          lácteos).
         </p>
       </div>
       <div class="step-card">
@@ -297,26 +284,18 @@
       <a routerLink="/productos" class="link-emerald inline-flex items-center gap-1 font-semibold">
         Ver todo el catálogo
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </a>
     </div>
 
     <!-- Category Filter Bar -->
     <div class="cat-filter-bar mb-8">
-      <button
-        class="cat-filter-chip"
-        [class.active]="selectedCategory() === null"
-        (click)="selectCategory(null)"
-      >
-        🌟 Todos
+      <button class="cat-filter-chip" [class.active]="selectedCategory() === null" (click)="selectCategory(null)">
+        Todos
       </button>
-      <button
-        *ngFor="let c of categories"
-        class="cat-filter-chip"
-        [class.active]="selectedCategory() === c.key"
-        (click)="selectCategory(c.key)"
-      >
+      <button *ngFor="let c of categories" class="cat-filter-chip" [class.active]="selectedCategory() === c.key"
+        (click)="selectCategory(c.key)">
         {{ c.label }}
       </button>
     </div>
@@ -351,11 +330,7 @@
             <h3 class="product-title-modern font-display">{{ p.name }}</h3>
             <div class="flex items-center justify-between mt-3">
               <span class="product-price-modern font-mono">${{ p.price | number:'1.2-2' }}</span>
-              <button
-                class="btn-add-circle"
-                title="Agregar al carrito"
-                (click)="addToQuickCart(p.name, $event)"
-              >
+              <button class="btn-add-circle" title="Agregar al carrito" (click)="addToQuickCart(p.name, $event)">
                 +
               </button>
             </div>
@@ -436,10 +411,6 @@
         <p class="footer-tagline">
           El mercado de tu barrio, conectado directamente a tu celular.
         </p>
-        <div class="system-status">
-          <span class="status-dot"></span>
-          <span class="text-xs font-mono text-emerald-400">Todos los sistemas operando al 100%</span>
-        </div>
       </div>
 
       <div>
@@ -472,7 +443,6 @@
 
     <div class="footer-bottom">
       <span>© 2026 Mercadito. Todos los derechos reservados.</span>
-      <span class="font-mono text-xs">Hecho con ❤️ para la comunidad</span>
     </div>
   </footer>
 

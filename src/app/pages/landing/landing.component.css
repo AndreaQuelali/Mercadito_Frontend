@@ -67,8 +67,17 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
 }
 
 .brand-text {
@@ -531,8 +540,13 @@
 }
 
 @keyframes marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .marquee-content {
@@ -614,6 +628,7 @@
   .bento-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
   .bento-card-large {
     grid-column: span 2;
   }
@@ -621,7 +636,7 @@
 
 .bento-card {
   position: relative;
-  background: var(--bg-card);
+  background: var(--bg-surface);
   border: 1px solid var(--border-glass);
   border-radius: 1.5rem;
   padding: 2rem;
@@ -630,7 +645,6 @@
 }
 
 .bento-card:hover {
-  background: var(--bg-card-hover);
   border-color: var(--border-emerald);
   transform: translateY(-4px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
@@ -1000,8 +1014,15 @@
 }
 
 @keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .empty-products-box {
@@ -1289,8 +1310,15 @@
 }
 
 @keyframes toast-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Motion Reveal Classes */
@@ -1300,10 +1328,21 @@
   animation: landing-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.reveal-d1 { animation-delay: 0.1s; }
-.reveal-d2 { animation-delay: 0.22s; }
-.reveal-d3 { animation-delay: 0.35s; }
-.reveal-d4 { animation-delay: 0.48s; }
+.reveal-d1 {
+  animation-delay: 0.1s;
+}
+
+.reveal-d2 {
+  animation-delay: 0.22s;
+}
+
+.reveal-d3 {
+  animation-delay: 0.35s;
+}
+
+.reveal-d4 {
+  animation-delay: 0.48s;
+}
 
 @keyframes landing-reveal {
   to {
@@ -1324,6 +1363,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .reveal,
   .fade-up {
     opacity: 1 !important;
@@ -1331,6 +1371,7 @@
     animation: none !important;
     transition: none !important;
   }
+
   .marquee-track {
     animation: none !important;
   }
