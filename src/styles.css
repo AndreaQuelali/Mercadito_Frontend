@@ -2,10 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Mercado Boliviano Theme Tokens - Light Mode */
+  --color-primary: #C65A3A;         /* 🧱 Terracota */
+  --color-primary-hover: #B04B2D;
+  --color-primary-light: #F9ECE8;
+
+  --color-secondary: #D9A441;       /* 🌽 Maíz */
+  --color-secondary-hover: #C59132;
+  --color-secondary-light: #FAF4E5;
+
+  --color-accent-green: #5F7745;    /* 🌿 Verde Hoja */
+  --color-accent-green-hover: #4E6338;
+  --color-accent-green-light: #EEF2EA;
+
+  --color-accent-pink: #C83D68;     /* 🌸 Fucsia Aguayo */
+  --color-accent-pink-light: #FAEAEE;
+
+  --color-accent-teal: #3E9C9A;     /* 🩵 Turquesa */
+  --color-accent-teal-light: #EBF6F6;
+
+  --color-bg-base: #F7F0E3;         /* 🥛 Crema */
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-elevated: #FFFBF5;
+  --color-bg-subtle: #EFE7D8;
+
+  --color-text-main: #3A2A22;       /* 🪵 Café Tierra */
+  --color-text-muted: #6B574C;
+  --color-text-subtle: #968377;
+  --color-text-on-primary: #FFFFFF;
+
+  --color-border-subtle: #E6DCCD;
+  --color-border-medium: #D4C6B1;
+  --color-border-focus: #C65A3A;
+
+  --shadow-sm: 0 2px 8px rgba(58, 42, 34, 0.05);
+  --shadow-md: 0 4px 20px rgba(58, 42, 34, 0.08);
+  --shadow-lg: 0 12px 36px rgba(58, 42, 34, 0.12);
+  --shadow-primary: 0 6px 24px rgba(198, 90, 58, 0.25);
+}
+
+/* Dark Mode Tokens */
+[data-theme="dark"], html.dark {
+  --color-primary: #E0704F;
+  --color-primary-hover: #C65A3A;
+  --color-primary-light: rgba(198, 90, 58, 0.2);
+
+  --color-secondary: #E5B552;
+  --color-secondary-hover: #D9A441;
+  --color-secondary-light: rgba(217, 164, 65, 0.2);
+
+  --color-accent-green: #7A995A;
+  --color-accent-green-hover: #5F7745;
+  --color-accent-green-light: rgba(95, 119, 69, 0.2);
+
+  --color-accent-pink: #DB547F;
+  --color-accent-pink-light: rgba(200, 61, 104, 0.2);
+
+  --color-accent-teal: #50B5B3;
+  --color-accent-teal-light: rgba(62, 156, 154, 0.2);
+
+  --color-bg-base: #1C1613;
+  --color-bg-surface: #271E1A;
+  --color-bg-surface-elevated: #332822;
+  --color-bg-subtle: #231A15;
+
+  --color-text-main: #F7F0E3;       /* Crema text in dark mode */
+  --color-text-muted: #C8BDB2;
+  --color-text-subtle: #968679;
+  --color-text-on-primary: #FFFFFF;
+
+  --color-border-subtle: #3D3029;
+  --color-border-medium: #54433A;
+  --color-border-focus: #E0704F;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 6px 24px rgba(224, 112, 79, 0.3);
+}
+
 @layer base {
-  html, body { height: 100%; }
+  html, body {
+    height: 100%;
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
   body {
-    @apply bg-warm-50 text-warm-800;
     font-family: 'DM Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -28,11 +112,17 @@
     font-family: 'DM Mono', monospace;
   }
 
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+
   /* Scrollbar styling */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0f0c; }
-  ::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.25); border-radius: 999px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(34, 197, 94, 0.5); }
+  ::-webkit-scrollbar-track { background: var(--color-bg-subtle); }
+  ::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-primary-hover); }
 }
 
 @layer components {

@@ -11,34 +11,50 @@ module.exports = {
         mono: ['"DM Mono"', 'monospace'],
       },
       colors: {
+        primary: {
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
+          light: 'var(--color-primary-light)',
+        },
+        secondary: {
+          DEFAULT: 'var(--color-secondary)',
+          hover: 'var(--color-secondary-hover)',
+          light: 'var(--color-secondary-light)',
+        },
+        'accent-green': {
+          DEFAULT: 'var(--color-accent-green)',
+          hover: 'var(--color-accent-green-hover)',
+          light: 'var(--color-accent-green-light)',
+        },
+        'accent-pink': {
+          DEFAULT: 'var(--color-accent-pink)',
+          light: 'var(--color-accent-pink-light)',
+        },
+        'accent-teal': {
+          DEFAULT: 'var(--color-accent-teal)',
+          light: 'var(--color-accent-teal-light)',
+        },
+        base: 'var(--color-bg-base)',
+        surface: {
+          DEFAULT: 'var(--color-bg-surface)',
+          elevated: 'var(--color-bg-surface-elevated)',
+          subtle: 'var(--color-bg-subtle)',
+        },
+        text: {
+          main: 'var(--color-text-main)',
+          muted: 'var(--color-text-muted)',
+          subtle: 'var(--color-text-subtle)',
+        },
+        border: {
+          subtle: 'var(--color-border-subtle)',
+          medium: 'var(--color-border-medium)',
+        },
         brand: {
-          50:  '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-        },
-        citrus: {
-          DEFAULT: '#E8B923',
-          ink: '#3D3208',
-        },
-        // Warm neutrals to replace cold slate where we want market warmth
-        warm: {
-          50:  '#fafaf9',
-          100: '#f5f5f4',
-          200: '#e7e5e4',
-          300: '#d6d3d1',
-          400: '#a8a29e',
-          500: '#78716c',
-          600: '#57534e',
-          700: '#44403c',
-          800: '#292524',
-          900: '#1c1917',
+          50:  '#FAF4E5',
+          100: '#F9ECE8',
+          500: '#C65A3A',
+          600: '#B04B2D',
+          700: '#5F7745',
         },
       },
       boxShadow: {

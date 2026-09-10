@@ -88,6 +88,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMode = signal<'buyer' | 'seller'>('buyer');
   addedToast = signal<string | null>(null);
 
+  // Mobile menu & dark mode signals
+  mobileMenuOpen = signal(false);
+  isDarkMode = signal(false);
+
   // Cursor Aura tracking
   auraX = signal(0);
   auraY = signal(0);
@@ -99,6 +103,45 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=2000&q=80';
   readonly communityImage =
     'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80';
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.set(!this.mobileMenuOpen());
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
+  toggleDarkMode(): void {
+    const next = !this.isDarkMode();
+    this.isDarkMode.set(next);
+    if (typeof document !== 'undefined') {
+      if (next) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('mercadito-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('mercadito-theme', 'light');
+      }
+    }
+  }
+
+  private initTheme(): void {
+    if (typeof window === 'undefined') return;
+    const saved = localStorage.getItem('mercadito-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      this.isDarkMode.set(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark');
+    } else {
+      this.isDarkMode.set(false);
+      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.classList.remove('dark');
+    }
+  }
 
   sellLink(): string {
     if (!this.auth.isLoggedIn()) return '/auth/register';
@@ -144,6 +187,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initTheme();
     this.productSvc.list().subscribe({
       next: (items) => {
         this.allProducts.set(items);
