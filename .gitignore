@@ -1,4 +1,28 @@
-node_modules
-.angular
+# Dependencies
+node_modules/
+
+# Angular build output
+dist/
+.angular/
+
+# Environment & secrets
 .env
-.vscode
+.env.local
+.env.*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/

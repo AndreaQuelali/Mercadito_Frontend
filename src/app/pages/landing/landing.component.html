@@ -1,0 +1,500 @@
+<!-- Floating Glassmorphic Navbar -->
+<header class="landing-navbar">
+  <div class="landing-navbar__inner">
+    <a routerLink="/" class="landing-navbar__brand" aria-label="Ir a la página de inicio de Mercadito">
+      <span class="brand-dot"></span>
+      <span class="brand-text">Mercadito</span>
+    </a>
+
+    <nav class="landing-navbar__nav" aria-label="Navegación principal">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#caracteristicas">Ventajas</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#testimonios">Comunidad</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="landing-navbar__actions">
+      <!-- Dark mode toggle -->
+      <button
+        (click)="toggleDarkMode()"
+        class="btn-theme-toggle"
+        [attr.aria-label]="isDarkMode() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        type="button"
+      >
+        <svg *ngIf="!isDarkMode()" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+        <svg *ngIf="isDarkMode()" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      </button>
+
+      <ng-container *ngIf="!auth.isLoggedIn(); else userMenu">
+        <a routerLink="/auth/login" class="nav-link-subtle">Ingresar</a>
+        <a [routerLink]="sellLink()" class="btn-nav-primary">{{ sellLabel() }}</a>
+      </ng-container>
+      <ng-template #userMenu>
+        <a [routerLink]="sellLink()" class="btn-nav-primary">{{ sellLabel() }}</a>
+      </ng-template>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        (click)="toggleMobileMenu()"
+        class="btn-mobile-toggle"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Abrir menú de navegación"
+        type="button"
+      >
+        <svg *ngIf="!mobileMenuOpen()" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg *ngIf="mobileMenuOpen()" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="landing-mobile-menu" *ngIf="mobileMenuOpen()" (click)="closeMobileMenu()">
+    <nav class="mobile-nav-links" (click)="$event.stopPropagation()" aria-label="Navegación móvil">
+      <a href="#como-funciona" (click)="closeMobileMenu()">Cómo funciona</a>
+      <a href="#caracteristicas" (click)="closeMobileMenu()">Ventajas</a>
+      <a href="#catalogo" (click)="closeMobileMenu()">Catálogo</a>
+      <a href="#testimonios" (click)="closeMobileMenu()">Comunidad</a>
+      <a href="#faq" (click)="closeMobileMenu()">FAQ</a>
+      <div class="mobile-nav-actions pt-4 border-t border-subtle flex flex-col gap-3">
+        <ng-container *ngIf="!auth.isLoggedIn(); else mobileUserMenu">
+          <a routerLink="/auth/login" (click)="closeMobileMenu()" class="nav-link-subtle text-center py-2">Ingresar</a>
+          <a [routerLink]="sellLink()" (click)="closeMobileMenu()" class="btn-nav-primary text-center py-2.5">{{ sellLabel() }}</a>
+        </ng-container>
+        <ng-template #mobileUserMenu>
+          <a [routerLink]="sellLink()" (click)="closeMobileMenu()" class="btn-nav-primary text-center py-2.5">{{ sellLabel() }}</a>
+        </ng-template>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Interactive Cursor Aura Decorator -->
+<div class="cursor-aura" *ngIf="showAura()" [style.left.px]="auraX()" [style.top.px]="auraY()" aria-hidden="true"></div>
+
+<!-- Main Container -->
+<div class="landing-root" (mousemove)="onMouseMove($event)">
+
+  <!-- Toast Notification -->
+  <div class="landing-toast" *ngIf="addedToast()">
+    <span class="toast-icon">✨</span>
+    <span>{{ addedToast() }}</span>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="landing-hero" aria-label="Mercadito Hero">
+    <!-- Full Background Media & Dark Veil Overlay -->
+    <div class="landing-hero__media" [style.backgroundImage]="'url(' + heroImage + ')'" role="img"
+      aria-label="Puesto de mercado con frutas y verduras frescas"></div>
+    <div class="landing-hero__veil" aria-hidden="true"></div>
+    <div class="landing-hero__grain" aria-hidden="true"></div>
+
+    <div class="landing-hero__content">
+      <p class="landing-brand reveal font-display">Mercadito</p>
+      <h1 class="landing-headline reveal reveal-d1 font-display">
+        El mercado de tu barrio, en tu celular
+      </h1>
+      <p class="landing-support reveal reveal-d2">
+        Conecta con puestos locales: compra lo fresco del día o abre tu puesto y vende a tu comunidad.
+      </p>
+      <div class="landing-ctas reveal reveal-d3">
+        <a routerLink="/productos" class="btn-primary">Explorar productos</a>
+        <a [routerLink]="sellLink()" class="btn-ghost">{{ sellLabel() }}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Suite Strip / Infinite Marquee -->
+  <div class="suite-strip">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span class="marquee-item">100% PRODUCTOS FRESCOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">PUESTOS LOCALES VERIFICADOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">ENTREGA & RETIRO EL MISMO DÍA</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">TRATO DIRECTO SIN INTERMEDIARIOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">UNIFICACIÓN DE PEDIDOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">CALIFICACIONES REALES DE VECINOS</span>
+        <span class="marquee-bullet">•</span>
+      </div>
+      <!-- Duplicate content for infinite loop -->
+      <div class="marquee-content" aria-hidden="true">
+        <span class="marquee-item">100% PRODUCTOS FRESCOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">PUESTOS LOCALES VERIFICADOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">ENTREGA & RETIRO EL MISMO DÍA</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">TRATO DIRECTO SIN INTERMEDIARIOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">UNIFICACIÓN DE PEDIDOS</span>
+        <span class="marquee-bullet">•</span>
+        <span class="marquee-item">CALIFICACIONES REALES DE VECINOS</span>
+        <span class="marquee-bullet">•</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bento Grid: Features Showcase -->
+  <section id="caracteristicas" class="section fade-up">
+    <div class="section-header text-center">
+      <span class="sub-eyebrow">VENTAJAS EXCLUSIVAS</span>
+      <h2 class="section-title">Diseñado para el comercio de barrio</h2>
+      <p class="section-lead mx-auto">
+        Tecnología ágil e intuitiva que conecta la frescura del mercado con la comodidad digital.
+      </p>
+    </div>
+
+    <div class="bento-grid">
+      <!-- Bento 1: Large Showcase Card -->
+      <div class="bento-card bento-card-large">
+        <div class="bento-glow"></div>
+        <div class="bento-content">
+          <span class="bento-tag">Verificación garantizada</span>
+          <h3 class="bento-title font-display">Puestos de Confianza y Calificación Vecinal</h3>
+          <p class="bento-text">
+            Conoce a cada comerciante antes de pedir. Accede a opiniones reales de vecinos de tu zona, calificaciones de
+            puntualidad y fotos del puesto real.
+          </p>
+          <div class="bento-mini-list mt-4">
+            <div class="bento-mini-item">
+              <span class="avatar-circle">M</span>
+              <div>
+                <span class="font-semibold bento-sub-title block">Don Manuel • Verdulería El Sol</span>
+                <span class="text-xs bento-sub-badge font-mono">Verificado • a 250m de ti</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento 2: Realtime Stock -->
+      <div class="bento-card bento-card-medium">
+        <div class="bento-glow"></div>
+        <div class="bento-content">
+          <span class="bento-tag">Stock al momento</span>
+          <h3 class="bento-title font-display">Productos Frescos del Día</h3>
+          <p class="bento-text">
+            Los puestos actualizan su inventario diariamente a primera hora. Lo que ves disponible es exactamente lo que
+            se encuentra en exhibición.
+          </p>
+          <div class="bento-stock-gauge mt-4">
+            <div class="gauge-bar">
+              <div class="gauge-fill" style="width: 85%;"></div>
+            </div>
+            <span class="text-xs bento-sub-badge font-mono mt-1 block">Cosecha de hoy: 85% disponible</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento 3: Dual Account -->
+      <div class="bento-card bento-card-medium">
+        <div class="bento-glow"></div>
+        <div class="bento-content">
+          <span class="bento-tag">Un solo perfil</span>
+          <h3 class="bento-title font-display">Compra y Vende en la misma plataforma</h3>
+          <p class="bento-text">
+            Sin cuentas separadas. Haz tus compras matutinas como vecino y activa tu puesto para vender tus productos en
+            cualquier momento.
+          </p>
+          <div class="mode-preview-pill mt-4">
+            <span class="mode-tab active">Comprador</span>
+            <span class="mode-tab">Vendedor</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bento 4: Transparent Prices -->
+      <div class="bento-card bento-card-large">
+        <div class="bento-glow"></div>
+        <div class="bento-content">
+          <span class="bento-tag">Trato Directo</span>
+          <h3 class="bento-title font-display">Precios Transparentes de Mercado</h3>
+          <p class="bento-text">
+            Sin comisiones infladas por intermediarios. Pagas los mismos precios del mostrador físico con acuerdos
+            directos entre tú y el comerciante.
+          </p>
+          <div class="flex items-center gap-4 mt-4">
+            <div class="price-badge-chip">
+              <span class="text-xs badge-chip-title">Tomate Redondo</span>
+              <span class="font-mono font-bold badge-chip-price">Bs 1.20 / kg</span>
+            </div>
+            <div class="price-badge-chip">
+              <span class="text-xs badge-chip-title">Pan Artesanal</span>
+              <span class="font-mono font-bold badge-chip-price">Bs 2.00 / unidad</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive "Cómo Funciona" Section -->
+  <section id="como-funciona" class="section fade-up">
+    <div class="section-header text-center">
+      <span class="sub-eyebrow">PASO A PASO</span>
+      <h2 class="section-title">Así funciona Mercadito</h2>
+
+      <!-- Buyer / Seller Toggle -->
+      <div class="toggle-mode-container mt-6">
+        <button class="toggle-btn" [class.active]="activeMode() === 'buyer'" (click)="setMode('buyer')">
+          Para Compradores
+        </button>
+        <button class="toggle-btn" [class.active]="activeMode() === 'seller'" (click)="setMode('seller')">
+          Para Vendedores
+        </button>
+      </div>
+    </div>
+
+    <!-- Buyer Flow Steps -->
+    <div class="how-steps-grid" *ngIf="activeMode() === 'buyer'">
+      <div class="step-card">
+        <span class="step-num font-mono">01</span>
+        <h3 class="step-title font-display">Explora el mercado digital</h3>
+        <p class="step-desc">
+          Navega entre puestos verificado de tu barrio o filtra por tu categoría favorita (verduras, panadería,
+          lácteos).
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">02</span>
+        <h3 class="step-title font-display">Arma tu carrito del día</h3>
+        <p class="step-desc">
+          Selecciona productos frescos con stock confirmado directamente del puesto de tu comerciante amigo.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">03</span>
+        <h3 class="step-title font-display">Confirma tu pedido</h3>
+        <p class="step-desc">
+          Coordina la recepción o retiro en el local según tu preferencia sin vueltas ni recargos ocultos.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">04</span>
+        <h3 class="step-title font-display">Disfruta de la frescura</h3>
+        <p class="step-desc">
+          Recibe tus productos con la calidad de siempre y califica la atención de tu puesto local.
+        </p>
+      </div>
+    </div>
+
+    <!-- Seller Flow Steps -->
+    <div class="how-steps-grid" *ngIf="activeMode() === 'seller'">
+      <div class="step-card">
+        <span class="step-num font-mono">01</span>
+        <h3 class="step-title font-display">Crea tu cuenta gratuita</h3>
+        <p class="step-desc">
+          Regístrate en menos de un minuto. Solo necesitas un correo y el nombre de tu emprendimiento o puesto.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">02</span>
+        <h3 class="step-title font-display">Activa “Quiero vender”</h3>
+        <p class="step-desc">
+          Ingresa al formulario de vendedor y completa los datos de tu puesto (dirección, horario, descripción).
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">03</span>
+        <h3 class="step-title font-display">Publica tus productos</h3>
+        <p class="step-desc">
+          Subes fotos, fijas el precio y el stock disponible para que los vecinos de la zona te encuentren al instante.
+        </p>
+      </div>
+      <div class="step-card">
+        <span class="step-num font-mono">04</span>
+        <h3 class="step-title font-display">Gestiona tus órdenes</h3>
+        <p class="step-desc">
+          Recibe notificaciones en tu panel de control cada vez que un cliente realice una solicitud de compra.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Catalog Section with Interactive Category Filter -->
+  <section id="catalogo" class="section fade-up">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+      <div>
+        <span class="sub-eyebrow">CATÁLOGO EN VIVO</span>
+        <h2 class="section-title">Del mercado a tu mesa hoy</h2>
+        <p class="section-lead">Una muestra en tiempo real de lo que hay publicado en este momento.</p>
+      </div>
+      <a routerLink="/productos" class="link-emerald inline-flex items-center gap-1 font-semibold">
+        Ver todo el catálogo
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div class="cat-filter-bar mb-8">
+      <button class="cat-filter-chip" [class.active]="selectedCategory() === null" (click)="selectCategory(null)">
+        Todos
+      </button>
+      <button *ngFor="let c of categories" class="cat-filter-chip" [class.active]="selectedCategory() === c.key"
+        (click)="selectCategory(c.key)">
+        {{ c.label }}
+      </button>
+    </div>
+
+    <!-- Skeletons -->
+    <div *ngIf="loadingProducts()" class="products-grid">
+      <div *ngFor="let i of [1,2,3,4]" class="product-card-skeleton">
+        <div class="skeleton-img"></div>
+        <div class="p-4 space-y-3">
+          <div class="skeleton-line w-2/3"></div>
+          <div class="skeleton-line w-1/3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loadingProducts() && filteredProducts().length === 0" class="empty-products-box">
+      <p class="font-display text-xl empty-box-title font-bold">No se encontraron productos en esta categoría.</p>
+      <p class="empty-box-sub text-sm mt-1">Sé el primero en publicar en esta categoría.</p>
+      <a [routerLink]="sellLink()" class="btn-primary mt-4 inline-flex">{{ sellLabel() }}</a>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!loadingProducts() && filteredProducts().length > 0" class="products-grid">
+      <div *ngFor="let p of filteredProducts()" class="product-card-modern">
+        <a [routerLink]="['/product', p.id]" class="product-card-link">
+          <div class="product-img-wrapper">
+            <img [src]="p.image" [alt]="p.name" loading="lazy" />
+            <span class="category-badge">{{ p.category || 'Mercado' }}</span>
+          </div>
+          <div class="product-card-body">
+            <h3 class="product-title-modern font-display">{{ p.name }}</h3>
+            <div class="flex items-center justify-between mt-3">
+              <span class="product-price-modern font-mono">Bs {{ p.price | number:'1.2-2' }}</span>
+              <button class="btn-add-circle" title="Agregar al carrito" (click)="addToQuickCart(p.name, $event)">
+                +
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Voices & Community Testimonials Section -->
+  <section id="testimonios" class="section voices-section fade-up">
+    <div class="section-header text-center">
+      <span class="sub-eyebrow text-emerald-400 font-mono">COMUNIDAD Y TESTIMONIOS</span>
+      <h2 class="voice-section-title font-display">Voces de nuestro barrio</h2>
+      <p class="voice-section-lead mx-auto">
+        Historias reales de quienes ya compran y ofrecen sus productos cerca de ti.
+      </p>
+    </div>
+
+    <div class="voices-grid mt-10">
+      <blockquote *ngFor="let t of testimonials" class="voice-card">
+        <div class="voice-stars">★★★★★</div>
+        <p class="voice-quote font-display">“{{ t.quote }}”</p>
+        <div class="voice-author">
+          <span class="author-avatar">{{ t.name.charAt(0) }}</span>
+          <div>
+            <cite class="author-name font-semibold block">{{ t.name }}</cite>
+            <span class="author-role text-xs font-mono">{{ t.role }}</span>
+          </div>
+        </div>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="section fade-up">
+    <div class="section-header text-center">
+      <span class="sub-eyebrow">PREGUNTAS FRECUENTES</span>
+      <h2 class="section-title">Lo esencial antes de empezar</h2>
+      <p class="section-lead mx-auto">Resuelve tus dudas sobre cómo comprar o abrir tu puesto.</p>
+    </div>
+
+    <div class="faq-container mt-8 max-w-3xl mx-auto">
+      <details *ngFor="let item of faq" class="faq-card">
+        <summary class="faq-summary">
+          <span class="font-display text-lg faq-q font-semibold">{{ item.q }}</span>
+          <span class="faq-icon">+</span>
+        </summary>
+        <p class="faq-body">{{ item.a }}</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- High-Impact CTA Banner -->
+  <section class="section fade-up">
+    <div class="cta-banner">
+      <div class="cta-glow-bg"></div>
+      <div class="cta-content text-center">
+        <h2 class="cta-title font-display">
+          ¿Listo para vivir la experiencia del mercado en tu celular?
+        </h2>
+        <p class="cta-desc">
+          Únete hoy a la comunidad de compradores y vendedores locales. Apoya al comercio de tu barrio.
+        </p>
+        <div class="cta-buttons">
+          <a routerLink="/productos" class="btn-primary">Explorar productos</a>
+          <a [routerLink]="sellLink()" class="btn-ghost">{{ sellLabel() }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer class="landing-footer">
+    <div class="footer-grid">
+      <div class="footer-col-brand">
+        <a routerLink="/" class="footer-brand font-display">Mercadito</a>
+        <p class="footer-tagline">
+          El mercado de tu barrio, conectado directamente a tu celular.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-heading font-mono">EXPLORAR</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/productos">Todos los productos</a></li>
+          <li><a href="#caracteristicas">Ventajas</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a [routerLink]="sellLink()">{{ sellLabel() }}</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading font-mono">MI CUENTA</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/auth/login">Iniciar sesión</a></li>
+          <li><a routerLink="/auth/register">Crear cuenta</a></li>
+          <li><a routerLink="/cart">Mi Carrito</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading font-mono">CONTACTO</h4>
+        <ul class="footer-links">
+          <li><a href="mailto:hola@mercadito.app">hola@mercadito.app</a></li>
+          <li class="text-xs text-gray-400">Red de Mercados Cercanos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Mercadito. Todos los derechos reservados.</span>
+    </div>
+  </footer>
+
+</div>
