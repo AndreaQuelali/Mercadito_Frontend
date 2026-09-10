@@ -29,7 +29,7 @@
 <!-- Interactive Cursor Aura Decorator -->
 <div class="cursor-aura" *ngIf="showAura()" [style.left.px]="auraX()" [style.top.px]="auraY()" aria-hidden="true"></div>
 
-<!-- Main Container (Dark Mode Forced Subtree) -->
+<!-- Main Container -->
 <div class="landing-root" (mousemove)="onMouseMove($event)">
 
   <!-- Toast Notification -->
@@ -121,8 +121,8 @@
             <div class="bento-mini-item">
               <span class="avatar-circle">M</span>
               <div>
-                <span class="font-semibold text-white block">Don Manuel • Verdulería El Sol</span>
-                <span class="text-xs text-emerald-400 font-mono">Verificado • a 250m de ti</span>
+                <span class="font-semibold text-stone-900 block">Don Manuel • Verdulería El Sol</span>
+                <span class="text-xs text-emerald-700 font-mono">Verificado • a 250m de ti</span>
               </div>
             </div>
           </div>
@@ -143,7 +143,7 @@
             <div class="gauge-bar">
               <div class="gauge-fill" style="width: 85%;"></div>
             </div>
-            <span class="text-xs text-emerald-300 font-mono mt-1 block">Cosecha de hoy: 85% disponible</span>
+            <span class="text-xs text-emerald-700 font-mono mt-1 block">Cosecha de hoy: 85% disponible</span>
           </div>
         </div>
       </div>
@@ -177,12 +177,12 @@
           </p>
           <div class="flex items-center gap-4 mt-4">
             <div class="price-badge-chip">
-              <span class="text-xs text-gray-400">Tomate Redondo</span>
-              <span class="font-mono font-bold text-amber-400">$1.20 / kg</span>
+              <span class="text-xs text-stone-500">Tomate Redondo</span>
+              <span class="font-mono font-bold text-amber-700">$1.20 / kg</span>
             </div>
             <div class="price-badge-chip">
-              <span class="text-xs text-gray-400">Pan Artesanal</span>
-              <span class="font-mono font-bold text-amber-400">$2.00 / unidad</span>
+              <span class="text-xs text-stone-500">Pan Artesanal</span>
+              <span class="font-mono font-bold text-amber-700">$2.00 / unidad</span>
             </div>
           </div>
         </div>
@@ -313,9 +313,9 @@
 
     <!-- Empty State -->
     <div *ngIf="!loadingProducts() && filteredProducts().length === 0" class="empty-products-box">
-      <p class="font-display text-xl text-white">No se encontraron productos en esta categoría.</p>
-      <p class="text-gray-400 text-sm mt-1">Sé el primero en publicar en esta categoría.</p>
-      <a [routerLink]="sellLink()" class="btn-citrus mt-4 inline-flex">{{ sellLabel() }}</a>
+      <p class="font-display text-xl text-stone-900 font-bold">No se encontraron productos en esta categoría.</p>
+      <p class="text-stone-600 text-sm mt-1">Sé el primero en publicar en esta categoría.</p>
+      <a [routerLink]="sellLink()" class="btn-primary mt-4 inline-flex">{{ sellLabel() }}</a>
     </div>
 
     <!-- Products Grid -->
@@ -343,9 +343,9 @@
   <!-- Voices & Community Testimonials Section -->
   <section id="testimonios" class="section voices-section fade-up">
     <div class="section-header text-center">
-      <span class="sub-eyebrow text-emerald-400">COMUNIDAD Y TESTIMONIOS</span>
-      <h2 class="section-title text-white">Voces de nuestro barrio</h2>
-      <p class="section-lead mx-auto text-gray-300">
+      <span class="sub-eyebrow text-emerald-400 font-mono">COMUNIDAD Y TESTIMONIOS</span>
+      <h2 class="voice-section-title font-display">Voces de nuestro barrio</h2>
+      <p class="voice-section-lead mx-auto">
         Historias reales de quienes ya compran y ofrecen sus productos cerca de ti.
       </p>
     </div>
@@ -357,8 +357,8 @@
         <div class="voice-author">
           <span class="author-avatar">{{ t.name.charAt(0) }}</span>
           <div>
-            <cite class="author-name font-semibold text-white block">{{ t.name }}</cite>
-            <span class="author-role text-xs text-emerald-400 font-mono">{{ t.role }}</span>
+            <cite class="author-name font-semibold block">{{ t.name }}</cite>
+            <span class="author-role text-xs font-mono">{{ t.role }}</span>
           </div>
         </div>
       </blockquote>
@@ -376,10 +376,10 @@
     <div class="faq-container mt-8 max-w-3xl mx-auto">
       <details *ngFor="let item of faq" class="faq-card">
         <summary class="faq-summary">
-          <span class="font-display text-lg text-white">{{ item.q }}</span>
+          <span class="font-display text-lg text-stone-900 font-semibold">{{ item.q }}</span>
           <span class="faq-icon">+</span>
         </summary>
-        <p class="faq-body text-gray-300">{{ item.a }}</p>
+        <p class="faq-body text-stone-600">{{ item.a }}</p>
       </details>
     </div>
   </section>
@@ -396,8 +396,8 @@
           Únete hoy a la comunidad de compradores y vendedores locales. Apoya al comercio de tu barrio.
         </p>
         <div class="cta-buttons">
-          <a routerLink="/productos" class="btn-citrus">Explorar productos</a>
-          <a [routerLink]="sellLink()" class="btn-emerald-ghost">{{ sellLabel() }}</a>
+          <a routerLink="/productos" class="btn-primary">Explorar productos</a>
+          <a [routerLink]="sellLink()" class="btn-ghost">{{ sellLabel() }}</a>
         </div>
       </div>
     </div>
