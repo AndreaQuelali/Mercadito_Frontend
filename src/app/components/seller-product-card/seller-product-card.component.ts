@@ -31,7 +31,7 @@ export type SellerProduct = {
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 text-sm">
         <div>
           <div class="text-slate-500">Precio</div>
-          <div class="text-emerald-600 font-semibold">$ {{ product?.price | number:'1.2-2' }} / {{ product?.unit }}</div>
+          <div class="text-emerald-600 font-semibold">Bs {{ product?.price | number:'1.2-2' }} / {{ product?.unit }}</div>
         </div>
         <div>
           <div class="text-slate-500">Stock</div>

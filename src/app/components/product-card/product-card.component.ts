@@ -44,7 +44,7 @@ export type ProductCard = {
 
       <div class="flex items-center justify-between pt-2 mt-auto">
         <div>
-          <div class="text-brand-600 font-bold text-lg">\${{ product?.price | number:'1.2-2' }}</div>
+          <div class="text-brand-600 font-bold text-lg">Bs {{ product?.price | number:'1.2-2' }}</div>
           <div class="text-xs text-slate-400">por {{ product?.unit }}</div>
         </div>
         <button

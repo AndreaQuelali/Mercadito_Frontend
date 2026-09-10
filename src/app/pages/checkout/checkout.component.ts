@@ -52,15 +52,15 @@ import { ToastService } from '../../services/toast.service';
                    class="w-14 h-14 object-cover rounded-lg shrink-0" />
               <div class="flex-1 min-w-0">
                 <p class="font-medium text-slate-900 truncate">{{ item.product.name }}</p>
-                <p class="text-sm text-slate-500">{{ item.quantity }} × \${{ item.product.price | number:'1.2-2' }}</p>
+                <p class="text-sm text-slate-500">{{ item.quantity }} × Bs {{ item.product.price | number:'1.2-2' }}</p>
               </div>
-              <span class="font-semibold text-slate-900">\${{ (item.quantity * item.product.price) | number:'1.2-2' }}</span>
+              <span class="font-semibold text-slate-900">Bs {{ (item.quantity * item.product.price) | number:'1.2-2' }}</span>
             </div>
           </div>
           <hr class="my-4 border-slate-100">
           <div class="flex justify-between text-lg font-bold text-slate-900">
             <span>Total</span>
-            <span class="text-brand-600">\${{ cart.total() | number:'1.2-2' }}</span>
+            <span class="text-brand-600">Bs {{ cart.total() | number:'1.2-2' }}</span>
           </div>
         </div>
 

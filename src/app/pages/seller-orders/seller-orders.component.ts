@@ -82,7 +82,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 
           <div class="text-right">
             <p class="text-xs text-slate-400">Total</p>
-            <p class="font-bold text-brand-600 text-lg">\${{ order.total | number:'1.2-2' }}</p>
+            <p class="font-bold text-brand-600 text-lg">Bs {{ order.total | number:'1.2-2' }}</p>
           </div>
 
           <!-- Advance status button -->
@@ -104,7 +104,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
                  class="w-10 h-10 object-cover rounded-lg" />
             <span class="hidden sm:inline max-w-[100px] truncate">{{ item.product.name }}</span>
             <span class="text-slate-400 text-xs">×{{ item.quantity }}</span>
-            <span class="text-slate-500 text-xs">\${{ item.unitPrice | number:'1.2-2' }}</span>
+            <span class="text-slate-500 text-xs">Bs {{ item.unitPrice | number:'1.2-2' }}</span>
           </div>
         </div>
       </article>

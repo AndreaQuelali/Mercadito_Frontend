@@ -42,7 +42,7 @@ import { ToastService } from '../../services/toast.service';
                class="w-20 h-20 object-cover rounded-lg shrink-0" />
           <div class="flex-1 min-w-0">
             <h3 class="font-semibold text-slate-900 truncate">{{ item.product.name }}</h3>
-            <p class="text-sm text-slate-500 mt-0.5">\${{ item.product.price | number:'1.2-2' }} / {{ item.product.unit }}</p>
+            <p class="text-sm text-slate-500 mt-0.5">Bs {{ item.product.price | number:'1.2-2' }} / {{ item.product.unit }}</p>
           </div>
 
           <!-- Quantity control -->
@@ -58,7 +58,7 @@ import { ToastService } from '../../services/toast.service';
           </div>
 
           <div class="text-right shrink-0 min-w-[80px]">
-            <div class="font-semibold text-slate-900">\${{ (item.quantity * item.product.price) | number:'1.2-2' }}</div>
+            <div class="font-semibold text-slate-900">Bs {{ (item.quantity * item.product.price) | number:'1.2-2' }}</div>
             <button (click)="removeItem(item.id)" class="text-xs text-red-500 hover:text-red-700 mt-1 transition">Eliminar</button>
           </div>
         </article>
@@ -71,13 +71,13 @@ import { ToastService } from '../../services/toast.service';
           <div class="space-y-2 text-sm">
             <div *ngFor="let item of cart.items()" class="flex justify-between text-slate-600">
               <span class="truncate max-w-[140px]">{{ item.product.name }} × {{ item.quantity }}</span>
-              <span>\${{ (item.quantity * item.product.price) | number:'1.2-2' }}</span>
+              <span>Bs {{ (item.quantity * item.product.price) | number:'1.2-2' }}</span>
             </div>
           </div>
           <hr class="border-slate-100">
           <div class="flex justify-between font-bold text-slate-900 text-base">
             <span>Total</span>
-            <span class="text-brand-600">\${{ cart.total() | number:'1.2-2' }}</span>
+            <span class="text-brand-600">Bs {{ cart.total() | number:'1.2-2' }}</span>
           </div>
           <a routerLink="/checkout"
              class="block w-full text-center bg-slate-900 hover:bg-slate-700 text-white font-semibold py-3 rounded-full transition">
