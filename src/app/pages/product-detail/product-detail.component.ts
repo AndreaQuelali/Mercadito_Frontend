@@ -65,7 +65,7 @@ const UNIT_LABELS: Record<string, string> = {
           <h1 class="text-3xl font-bold text-slate-900 leading-tight">{{ product()!.name }}</h1>
 
           <div class="flex items-baseline gap-2">
-            <span class="text-4xl font-extrabold text-brand-600">\${{ product()!.price | number:'1.2-2' }}</span>
+            <span class="text-4xl font-extrabold text-brand-600">Bs {{ product()!.price | number:'1.2-2' }}</span>
             <span class="text-slate-500">/ {{ unitLabel(product()!.unit) }}</span>
           </div>
 

@@ -54,7 +54,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
           </span>
           <div class="text-right">
             <p class="text-xs text-slate-400">{{ order.createdAt | date:'d MMM, y' }}</p>
-            <p class="font-bold text-brand-600">\${{ order.total | number:'1.2-2' }}</p>
+            <p class="font-bold text-brand-600">Bs {{ order.total | number:'1.2-2' }}</p>
           </div>
         </div>
 
