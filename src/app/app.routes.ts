@@ -7,6 +7,8 @@ import { SellerOnboardingComponent } from './pages/seller/seller-onboarding.comp
 import { SellerSettingsComponent } from './pages/seller/seller-settings.component';
 import { LoginComponent } from './pages/auth/login.component';
 import { RegisterComponent } from './pages/auth/register.component';
+import { ForgotPasswordComponent } from './pages/auth/forgot-password.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
@@ -24,6 +26,10 @@ export const appRoutes: Routes = [
   // Auth
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+  { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+  { path: 'auth/reset-password', component: ResetPasswordComponent },
+  /** Email links from backend use /reset-password?token= */
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   // Buyer (requires auth)
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
