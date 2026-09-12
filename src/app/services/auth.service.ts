@@ -108,6 +108,20 @@ export class AuthService {
     });
   }
 
+  forgotPassword(email: string): Observable<{ ok: boolean; message: string }> {
+    return this.http.post<{ ok: boolean; message: string }>(
+      `${environment.apiUrl}/auth/password/forgot`,
+      { email }
+    );
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ ok: boolean; message: string }> {
+    return this.http.post<{ ok: boolean; message: string }>(
+      `${environment.apiUrl}/auth/password/reset`,
+      { token, newPassword }
+    );
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     this._token.set(null);

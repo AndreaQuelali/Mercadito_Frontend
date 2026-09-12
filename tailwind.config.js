@@ -49,6 +49,16 @@ module.exports = {
           subtle: 'var(--color-border-subtle)',
           medium: 'var(--color-border-medium)',
         },
+        danger: {
+          DEFAULT: 'var(--color-danger)',
+          bg: 'var(--color-danger-bg)',
+          border: 'var(--color-danger-border)',
+        },
+        success: {
+          DEFAULT: 'var(--color-success)',
+          bg: 'var(--color-success-bg)',
+          border: 'var(--color-success-border)',
+        },
         brand: {
           50:  '#FAF4E5',
           100: '#F9ECE8',
@@ -60,6 +70,10 @@ module.exports = {
       boxShadow: {
         card: '0 4px 20px rgba(0,0,0,0.07)',
         'card-hover': '0 8px 32px rgba(0,0,0,0.12)',
+        'theme-sm': 'var(--shadow-sm)',
+        'theme-md': 'var(--shadow-md)',
+        'theme-lg': 'var(--shadow-lg)',
+        'theme-primary': 'var(--shadow-primary)',
       },
       borderRadius: {
         xl:  '14px',
