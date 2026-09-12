@@ -12,14 +12,28 @@ import { ThemeService } from '../../services/theme.service';
     <div class="min-h-screen bg-base flex">
       <!-- Brand panel (desktop) -->
       <aside
-        class="hidden lg:flex lg:w-1/2 bg-accent-green relative overflow-hidden
+        class="hidden lg:flex lg:w-1/2 relative overflow-hidden
                flex-col justify-between p-10 xl:p-12 animate-fade-in"
       >
+        <img
+          [src]="panelImage"
+          alt="Mercado tradicional boliviano con puestos de productos locales"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <!-- Tint + readability gradient -->
         <div
-          class="absolute inset-0 opacity-[0.12] pointer-events-none"
+          class="absolute inset-0 pointer-events-none"
+          style="background:
+            linear-gradient(160deg, rgba(58,42,34,0.55) 0%, rgba(95,119,69,0.72) 45%, rgba(58,42,34,0.85) 100%),
+            linear-gradient(to top, rgba(28,22,19,0.75) 0%, transparent 55%);"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="absolute inset-0 opacity-[0.08] pointer-events-none mix-blend-overlay"
           style="background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png')"
           aria-hidden="true"
         ></div>
+
         <a routerLink="/" class="relative z-10 flex items-center gap-3 text-white">
           <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6" aria-hidden="true">
@@ -29,17 +43,17 @@ import { ThemeService } from '../../services/theme.service';
           <span class="text-xl font-semibold tracking-wide font-display">Mercadito</span>
         </a>
         <div class="relative z-10 animate-slide-up" style="animation-delay: 80ms">
-          <blockquote class="text-white/95 text-2xl xl:text-3xl font-display leading-snug mb-6">
+          <blockquote class="text-white text-2xl xl:text-3xl font-display leading-snug mb-6 drop-shadow-sm">
             <ng-container *ngIf="quote; else defaultQuote">{{ quote }}</ng-container>
             <ng-template #defaultQuote>
               El mercado local,<br />en la palma de tu mano.
             </ng-template>
           </blockquote>
-          <p class="text-white/70 text-sm max-w-sm">
+          <p class="text-white/85 text-sm max-w-sm">
             {{ subtitle || 'Conectamos productores y compradores de tu comunidad.' }}
           </p>
         </div>
-        <p class="relative z-10 text-white/40 text-xs">Mercado Boliviano</p>
+        <p class="relative z-10 text-white/55 text-xs tracking-wide">Mercado Boliviano</p>
       </aside>
 
       <!-- Form panel -->
@@ -87,4 +101,8 @@ export class AuthLayoutComponent {
 
   @Input() quote = '';
   @Input() subtitle = '';
+
+  /** Mercado tradicional — La Paz, Bolivia (Unsplash) */
+  readonly panelImage =
+    'https://images.unsplash.com/photo-1556685704-1985e999a0d4?auto=format&fit=crop&w=1600&q=80';
 }
