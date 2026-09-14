@@ -12,10 +12,10 @@ import { CommonModule } from '@angular/common';
   template: `
     <button
       [type]="type"
-      [disabled]="disabled || loading"
+      [disabled]="isInactive"
       [attr.aria-busy]="loading || null"
       class="inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition
-             focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+             focus-visible:outline-none"
       [ngClass]="classes"
     >
       <span
@@ -34,12 +34,20 @@ export class UiButtonComponent {
   @Input() loading = false;
   @Input() disabled = false;
 
+  get isInactive(): boolean {
+    return this.disabled || this.loading;
+  }
+
   get classes(): string {
     const base = this.fullWidth ? 'w-full py-3 px-4' : 'px-4 py-2.5';
+    if (this.isInactive) {
+      return `${base} bg-surface-subtle text-text-subtle border border-border-subtle
+              cursor-not-allowed shadow-none`;
+    }
     if (this.variant === 'ghost') {
       return `${base} bg-transparent text-text-muted border border-border-medium
               hover:bg-surface-subtle hover:text-text-main`;
     }
-    return `${base} bg-primary hover:bg-primary-hover text-white shadow-theme-primary`;
+    return `${base} bg-primary hover:bg-primary-hover text-white shadow-theme-primary border border-transparent`;
   }
 }

@@ -50,6 +50,7 @@ import {
           autocomplete="new-password"
           placeholder="Mín. 8, mayúscula, número y símbolo"
           [(ngModel)]="password"
+          (valueChange)="onValueChange('password', $event)"
           [error]="fieldErrors().password"
           (blurred)="onBlur('password')"
         ></ui-field>
@@ -61,13 +62,20 @@ import {
           autocomplete="new-password"
           placeholder="Repite tu contraseña"
           [(ngModel)]="confirmPassword"
+          (valueChange)="onValueChange('confirmPassword', $event)"
           [error]="fieldErrors().confirmPassword"
           (blurred)="onBlur('confirmPassword')"
         ></ui-field>
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
 
-        <ui-button type="submit" variant="primary" [fullWidth]="true" [loading]="loading()">
+        <ui-button
+          type="submit"
+          variant="primary"
+          [fullWidth]="true"
+          [loading]="loading()"
+          [disabled]="!formValid()"
+        >
           {{ loading() ? 'Guardando…' : 'Restablecer contraseña' }}
         </ui-button>
       </form>
@@ -95,10 +103,22 @@ export class ResetPasswordComponent implements OnInit {
   loading = signal(false);
   errorMsg = signal<string | null>(null);
   fieldErrors = signal<ResetFieldErrors>({ password: '', confirmPassword: '' });
+  formValid = signal(false);
   done = signal(false);
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
+    this.refreshFormValid();
+  }
+
+  refreshFormValid(): void {
+    const fieldsOk = !hasFieldErrors(validateResetForm(this.password, this.confirmPassword));
+    this.formValid.set(!!this.token && fieldsOk);
+  }
+
+  onValueChange(field: 'password' | 'confirmPassword', value: string): void {
+    this[field] = value;
+    this.refreshFormValid();
   }
 
   onBlur(field: 'password' | 'confirmPassword'): void {
@@ -112,6 +132,7 @@ export class ResetPasswordComponent implements OnInit {
       next.confirmPassword = passwordsMatch(this.password, this.confirmPassword) ?? '';
     }
     this.fieldErrors.set(next);
+    this.refreshFormValid();
   }
 
   onSubmit() {
@@ -120,6 +141,7 @@ export class ResetPasswordComponent implements OnInit {
 
     const errors = validateResetForm(this.password, this.confirmPassword);
     this.fieldErrors.set(errors);
+    this.refreshFormValid();
     if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);

@@ -43,6 +43,7 @@ import {
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
+          (valueChange)="onValueChange('email', $event)"
           [error]="fieldErrors().email"
           (blurred)="onBlur('email')"
         ></ui-field>
@@ -55,6 +56,7 @@ import {
             autocomplete="current-password"
             placeholder="••••••••"
             [(ngModel)]="password"
+            (valueChange)="onValueChange('password', $event)"
             [error]="fieldErrors().password"
             (blurred)="onBlur('password')"
           ></ui-field>
@@ -70,7 +72,13 @@ import {
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
 
-        <ui-button type="submit" variant="primary" [fullWidth]="true" [loading]="loading()">
+        <ui-button
+          type="submit"
+          variant="primary"
+          [fullWidth]="true"
+          [loading]="loading()"
+          [disabled]="!formValid()"
+        >
           {{ loading() ? 'Iniciando…' : 'Iniciar sesión' }}
         </ui-button>
       </form>
@@ -92,6 +100,7 @@ export class LoginComponent implements OnInit {
   loading = signal(false);
   errorMsg = signal<string | null>(null);
   fieldErrors = signal<LoginFieldErrors>({ email: '', password: '' });
+  formValid = signal(false);
   private returnUrl = '/';
 
   ngOnInit(): void {
@@ -99,6 +108,17 @@ export class LoginComponent implements OnInit {
     if (raw && raw.startsWith('/') && !raw.startsWith('//')) {
       this.returnUrl = raw;
     }
+    this.refreshFormValid();
+  }
+
+  refreshFormValid(): void {
+    this.formValid.set(!hasFieldErrors(validateLoginForm(this.email, this.password)));
+  }
+
+  onValueChange(field: 'email' | 'password', value: string): void {
+    if (field === 'email') this.email = value;
+    else this.password = value;
+    this.refreshFormValid();
   }
 
   onBlur(field: 'email' | 'password'): void {
@@ -106,11 +126,13 @@ export class LoginComponent implements OnInit {
     if (field === 'email') next.email = validateEmail(this.email) ?? '';
     if (field === 'password') next.password = validateLoginPassword(this.password) ?? '';
     this.fieldErrors.set(next);
+    this.refreshFormValid();
   }
 
   onSubmit() {
     const errors = validateLoginForm(this.email, this.password);
     this.fieldErrors.set(errors);
+    this.refreshFormValid();
     if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);

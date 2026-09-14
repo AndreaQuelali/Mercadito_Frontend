@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -46,6 +46,7 @@ import {
             autocomplete="given-name"
             placeholder="Ana"
             [(ngModel)]="firstName"
+            (valueChange)="onValueChange('firstName', $event)"
             [error]="fieldErrors().firstName"
             (blurred)="onBlur('firstName')"
           ></ui-field>
@@ -56,6 +57,7 @@ import {
             autocomplete="family-name"
             placeholder="García"
             [(ngModel)]="lastName"
+            (valueChange)="onValueChange('lastName', $event)"
             [error]="fieldErrors().lastName"
             (blurred)="onBlur('lastName')"
           ></ui-field>
@@ -68,6 +70,7 @@ import {
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
+          (valueChange)="onValueChange('email', $event)"
           [error]="fieldErrors().email"
           (blurred)="onBlur('email')"
         ></ui-field>
@@ -79,6 +82,7 @@ import {
           autocomplete="new-password"
           placeholder="Mín. 8, mayúscula, número y símbolo"
           [(ngModel)]="password"
+          (valueChange)="onValueChange('password', $event)"
           [error]="fieldErrors().password"
           (blurred)="onBlur('password')"
         ></ui-field>
@@ -90,6 +94,7 @@ import {
           autocomplete="new-password"
           placeholder="Repite tu contraseña"
           [(ngModel)]="confirmPassword"
+          (valueChange)="onValueChange('confirmPassword', $event)"
           [error]="fieldErrors().confirmPassword"
           (blurred)="onBlur('confirmPassword')"
         ></ui-field>
@@ -97,7 +102,13 @@ import {
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
         <ui-alert *ngIf="successMsg()" tone="success">{{ successMsg() }}</ui-alert>
 
-        <ui-button type="submit" variant="primary" [fullWidth]="true" [loading]="loading()">
+        <ui-button
+          type="submit"
+          variant="primary"
+          [fullWidth]="true"
+          [loading]="loading()"
+          [disabled]="!formValid()"
+        >
           {{ loading() ? 'Creando…' : 'Crear cuenta' }}
         </ui-button>
       </form>
@@ -109,7 +120,7 @@ import {
     </auth-layout>
   `,
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -128,6 +139,33 @@ export class RegisterComponent {
     password: '',
     confirmPassword: '',
   });
+  formValid = signal(false);
+
+  ngOnInit(): void {
+    this.refreshFormValid();
+  }
+
+  refreshFormValid(): void {
+    this.formValid.set(
+      !hasFieldErrors(
+        validateRegisterForm({
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+        })
+      )
+    );
+  }
+
+  onValueChange(
+    field: 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword',
+    value: string
+  ): void {
+    this[field] = value;
+    this.refreshFormValid();
+  }
 
   onBlur(
     field: 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword'
@@ -154,6 +192,7 @@ export class RegisterComponent {
         break;
     }
     this.fieldErrors.set(next);
+    this.refreshFormValid();
   }
 
   onSubmit() {
@@ -166,6 +205,7 @@ export class RegisterComponent {
       confirmPassword: this.confirmPassword,
     });
     this.fieldErrors.set(errors);
+    this.refreshFormValid();
     if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -44,13 +44,20 @@ import {
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
+          (valueChange)="onValueChange($event)"
           [error]="fieldErrors().email"
           (blurred)="onBlur()"
         ></ui-field>
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
 
-        <ui-button type="submit" variant="primary" [fullWidth]="true" [loading]="loading()">
+        <ui-button
+          type="submit"
+          variant="primary"
+          [fullWidth]="true"
+          [loading]="loading()"
+          [disabled]="!formValid()"
+        >
           {{ loading() ? 'Enviando…' : 'Enviar enlace' }}
         </ui-button>
       </form>
@@ -74,7 +81,7 @@ import {
     </auth-layout>
   `,
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit {
   private auth = inject(AuthService);
 
   email = '';
@@ -82,14 +89,30 @@ export class ForgotPasswordComponent {
   errorMsg = signal<string | null>(null);
   sent = signal(false);
   fieldErrors = signal<ForgotFieldErrors>({ email: '' });
+  formValid = signal(false);
+
+  ngOnInit(): void {
+    this.refreshFormValid();
+  }
+
+  refreshFormValid(): void {
+    this.formValid.set(!hasFieldErrors(validateForgotForm(this.email)));
+  }
+
+  onValueChange(value: string): void {
+    this.email = value;
+    this.refreshFormValid();
+  }
 
   onBlur(): void {
     this.fieldErrors.set({ email: validateEmail(this.email) ?? '' });
+    this.refreshFormValid();
   }
 
   onSubmit() {
     const errors = validateForgotForm(this.email);
     this.fieldErrors.set(errors);
+    this.refreshFormValid();
     if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);
