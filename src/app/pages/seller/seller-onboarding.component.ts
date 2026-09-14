@@ -53,7 +53,7 @@ import { ToastService } from '../../services/toast.service';
             <span *ngIf="saving()" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             Crear mi puesto
           </button>
-          <a routerLink="/" class="px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50 text-sm">Cancelar</a>
+          <a routerLink="/home" class="px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50 text-sm">Cancelar</a>
         </div>
       </form>
     </div>

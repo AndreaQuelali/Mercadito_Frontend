@@ -34,7 +34,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
       </div>
       <p class="text-slate-600 font-medium mb-1">Aún no has hecho pedidos</p>
       <p class="text-slate-400 text-sm mb-6">Cuando hagas una compra, aparecerá aquí.</p>
-      <a routerLink="/" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-5 rounded-full transition text-sm">
+      <a routerLink="/products" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-5 rounded-full transition text-sm">
         Explorar productos
       </a>
     </div>

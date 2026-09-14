@@ -22,7 +22,7 @@ import { ToastService } from '../../services/toast.service';
       </div>
       <h2 class="text-lg font-semibold text-slate-700 mb-2">Tu carrito está vacío</h2>
       <p class="text-slate-500 mb-6">Explora el catálogo y agrega productos.</p>
-      <a routerLink="/" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-full transition">
+      <a routerLink="/products" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 px-6 rounded-full transition">
         Explorar productos
       </a>
     </div>
@@ -83,7 +83,7 @@ import { ToastService } from '../../services/toast.service';
              class="block w-full text-center bg-slate-900 hover:bg-slate-700 text-white font-semibold py-3 rounded-full transition">
             Proceder al pago
           </a>
-          <a routerLink="/" class="block w-full text-center text-sm text-slate-500 hover:text-slate-800 transition py-1">
+          <a routerLink="/products" class="block w-full text-center text-sm text-slate-500 hover:text-slate-800 transition py-1">
             Seguir comprando
           </a>
         </div>

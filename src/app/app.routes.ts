@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { ProductsComponent } from './pages/products/products.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { SellerDashboardComponent } from './pages/seller/seller-dashboard.component';
 import { ProductFormComponent } from './pages/seller/product-form.component';
@@ -7,6 +8,8 @@ import { SellerOnboardingComponent } from './pages/seller/seller-onboarding.comp
 import { SellerSettingsComponent } from './pages/seller/seller-settings.component';
 import { LoginComponent } from './pages/auth/login.component';
 import { RegisterComponent } from './pages/auth/register.component';
+import { ForgotPasswordComponent } from './pages/auth/forgot-password.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
@@ -18,12 +21,20 @@ import { authGuard, sellerGuard, noSellerGuard, adminGuard } from './guards/auth
 export const appRoutes: Routes = [
   // Public
   { path: '', component: LandingComponent },
-  { path: 'productos', component: HomeComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'productos', redirectTo: 'products', pathMatch: 'full' },
   { path: 'product/:id', component: ProductDetailComponent },
 
   // Auth
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+  { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+  { path: 'auth/reset-password', component: ResetPasswordComponent },
+  /** Email links from backend use /reset-password?token= */
+  { path: 'reset-password', component: ResetPasswordComponent },
+
+  // Authenticated home (discovery)
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
 
   // Buyer (requires auth)
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
