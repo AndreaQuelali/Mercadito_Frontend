@@ -8,8 +8,9 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 import { ProductService } from '../../services/products.service';
 import { ProductCard } from '../../components/product-card/product-card.component';
 
@@ -75,6 +76,8 @@ const FAQ = [
 })
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   auth = inject(AuthService);
+  theme = inject(ThemeService);
+  private router = inject(Router);
   private productSvc = inject(ProductService);
   private host = inject(ElementRef<HTMLElement>);
 
@@ -88,9 +91,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMode = signal<'buyer' | 'seller'>('buyer');
   addedToast = signal<string | null>(null);
 
-  // Mobile menu & dark mode signals
   mobileMenuOpen = signal(false);
-  isDarkMode = signal(false);
 
   // Cursor Aura tracking
   auraX = signal(0);
@@ -113,39 +114,12 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleDarkMode(): void {
-    const next = !this.isDarkMode();
-    this.isDarkMode.set(next);
-    if (typeof document !== 'undefined') {
-      if (next) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('mercadito-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('mercadito-theme', 'light');
-      }
-    }
-  }
-
-  private initTheme(): void {
-    if (typeof window === 'undefined') return;
-    const saved = localStorage.getItem('mercadito-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      this.isDarkMode.set(true);
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.documentElement.classList.add('dark');
-    } else {
-      this.isDarkMode.set(false);
-      document.documentElement.removeAttribute('data-theme');
-      document.documentElement.classList.remove('dark');
-    }
+    this.theme.toggle();
   }
 
   sellLink(): string {
     if (!this.auth.isLoggedIn()) return '/auth/register';
-    if (this.auth.isAdmin()) return '/productos';
+    if (this.auth.isAdmin()) return '/products';
     if (this.auth.hasSeller()) return '/seller';
     return '/seller/onboarding';
   }
@@ -187,7 +161,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initTheme();
+    if (this.auth.isLoggedIn()) {
+      this.router.navigateByUrl('/home');
+      return;
+    }
     this.productSvc.list().subscribe({
       next: (items) => {
         this.allProducts.set(items);

@@ -14,7 +14,7 @@ import { CartService } from '../../services/cart.service';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
 
       <!-- Logo -->
-      <a routerLink="/" class="flex items-center gap-2 font-semibold text-slate-900 shrink-0">
+      <a [routerLink]="auth.isLoggedIn() ? '/home' : '/'" class="flex items-center gap-2 font-semibold text-slate-900 shrink-0">
         <span class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-brand-500 text-white">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
             <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h15A1.5 1.5 0 0 1 21 7.5V9a3 3 0 0 1-3 3v6a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18v-6a3 3 0 0 1-3-3V7.5Z"/>
@@ -44,7 +44,7 @@ import { CartService } from '../../services/cart.service';
       <!-- Nav -->
       <nav class="flex items-center gap-1 shrink-0">
 
-        <a routerLink="/productos"
+        <a routerLink="/products"
            routerLinkActive="bg-slate-100 text-slate-900"
            class="hidden sm:inline-flex px-3 py-2 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition">
           Productos
@@ -158,8 +158,16 @@ export class HeaderComponent {
 
   onSearch(q: string) {
     this.searchSvc.setQuery(q);
-    if (!this.router.url.startsWith('/productos')) {
-      this.router.navigateByUrl('/productos');
+    const trimmed = q.trim();
+    if (!this.router.url.startsWith('/products')) {
+      this.router.navigate(['/products'], {
+        queryParams: trimmed ? { q: trimmed } : {},
+      });
+      return;
     }
+    this.router.navigate([], {
+      queryParams: { q: trimmed || null },
+      queryParamsHandling: 'merge',
+    });
   }
 }

@@ -1,0 +1,278 @@
+:host {
+  display: block;
+}
+
+.home-page {
+  min-height: 100%;
+  background: var(--color-bg-base);
+  color: var(--color-text-main);
+}
+
+.home-shell {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .home-shell { padding-inline: 1.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .home-shell { padding-inline: 2rem; }
+}
+
+.home-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 2.25rem 0 2rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.home-hero__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 90% at 0% 0%, color-mix(in srgb, var(--color-primary) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 55% 70% at 100% 20%, color-mix(in srgb, var(--color-secondary) 16%, transparent), transparent 50%),
+    radial-gradient(ellipse 40% 50% at 70% 100%, color-mix(in srgb, var(--color-accent-green) 12%, transparent), transparent 45%),
+    linear-gradient(180deg, var(--color-bg-surface-elevated), var(--color-bg-base));
+  pointer-events: none;
+}
+
+.home-hero__wash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.045;
+  background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+  mix-blend-mode: multiply;
+}
+
+.home-hero__content {
+  position: relative;
+  z-index: 1;
+  animation: home-in 0.4s ease-out;
+}
+
+.home-hero__title {
+  margin: 0.35rem 0 0.65rem;
+  font-size: clamp(2rem, 4vw, 2.85rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-main);
+}
+
+.home-hero__lead {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+.home-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-green);
+}
+
+.btn-primary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-medium);
+}
+
+.btn-ghost:hover {
+  color: var(--color-text-main);
+  background: var(--color-bg-subtle);
+}
+
+.home-main {
+  padding-block: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.home-section {
+  animation: home-in 0.45s ease-out both;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.section-title {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  color: var(--color-text-main);
+}
+
+.section-sub {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.section-link {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.section-link:hover {
+  text-decoration: underline;
+}
+
+.category-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  animation: home-in 0.35s ease-out both;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.category-chip:hover {
+  transform: translateY(-2px);
+  color: var(--color-text-main);
+}
+
+.category-chip__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.tone-green { color: var(--color-accent-green); border-color: color-mix(in srgb, var(--color-accent-green) 28%, var(--color-border-subtle)); }
+.tone-secondary { color: var(--color-secondary-hover); border-color: color-mix(in srgb, var(--color-secondary) 35%, var(--color-border-subtle)); }
+.tone-primary { color: var(--color-primary); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border-subtle)); }
+.tone-teal { color: var(--color-accent-teal); border-color: color-mix(in srgb, var(--color-accent-teal) 30%, var(--color-border-subtle)); }
+.tone-pink { color: var(--color-accent-pink); border-color: color-mix(in srgb, var(--color-accent-pink) 30%, var(--color-border-subtle)); }
+
+.product-grid {
+  display: grid;
+  gap: 1.15rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1280px) {
+  .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.skeleton-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.empty-inline {
+  padding: 1.5rem 0;
+  color: var(--color-text-subtle);
+  font-size: 0.9rem;
+}
+
+.reveal-card {
+  animation: home-in 0.4s ease-out both;
+}
+
+.home-cta__panel {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--color-border-subtle);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-primary-light) 70%, var(--color-bg-surface)), var(--color-bg-surface-elevated));
+  box-shadow: var(--shadow-sm);
+}
+
+.home-cta__panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+}
+
+.home-cta__panel p {
+  margin: 0 auto 1.25rem;
+  max-width: 28rem;
+  color: var(--color-text-muted);
+}
+
+@keyframes home-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__content,
+  .home-section,
+  .category-chip,
+  .reveal-card {
+    animation: none;
+  }
+}

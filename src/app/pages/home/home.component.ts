@@ -1,130 +1,135 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ProductCard, ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ProductService } from '../../services/products.service';
-import { SearchService } from '../../services/search.service';
+import { AuthService } from '../../services/auth.service';
+import { PRODUCT_CATEGORIES } from '../products/products.component';
 
-const CATEGORIES = [
-  { key: 'all',        label: 'Todo' },
-  { key: 'verduras',   label: 'Verduras' },
-  { key: 'frutas',     label: 'Frutas' },
-  { key: 'panaderia',  label: 'Panadería' },
-  { key: 'lacteos',    label: 'Lácteos' },
-  { key: 'artesanias', label: 'Artesanías' },
-];
-
-const VALID_CATEGORIES = new Set(
-  CATEGORIES.map((c) => c.key).filter((k) => k !== 'all')
-);
+const SECTION_SIZE = 8;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent],
+  imports: [CommonModule, RouterLink, ProductCardComponent],
   template: `
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <header class="space-y-2">
+      <p class="text-sm text-text-muted">Mercado Boliviano</p>
+      <h1 class="text-3xl sm:text-4xl font-display font-bold text-text-main">
+        Hola{{ firstName() ? ', ' + firstName() : '' }}
+      </h1>
+      <p class="text-text-muted max-w-xl">
+        Descubre puestos locales, encuentra lo fresco del día y vuelve a tus favoritos del barrio.
+      </p>
+    </header>
 
-    <!-- Category chips -->
-    <div class="flex flex-wrap gap-2">
-      <button
-        *ngFor="let c of categories"
-        (click)="selectCategory(c.key)"
-        class="px-4 py-1.5 rounded-full border text-sm font-medium transition-all"
-        [ngClass]="activeCategory() === c.key
-          ? 'bg-slate-900 text-white border-slate-900'
-          : 'bg-white text-slate-600 border-slate-300 hover:border-slate-500 hover:text-slate-900'"
-      >
-        {{ c.label }}
-      </button>
-    </div>
+    <!-- Categories -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-lg font-display font-semibold text-text-main">Categorías</h2>
+        <a routerLink="/products" class="text-sm font-medium text-primary hover:underline">Ver catálogo</a>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a
+          *ngFor="let c of browseCategories"
+          [routerLink]="['/products']"
+          [queryParams]="{ category: c.key }"
+          class="px-4 py-2 rounded-full border border-border-medium bg-surface text-sm font-medium
+                 text-text-muted hover:border-primary hover:text-primary transition"
+        >
+          {{ c.label }}
+        </a>
+      </div>
+    </section>
 
-    <!-- Loading skeleton grid -->
-    <section *ngIf="loading()" class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <div *ngFor="let i of [1,2,3,4,5,6,7,8]"
-           class="bg-white rounded-xl shadow-card overflow-hidden">
-        <div class="aspect-[4/3] skeleton"></div>
-        <div class="p-4 space-y-3">
-          <div class="skeleton h-4 w-2/3"></div>
-          <div class="skeleton h-3 w-full"></div>
-          <div class="skeleton h-3 w-4/5"></div>
-          <div class="flex justify-between items-center pt-1">
-            <div class="skeleton h-5 w-20"></div>
-            <div class="skeleton h-8 w-24 rounded-full"></div>
+    <!-- Loading -->
+    <div *ngIf="loading()" class="space-y-8">
+      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-xl shadow-card overflow-hidden">
+          <div class="aspect-[4/3] skeleton"></div>
+          <div class="p-4 space-y-3">
+            <div class="skeleton h-4 w-2/3"></div>
+            <div class="skeleton h-3 w-full"></div>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Products grid -->
-    <section *ngIf="!loading()" class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <app-product-card
-        *ngFor="let p of filtered()"
-        [product]="p"
-        class="animate-fade-in"
-      />
-    </section>
-
-    <!-- Empty state -->
-    <div *ngIf="!loading() && filtered().length === 0"
-         class="flex flex-col items-center py-20 text-center">
-      <div class="w-16 h-16 rounded-full bg-warm-100 flex items-center justify-center mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-8 w-8 text-warm-400">
-          <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 1 0 4.235 12.03l3.743 3.742a.75.75 0 1 0 1.06-1.06l-3.742-3.743A6.75 6.75 0 0 0 10.5 3.75Zm-5.25 6.75a5.25 5.25 0 1 1 10.5 0 5.25 5.25 0 0 1-10.5 0Z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <p class="text-slate-600 font-medium">No se encontraron productos</p>
-      <p class="text-slate-400 text-sm mt-1">Prueba con otro término o categoría.</p>
     </div>
+
+    <ng-container *ngIf="!loading()">
+      <!-- Featured -->
+      <section class="space-y-4">
+        <div class="flex items-end justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-display font-bold text-text-main">Destacados</h2>
+            <p class="text-sm text-text-muted">Selección para empezar a explorar.</p>
+          </div>
+          <a routerLink="/products" class="text-sm font-medium text-primary hover:underline shrink-0">Ver todos</a>
+        </div>
+        <div *ngIf="featured().length === 0" class="text-sm text-text-subtle py-6">
+          Aún no hay productos publicados.
+        </div>
+        <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <app-product-card *ngFor="let p of featured()" [product]="p" class="animate-fade-in" />
+        </div>
+      </section>
+
+      <!-- Newest -->
+      <section class="space-y-4">
+        <div class="flex items-end justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-display font-bold text-text-main">Recién llegados</h2>
+            <p class="text-sm text-text-muted">Últimas publicaciones del mercado.</p>
+          </div>
+          <a routerLink="/products" class="text-sm font-medium text-primary hover:underline shrink-0">Ver todos</a>
+        </div>
+        <div *ngIf="newest().length === 0" class="text-sm text-text-subtle py-6">
+          Aún no hay productos publicados.
+        </div>
+        <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <app-product-card *ngFor="let p of newest()" [product]="p" class="animate-fade-in" />
+        </div>
+      </section>
+
+      <div class="flex justify-center pt-2 pb-6">
+        <a
+          routerLink="/products"
+          class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover
+                 text-white font-semibold shadow-theme-primary transition"
+        >
+          Ver todo el catálogo
+        </a>
+      </div>
+    </ng-container>
   </main>
-  `
+  `,
 })
 export class HomeComponent implements OnInit {
-  private searchSvc = inject(SearchService);
   private productService = inject(ProductService);
-  private route = inject(ActivatedRoute);
+  private auth = inject(AuthService);
 
-  categories = CATEGORIES;
-  activeCategory = signal<string>('all');
+  browseCategories = PRODUCT_CATEGORIES.filter((c) => c.key !== 'all');
   products = signal<ProductCard[]>([]);
   loading = signal(true);
 
-  filtered = computed(() => {
-    const q = this.searchSvc.query().toLowerCase().trim();
-    const cat = this.activeCategory();
-    return this.products().filter(p => {
-      const matchesQuery = q
-        ? (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
-        : true;
-      const matchesCategory = cat === 'all'
-        ? true
-        : (p as any).category === cat;
-      return matchesQuery && matchesCategory;
-    });
+  firstName = computed(() => {
+    const name = this.auth.currentUser()?.name?.trim() ?? '';
+    return name.split(/\s+/)[0] || '';
   });
 
-  selectCategory(key: string): void {
-    this.activeCategory.set(key);
-  }
+  featured = computed(() => this.products().slice(0, SECTION_SIZE));
+  newest = computed(() => [...this.products()].reverse().slice(0, SECTION_SIZE));
 
   ngOnInit(): void {
-    const cat = this.route.snapshot.queryParamMap.get('category');
-    if (cat && VALID_CATEGORIES.has(cat)) {
-      this.activeCategory.set(cat);
-    }
-
-    this.route.queryParamMap.subscribe((params) => {
-      const next = params.get('category');
-      if (next && VALID_CATEGORIES.has(next)) {
-        this.activeCategory.set(next);
-      } else if (!next) {
-        // keep current chip unless navigating without category from landing intentionally
-      }
-    });
-
     this.productService.list().subscribe({
-      next: (items) => { this.products.set(items); this.loading.set(false); },
-      error: () => { this.products.set([]); this.loading.set(false); },
+      next: (items) => {
+        this.products.set(items);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.products.set([]);
+        this.loading.set(false);
+      },
     });
   }
 }
