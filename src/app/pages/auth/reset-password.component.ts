@@ -7,6 +7,13 @@ import { AuthLayoutComponent } from '../../components/ui/auth-layout.component';
 import { UiFieldComponent } from '../../components/ui/ui-field.component';
 import { UiButtonComponent } from '../../components/ui/ui-button.component';
 import { UiAlertComponent } from '../../components/ui/ui-alert.component';
+import {
+  ResetFieldErrors,
+  hasFieldErrors,
+  passwordsMatch,
+  validatePasswordPolicy,
+  validateResetForm,
+} from './auth-validation';
 
 @Component({
   selector: 'app-reset-password',
@@ -35,16 +42,16 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
         </ui-alert>
       </div>
 
-      <form *ngIf="token && !done()" (ngSubmit)="onSubmit()" class="space-y-5">
+      <form *ngIf="token && !done()" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
         <ui-field
           label="Nueva contraseña"
           name="password"
           type="password"
           autocomplete="new-password"
-          placeholder="Mínimo 8 caracteres"
+          placeholder="Mín. 8, mayúscula, número y símbolo"
           [(ngModel)]="password"
-          [minlength]="8"
-          [required]="true"
+          [error]="fieldErrors().password"
+          (blurred)="onBlur('password')"
         ></ui-field>
 
         <ui-field
@@ -54,9 +61,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           autocomplete="new-password"
           placeholder="Repite tu contraseña"
           [(ngModel)]="confirmPassword"
-          [minlength]="8"
-          [error]="confirmError()"
-          [required]="true"
+          [error]="fieldErrors().confirmPassword"
+          (blurred)="onBlur('confirmPassword')"
         ></ui-field>
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
@@ -88,27 +94,33 @@ export class ResetPasswordComponent implements OnInit {
   confirmPassword = '';
   loading = signal(false);
   errorMsg = signal<string | null>(null);
-  confirmError = signal('');
+  fieldErrors = signal<ResetFieldErrors>({ password: '', confirmPassword: '' });
   done = signal(false);
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
   }
 
-  onSubmit() {
-    this.confirmError.set('');
-    this.errorMsg.set(null);
+  onBlur(field: 'password' | 'confirmPassword'): void {
+    const next = { ...this.fieldErrors() };
+    if (field === 'password') {
+      next.password = validatePasswordPolicy(this.password) ?? '';
+      if (this.confirmPassword) {
+        next.confirmPassword = passwordsMatch(this.password, this.confirmPassword) ?? '';
+      }
+    } else {
+      next.confirmPassword = passwordsMatch(this.password, this.confirmPassword) ?? '';
+    }
+    this.fieldErrors.set(next);
+  }
 
+  onSubmit() {
+    this.errorMsg.set(null);
     if (!this.token) return;
 
-    if (this.password.length < 8) {
-      this.errorMsg.set('La contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-    if (this.password !== this.confirmPassword) {
-      this.confirmError.set('Las contraseñas no coinciden.');
-      return;
-    }
+    const errors = validateResetForm(this.password, this.confirmPassword);
+    this.fieldErrors.set(errors);
+    if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);
     this.auth.resetPassword(this.token, this.password).subscribe({
@@ -118,7 +130,8 @@ export class ResetPasswordComponent implements OnInit {
       },
       error: (err) => {
         this.errorMsg.set(
-          err?.error?.message ?? 'No pudimos restablecer la contraseña. El enlace puede haber expirado.'
+          err?.error?.message ??
+            'No pudimos restablecer la contraseña. El enlace puede haber expirado.'
         );
         this.loading.set(false);
       },

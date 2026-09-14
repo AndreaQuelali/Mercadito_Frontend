@@ -7,6 +7,15 @@ import { AuthLayoutComponent } from '../../components/ui/auth-layout.component';
 import { UiFieldComponent } from '../../components/ui/ui-field.component';
 import { UiButtonComponent } from '../../components/ui/ui-button.component';
 import { UiAlertComponent } from '../../components/ui/ui-alert.component';
+import {
+  RegisterFieldErrors,
+  hasFieldErrors,
+  passwordsMatch,
+  validateEmail,
+  validateName,
+  validatePasswordPolicy,
+  validateRegisterForm,
+} from './auth-validation';
 
 @Component({
   selector: 'app-register',
@@ -28,7 +37,7 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
       <h1 class="text-3xl font-display font-bold text-text-main mb-2">Crear cuenta</h1>
       <p class="text-text-muted mb-8">Empieza a comprar y vender en tu comunidad</p>
 
-      <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <form (ngSubmit)="onSubmit()" class="space-y-4" novalidate>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <ui-field
             label="Nombre"
@@ -37,7 +46,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
             autocomplete="given-name"
             placeholder="Ana"
             [(ngModel)]="firstName"
-            [required]="true"
+            [error]="fieldErrors().firstName"
+            (blurred)="onBlur('firstName')"
           ></ui-field>
           <ui-field
             label="Apellido"
@@ -46,7 +56,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
             autocomplete="family-name"
             placeholder="García"
             [(ngModel)]="lastName"
-            [required]="true"
+            [error]="fieldErrors().lastName"
+            (blurred)="onBlur('lastName')"
           ></ui-field>
         </div>
 
@@ -57,7 +68,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
-          [required]="true"
+          [error]="fieldErrors().email"
+          (blurred)="onBlur('email')"
         ></ui-field>
 
         <ui-field
@@ -65,10 +77,10 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           name="password"
           type="password"
           autocomplete="new-password"
-          placeholder="Mínimo 8 caracteres"
+          placeholder="Mín. 8, mayúscula, número y símbolo"
           [(ngModel)]="password"
-          [minlength]="8"
-          [required]="true"
+          [error]="fieldErrors().password"
+          (blurred)="onBlur('password')"
         ></ui-field>
 
         <ui-field
@@ -78,9 +90,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           autocomplete="new-password"
           placeholder="Repite tu contraseña"
           [(ngModel)]="confirmPassword"
-          [minlength]="8"
-          [error]="confirmError()"
-          [required]="true"
+          [error]="fieldErrors().confirmPassword"
+          (blurred)="onBlur('confirmPassword')"
         ></ui-field>
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
@@ -110,31 +121,72 @@ export class RegisterComponent {
   loading = signal(false);
   errorMsg = signal<string | null>(null);
   successMsg = signal<string | null>(null);
-  confirmError = signal('');
+  fieldErrors = signal<RegisterFieldErrors>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  onBlur(
+    field: 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword'
+  ): void {
+    const next = { ...this.fieldErrors() };
+    switch (field) {
+      case 'firstName':
+        next.firstName = validateName(this.firstName, 'firstName') ?? '';
+        break;
+      case 'lastName':
+        next.lastName = validateName(this.lastName, 'lastName') ?? '';
+        break;
+      case 'email':
+        next.email = validateEmail(this.email) ?? '';
+        break;
+      case 'password':
+        next.password = validatePasswordPolicy(this.password) ?? '';
+        if (this.confirmPassword) {
+          next.confirmPassword = passwordsMatch(this.password, this.confirmPassword) ?? '';
+        }
+        break;
+      case 'confirmPassword':
+        next.confirmPassword = passwordsMatch(this.password, this.confirmPassword) ?? '';
+        break;
+    }
+    this.fieldErrors.set(next);
+  }
 
   onSubmit() {
-    this.confirmError.set('');
     this.errorMsg.set(null);
-
-    if (this.password.length < 8) {
-      this.errorMsg.set('La contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-    if (this.password !== this.confirmPassword) {
-      this.confirmError.set('Las contraseñas no coinciden.');
-      return;
-    }
+    const errors = validateRegisterForm({
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      password: this.password,
+      confirmPassword: this.confirmPassword,
+    });
+    this.fieldErrors.set(errors);
+    if (hasFieldErrors(errors)) return;
 
     this.loading.set(true);
-    this.auth.register(this.firstName, this.lastName, this.email, this.password).subscribe({
-      next: () => {
-        this.successMsg.set('¡Cuenta creada! Redirigiendo al inicio de sesión...');
-        setTimeout(() => this.router.navigateByUrl('/auth/login'), 1500);
-      },
-      error: (err) => {
-        this.errorMsg.set(err?.error?.message ?? 'Error al crear la cuenta. Intenta con otro correo.');
-        this.loading.set(false);
-      },
-    });
+    this.auth
+      .register(
+        this.firstName.trim(),
+        this.lastName.trim(),
+        this.email.trim(),
+        this.password
+      )
+      .subscribe({
+        next: () => {
+          this.successMsg.set('¡Cuenta creada! Redirigiendo al inicio de sesión...');
+          setTimeout(() => this.router.navigateByUrl('/auth/login'), 1500);
+        },
+        error: (err) => {
+          this.errorMsg.set(
+            err?.error?.message ?? 'Error al crear la cuenta. Intenta con otro correo.'
+          );
+          this.loading.set(false);
+        },
+      });
   }
 }

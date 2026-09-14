@@ -46,7 +46,7 @@ let nextId = 0;
           [attr.aria-describedby]="hintOrErrorId"
           [value]="value"
           (input)="onInput($event)"
-          (blur)="onTouched()"
+          (blur)="handleBlur()"
           class="w-full bg-surface border border-border-medium rounded-xl px-4 py-3
                  text-text-main placeholder:text-text-subtle
                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
@@ -89,6 +89,8 @@ export class UiFieldComponent implements ControlValueAccessor {
   @Input() id = '';
 
   @Output() valueChange = new EventEmitter<string>();
+  /** Emitted when the input loses focus (for field-level validation). */
+  @Output() blurred = new EventEmitter<void>();
 
   readonly fieldId = `ui-field-${++nextId}`;
   value = '';
@@ -117,6 +119,11 @@ export class UiFieldComponent implements ControlValueAccessor {
     this.value = next;
     this.onChange(next);
     this.valueChange.emit(next);
+  }
+
+  handleBlur(): void {
+    this.onTouched();
+    this.blurred.emit();
   }
 
   writeValue(value: string | null): void {

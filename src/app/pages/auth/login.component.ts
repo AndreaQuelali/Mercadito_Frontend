@@ -7,6 +7,13 @@ import { AuthLayoutComponent } from '../../components/ui/auth-layout.component';
 import { UiFieldComponent } from '../../components/ui/ui-field.component';
 import { UiButtonComponent } from '../../components/ui/ui-button.component';
 import { UiAlertComponent } from '../../components/ui/ui-alert.component';
+import {
+  LoginFieldErrors,
+  hasFieldErrors,
+  validateEmail,
+  validateLoginForm,
+  validateLoginPassword,
+} from './auth-validation';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +35,7 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
       <h1 class="text-3xl font-display font-bold text-text-main mb-2">Bienvenido de vuelta</h1>
       <p class="text-text-muted mb-8">Ingresa a tu cuenta para continuar</p>
 
-      <form (ngSubmit)="onSubmit()" class="space-y-5">
+      <form (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
         <ui-field
           label="Correo electrónico"
           name="email"
@@ -36,7 +43,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
-          [required]="true"
+          [error]="fieldErrors().email"
+          (blurred)="onBlur('email')"
         ></ui-field>
 
         <div>
@@ -47,7 +55,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
             autocomplete="current-password"
             placeholder="••••••••"
             [(ngModel)]="password"
-            [required]="true"
+            [error]="fieldErrors().password"
+            (blurred)="onBlur('password')"
           ></ui-field>
           <div class="mt-2 text-right">
             <a
@@ -82,6 +91,7 @@ export class LoginComponent implements OnInit {
   password = '';
   loading = signal(false);
   errorMsg = signal<string | null>(null);
+  fieldErrors = signal<LoginFieldErrors>({ email: '', password: '' });
   private returnUrl = '/';
 
   ngOnInit(): void {
@@ -91,10 +101,21 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  onBlur(field: 'email' | 'password'): void {
+    const next = { ...this.fieldErrors() };
+    if (field === 'email') next.email = validateEmail(this.email) ?? '';
+    if (field === 'password') next.password = validateLoginPassword(this.password) ?? '';
+    this.fieldErrors.set(next);
+  }
+
   onSubmit() {
+    const errors = validateLoginForm(this.email, this.password);
+    this.fieldErrors.set(errors);
+    if (hasFieldErrors(errors)) return;
+
     this.loading.set(true);
     this.errorMsg.set(null);
-    this.auth.login(this.email, this.password).subscribe({
+    this.auth.login(this.email.trim(), this.password).subscribe({
       next: () => this.router.navigateByUrl(this.returnUrl),
       error: (err) => {
         this.errorMsg.set(err?.error?.message ?? 'Credenciales incorrectas. Intenta nuevamente.');

@@ -7,6 +7,12 @@ import { AuthLayoutComponent } from '../../components/ui/auth-layout.component';
 import { UiFieldComponent } from '../../components/ui/ui-field.component';
 import { UiButtonComponent } from '../../components/ui/ui-button.component';
 import { UiAlertComponent } from '../../components/ui/ui-alert.component';
+import {
+  ForgotFieldErrors,
+  hasFieldErrors,
+  validateEmail,
+  validateForgotForm,
+} from './auth-validation';
 
 @Component({
   selector: 'app-forgot-password',
@@ -30,7 +36,7 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
         Ingresa tu correo y te enviaremos instrucciones para restablecerla.
       </p>
 
-      <form *ngIf="!sent()" (ngSubmit)="onSubmit()" class="space-y-5">
+      <form *ngIf="!sent()" (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
         <ui-field
           label="Correo electrónico"
           name="email"
@@ -38,7 +44,8 @@ import { UiAlertComponent } from '../../components/ui/ui-alert.component';
           autocomplete="email"
           placeholder="tu@correo.com"
           [(ngModel)]="email"
-          [required]="true"
+          [error]="fieldErrors().email"
+          (blurred)="onBlur()"
         ></ui-field>
 
         <ui-alert *ngIf="errorMsg()" tone="error">{{ errorMsg() }}</ui-alert>
@@ -74,17 +81,28 @@ export class ForgotPasswordComponent {
   loading = signal(false);
   errorMsg = signal<string | null>(null);
   sent = signal(false);
+  fieldErrors = signal<ForgotFieldErrors>({ email: '' });
+
+  onBlur(): void {
+    this.fieldErrors.set({ email: validateEmail(this.email) ?? '' });
+  }
 
   onSubmit() {
+    const errors = validateForgotForm(this.email);
+    this.fieldErrors.set(errors);
+    if (hasFieldErrors(errors)) return;
+
     this.loading.set(true);
     this.errorMsg.set(null);
-    this.auth.forgotPassword(this.email).subscribe({
+    this.auth.forgotPassword(this.email.trim()).subscribe({
       next: () => {
         this.sent.set(true);
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMsg.set(err?.error?.message ?? 'No pudimos procesar la solicitud. Intenta de nuevo.');
+        this.errorMsg.set(
+          err?.error?.message ?? 'No pudimos procesar la solicitud. Intenta de nuevo.'
+        );
         this.loading.set(false);
       },
     });
