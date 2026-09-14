@@ -27,7 +27,7 @@ import { ToastService } from '../../services/toast.service';
         <a routerLink="/orders" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 px-6 rounded-full transition">
           Ver mis pedidos
         </a>
-        <a routerLink="/" class="inline-flex items-center gap-2 border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-6 rounded-full transition">
+        <a routerLink="/products" class="inline-flex items-center gap-2 border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium py-2.5 px-6 rounded-full transition">
           Seguir comprando
         </a>
       </div>
@@ -39,7 +39,7 @@ import { ToastService } from '../../services/toast.service';
 
       <div *ngIf="cart.items().length === 0" class="text-slate-500 py-12 text-center">
         Tu carrito está vacío.
-        <a routerLink="/" class="text-brand-600 hover:underline block mt-2">Explorar productos</a>
+        <a routerLink="/products" class="text-brand-600 hover:underline block mt-2">Explorar productos</a>
       </div>
 
       <div *ngIf="cart.items().length > 0" class="space-y-6">

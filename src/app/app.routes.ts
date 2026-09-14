@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
+import { ProductsComponent } from './pages/products/products.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { SellerDashboardComponent } from './pages/seller/seller-dashboard.component';
 import { ProductFormComponent } from './pages/seller/product-form.component';
@@ -20,7 +21,8 @@ import { authGuard, sellerGuard, noSellerGuard, adminGuard } from './guards/auth
 export const appRoutes: Routes = [
   // Public
   { path: '', component: LandingComponent },
-  { path: 'productos', component: HomeComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'productos', redirectTo: 'products', pathMatch: 'full' },
   { path: 'product/:id', component: ProductDetailComponent },
 
   // Auth
@@ -30,6 +32,9 @@ export const appRoutes: Routes = [
   { path: 'auth/reset-password', component: ResetPasswordComponent },
   /** Email links from backend use /reset-password?token= */
   { path: 'reset-password', component: ResetPasswordComponent },
+
+  // Authenticated home (discovery)
+  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
 
   // Buyer (requires auth)
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },

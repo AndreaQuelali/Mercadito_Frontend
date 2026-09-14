@@ -16,7 +16,7 @@ import { ToastService } from '../../services/toast.service';
         <h1 class="text-2xl font-bold text-slate-900">Sellers</h1>
         <p class="text-slate-500 text-sm mt-1">Suspende o reactiva puestos de vendedores.</p>
       </div>
-      <a routerLink="/" class="text-sm text-slate-500 hover:text-slate-800">Inicio</a>
+      <a routerLink="/home" class="text-sm text-slate-500 hover:text-slate-800">Inicio</a>
     </div>
 
     <div *ngIf="loading()" class="space-y-3 animate-pulse">

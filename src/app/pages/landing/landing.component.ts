@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { ProductService } from '../../services/products.service';
@@ -77,6 +77,7 @@ const FAQ = [
 export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   auth = inject(AuthService);
   theme = inject(ThemeService);
+  private router = inject(Router);
   private productSvc = inject(ProductService);
   private host = inject(ElementRef<HTMLElement>);
 
@@ -118,7 +119,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sellLink(): string {
     if (!this.auth.isLoggedIn()) return '/auth/register';
-    if (this.auth.isAdmin()) return '/productos';
+    if (this.auth.isAdmin()) return '/products';
     if (this.auth.hasSeller()) return '/seller';
     return '/seller/onboarding';
   }
@@ -160,6 +161,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    if (this.auth.isLoggedIn()) {
+      this.router.navigateByUrl('/home');
+      return;
+    }
     this.productSvc.list().subscribe({
       next: (items) => {
         this.allProducts.set(items);

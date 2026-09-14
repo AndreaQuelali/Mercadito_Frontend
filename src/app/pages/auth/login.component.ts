@@ -101,11 +101,11 @@ export class LoginComponent implements OnInit {
   errorMsg = signal<string | null>(null);
   fieldErrors = signal<LoginFieldErrors>({ email: '', password: '' });
   formValid = signal(false);
-  private returnUrl = '/';
+  private returnUrl = '/home';
 
   ngOnInit(): void {
     const raw = this.route.snapshot.queryParamMap.get('returnUrl');
-    if (raw && raw.startsWith('/') && !raw.startsWith('//')) {
+    if (raw && raw.startsWith('/') && !raw.startsWith('//') && raw !== '/') {
       this.returnUrl = raw;
     }
     this.refreshFormValid();
