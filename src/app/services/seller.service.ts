@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -49,6 +49,9 @@ export class SellerService {
   private auth = inject(AuthService);
   private base = `${environment.apiUrl}/seller`;
 
+  private _mine = signal<Seller | null>(null);
+  readonly mine = this._mine.asReadonly();
+
   create(payload: CreateSellerPayload): Observable<{ seller: Seller; token: string }> {
     return this.http.post<ApiResponse<Seller>>(this.base, payload).pipe(
       map((res) => {
@@ -60,6 +63,7 @@ export class SellerService {
       tap(({ seller, token }) => {
         this.auth.setToken(token);
         this.auth.setSellerStatus(seller.status);
+        this._mine.set(seller);
       })
     );
   }
@@ -70,7 +74,10 @@ export class SellerService {
         if (!res.ok || !res.data) throw new Error(res.message || 'Seller not found');
         return res.data;
       }),
-      tap((seller) => this.auth.setSellerStatus(seller.status))
+      tap((seller) => {
+        this.auth.setSellerStatus(seller.status);
+        this._mine.set(seller);
+      })
     );
   }
 
@@ -80,7 +87,10 @@ export class SellerService {
         if (!res.ok || !res.data) throw new Error(res.message || 'Update failed');
         return res.data;
       }),
-      tap((seller) => this.auth.setSellerStatus(seller.status))
+      tap((seller) => {
+        this.auth.setSellerStatus(seller.status);
+        this._mine.set(seller);
+      })
     );
   }
 

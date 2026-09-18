@@ -120,7 +120,7 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   sellLink(): string {
     if (!this.auth.isLoggedIn()) return '/auth/register';
     if (this.auth.isAdmin()) return '/products';
-    if (this.auth.hasSeller()) return '/seller';
+    if (this.auth.hasSeller()) return '/dashboard';
     return '/seller/onboarding';
   }
 
