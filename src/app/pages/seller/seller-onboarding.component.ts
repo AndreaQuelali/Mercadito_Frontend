@@ -96,7 +96,7 @@ export class SellerOnboardingComponent {
     this.sellerSvc.create(payload).subscribe({
       next: () => {
         this.toast.success('¡Tu puesto está listo!');
-        this.router.navigateByUrl('/seller');
+        this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
         const msg =

@@ -15,19 +15,11 @@ import { SellerService } from '../../services/seller.service';
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <header class="flex items-center justify-between flex-wrap gap-3">
       <div>
-        <h1 class="text-2xl font-semibold text-slate-900">Panel de Vendedor</h1>
-        <p class="text-slate-500">Gestiona tus productos</p>
+        <h1 class="text-2xl font-semibold text-slate-900">Productos</h1>
+        <p class="text-slate-500">Gestiona el catálogo de tu puesto</p>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        <a routerLink="/seller/settings"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50 text-sm">
-          Configuración
-        </a>
-        <a routerLink="/seller/orders"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50 text-sm">
-          Mis órdenes
-        </a>
-        <a *ngIf="auth.canManageStore()" routerLink="/seller/new"
+        <a *ngIf="auth.canManageStore()" routerLink="/dashboard/products/new"
            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
             <path fill-rule="evenodd" d="M12 4.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6A.75.75 0 0 1 12 4.5Z" clip-rule="evenodd"/>
@@ -52,7 +44,7 @@ import { SellerService } from '../../services/seller.service';
          class="flex flex-col items-center py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl">
       <p class="text-slate-600 font-medium mb-1">Aún no tienes productos</p>
       <p class="text-slate-400 text-sm mb-4">Publica tu primer producto y empieza a vender.</p>
-      <a *ngIf="auth.canManageStore()" routerLink="/seller/new" class="inline-flex items-center gap-2 text-brand-600 font-medium hover:underline text-sm">
+      <a *ngIf="auth.canManageStore()" routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 text-brand-600 font-medium hover:underline text-sm">
         + Agregar producto
       </a>
     </div>
@@ -95,7 +87,7 @@ export class SellerDashboardComponent implements OnInit {
 
   onEdit(id: number): void {
     if (!this.auth.canManageStore()) return;
-    this.router.navigateByUrl(`/seller/edit/${id}`);
+    this.router.navigateByUrl(`/dashboard/products/edit/${id}`);
   }
 
   private fetch(): void {

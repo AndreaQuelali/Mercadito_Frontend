@@ -1116,6 +1116,13 @@
   animation: toast-in 0.3s ease-out;
 }
 
+.toast-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;
