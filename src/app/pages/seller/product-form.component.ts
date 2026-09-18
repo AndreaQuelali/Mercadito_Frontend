@@ -30,7 +30,7 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
     <div *ngIf="!auth.canManageStore()"
          class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
       Tu puesto está suspendido. No puedes crear ni editar productos.
-      <a routerLink="/seller" class="underline ml-1">Volver al panel</a>
+      <a routerLink="/dashboard/products" class="underline ml-1">Volver al panel</a>
     </div>
 
     <div class="bg-white rounded-2xl border border-slate-200 p-6">
@@ -94,7 +94,7 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
             <span *ngIf="saving()" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             {{ isEdit ? 'Guardar Cambios' : 'Publicar' }}
           </button>
-          <a routerLink="/seller" class="px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50">Cancelar</a>
+          <a routerLink="/dashboard/products" class="px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50">Cancelar</a>
         </div>
       </form>
     </div>
@@ -176,7 +176,7 @@ export class ProductFormComponent implements OnInit {
       : this.productService.create(payload);
 
     request.subscribe({
-      next: () => this.router.navigateByUrl('/seller'),
+      next: () => this.router.navigateByUrl('/dashboard/products'),
       error: () => {
         this.errorMsg.set('Ocurrió un error. Verifica los datos e intenta nuevamente.');
         this.saving.set(false);

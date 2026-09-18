@@ -31,7 +31,7 @@ export const noSellerGuard: CanActivateFn = (_route: ActivatedRouteSnapshot, sta
   const auth = inject(AuthService);
   const router = inject(Router);
   if (!auth.isLoggedIn()) return loginTree(router, state.url);
-  if (auth.hasSeller()) return router.createUrlTree(['/seller']);
+  if (auth.hasSeller()) return router.createUrlTree(['/dashboard']);
   return true;
 };
 
