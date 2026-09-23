@@ -1,0 +1,24 @@
+# Mercadito
+
+> Marketplace de puestos locales en Bolivia: compra frutas, verduras y productos de barrio, o vende desde tu propio puesto con la misma cuenta.
+
+Mercadito es una plataforma web de comercio electrónico inspirada en el mercado boliviano. Cualquier usuario autenticado puede comprar. Vender es opcional: se activa un perfil de puesto (Seller) sin cambiar de cuenta. En esta etapa los pedidos se coordinan entre comprador y vendedor; el catálogo y el flujo de órdenes viven en la app.
+
+## Páginas públicas
+
+- [Inicio](https://www.mercadito.bo/): Qué es Mercadito, cómo funciona y preguntas frecuentes.
+- [Catálogo](https://www.mercadito.bo/products): Listado público de productos con búsqueda y filtros.
+- [Sitemap](https://www.mercadito.bo/sitemap.xml): URLs indexables.
+
+## Cómo usar Mercadito
+
+- Comprar: explorar el catálogo, agregar al carrito e iniciar sesión para confirmar el pedido.
+- Vender: registrarse, elegir “Quiero vender”, crear el puesto y publicar productos (precio, stock, imagen).
+- Una cuenta sirve para comprar y vender. No hay roles mutuamente excluyentes.
+- Retiro o entrega: se acuerda con el puesto (retiro en el mercado o entrega en zona).
+
+## No indexar
+
+- Flujos con sesión: `/home`, `/cart`, `/checkout`, `/orders`.
+- Gestión de tienda: `/seller`, `/dashboard`.
+- Auth y admin: `/auth/`, `/reset-password`, `/admin`.
