@@ -54,7 +54,8 @@ export class AppComponent implements OnInit {
       path === '/' ||
       path === '' ||
       path.startsWith('/auth') ||
-      path === '/reset-password';
+      path === '/reset-password' ||
+      path.startsWith('/dashboard');
     this.showGlobalHeader.set(!hide);
   }
 }

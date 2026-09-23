@@ -13,10 +13,10 @@ import { ToastService } from '../../services/toast.service';
   <main class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Configuración del puesto</h1>
+        <h1 class="text-2xl font-bold text-slate-900">Mi tienda</h1>
         <p class="text-slate-500 text-sm mt-1">Edita los datos de tu perfil de vendedor.</p>
       </div>
-      <a routerLink="/seller" class="text-sm text-slate-500 hover:text-slate-800">Volver al panel</a>
+      <a routerLink="/dashboard" class="text-sm text-slate-500 hover:text-slate-800">Volver al panel</a>
     </div>
 
     <div *ngIf="seller()?.status === 'suspended'"
