@@ -1,64 +1,146 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { ProductsComponent } from './pages/products/products.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { SellerDashboardComponent } from './pages/seller/seller-dashboard.component';
-import { ProductFormComponent } from './pages/seller/product-form.component';
-import { SellerOnboardingComponent } from './pages/seller/seller-onboarding.component';
-import { SellerSettingsComponent } from './pages/seller/seller-settings.component';
-import { LoginComponent } from './pages/auth/login.component';
-import { RegisterComponent } from './pages/auth/register.component';
-import { ForgotPasswordComponent } from './pages/auth/forgot-password.component';
-import { ResetPasswordComponent } from './pages/auth/reset-password.component';
-import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
-import { CartComponent } from './pages/cart/cart.component';
-import { CheckoutComponent } from './pages/checkout/checkout.component';
-import { OrdersComponent } from './pages/orders/orders.component';
-import { SellerOrdersComponent } from './pages/seller-orders/seller-orders.component';
-import { AdminSellersComponent } from './pages/admin/admin-sellers.component';
-import { SellerShellComponent } from './layouts/seller-shell/seller-shell.component';
-import { SellerHomeComponent } from './pages/dashboard/seller-home.component';
-import { SellerPlaceholderComponent } from './pages/dashboard/seller-placeholder.component';
 import { authGuard, sellerGuard, noSellerGuard, adminGuard } from './guards/auth.guard';
 
 export const appRoutes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'products', component: ProductsComponent },
+  {
+    path: 'products',
+    loadComponent: () =>
+      import('./pages/products/products.component').then((m) => m.ProductsComponent),
+  },
   { path: 'productos', redirectTo: 'products', pathMatch: 'full' },
-  { path: 'product/:id', component: ProductDetailComponent },
+  {
+    path: 'product/:id',
+    loadComponent: () =>
+      import('./pages/product-detail/product-detail.component').then(
+        (m) => m.ProductDetailComponent
+      ),
+  },
 
-  { path: 'auth/login', component: LoginComponent },
-  { path: 'auth/register', component: RegisterComponent },
-  { path: 'auth/forgot-password', component: ForgotPasswordComponent },
-  { path: 'auth/reset-password', component: ResetPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  {
+    path: 'auth/login',
+    loadComponent: () => import('./pages/auth/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'auth/register',
+    loadComponent: () =>
+      import('./pages/auth/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'auth/forgot-password',
+    loadComponent: () =>
+      import('./pages/auth/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+  },
+  {
+    path: 'auth/reset-password',
+    loadComponent: () =>
+      import('./pages/auth/reset-password.component').then((m) => m.ResetPasswordComponent),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./pages/auth/reset-password.component').then((m) => m.ResetPasswordComponent),
+  },
 
-  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+  {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home.component').then((m) => m.HomeComponent),
+    canActivate: [authGuard],
+  },
 
-  { path: 'cart', component: CartComponent, canActivate: [authGuard] },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
-  { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
+  {
+    path: 'cart',
+    loadComponent: () => import('./pages/cart/cart.component').then((m) => m.CartComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'checkout',
+    loadComponent: () =>
+      import('./pages/checkout/checkout.component').then((m) => m.CheckoutComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'orders',
+    loadComponent: () => import('./pages/orders/orders.component').then((m) => m.OrdersComponent),
+    canActivate: [authGuard],
+  },
 
   {
     path: 'seller/onboarding',
-    component: SellerOnboardingComponent,
+    loadComponent: () =>
+      import('./pages/seller/seller-onboarding.component').then(
+        (m) => m.SellerOnboardingComponent
+      ),
     canActivate: [authGuard, noSellerGuard],
   },
 
   {
     path: 'dashboard',
-    component: SellerShellComponent,
+    loadComponent: () =>
+      import('./layouts/seller-shell/seller-shell.component').then((m) => m.SellerShellComponent),
     canActivate: [authGuard, sellerGuard],
     children: [
-      { path: '', component: SellerHomeComponent },
-      { path: 'products', component: SellerDashboardComponent },
-      { path: 'products/new', component: ProductFormComponent },
-      { path: 'products/edit/:id', component: ProductFormComponent },
-      { path: 'orders', component: SellerOrdersComponent },
-      { path: 'sales', component: SellerPlaceholderComponent, data: { title: 'Ventas' } },
-      { path: 'inventory', component: SellerPlaceholderComponent, data: { title: 'Inventario' } },
-      { path: 'store', component: SellerSettingsComponent },
-      { path: 'settings', component: SellerPlaceholderComponent, data: { title: 'Configuración' } },
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/dashboard/seller-home.component').then((m) => m.SellerHomeComponent),
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./pages/seller/seller-dashboard.component').then(
+            (m) => m.SellerDashboardComponent
+          ),
+      },
+      {
+        path: 'products/new',
+        loadComponent: () =>
+          import('./pages/seller/product-form.component').then((m) => m.ProductFormComponent),
+      },
+      {
+        path: 'products/edit/:id',
+        loadComponent: () =>
+          import('./pages/seller/product-form.component').then((m) => m.ProductFormComponent),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./pages/seller-orders/seller-orders.component').then(
+            (m) => m.SellerOrdersComponent
+          ),
+      },
+      {
+        path: 'sales',
+        loadComponent: () =>
+          import('./pages/dashboard/seller-placeholder.component').then(
+            (m) => m.SellerPlaceholderComponent
+          ),
+        data: { title: 'Ventas' },
+      },
+      {
+        path: 'inventory',
+        loadComponent: () =>
+          import('./pages/dashboard/seller-placeholder.component').then(
+            (m) => m.SellerPlaceholderComponent
+          ),
+        data: { title: 'Inventario' },
+      },
+      {
+        path: 'store',
+        loadComponent: () =>
+          import('./pages/seller/seller-settings.component').then(
+            (m) => m.SellerSettingsComponent
+          ),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./pages/dashboard/seller-placeholder.component').then(
+            (m) => m.SellerPlaceholderComponent
+          ),
+        data: { title: 'Configuración' },
+      },
     ],
   },
 
@@ -70,7 +152,8 @@ export const appRoutes: Routes = [
 
   {
     path: 'admin/sellers',
-    component: AdminSellersComponent,
+    loadComponent: () =>
+      import('./pages/admin/admin-sellers.component').then((m) => m.AdminSellersComponent),
     canActivate: [authGuard, adminGuard],
   },
 

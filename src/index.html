@@ -3,15 +3,24 @@
 <head>
   <meta charset="utf-8">
   <title>Mercadito</title>
+  <meta name="description" content="Mercadito: marketplace de puestos locales en Bolivia. Compra frutas, verduras y productos de barrio, o vende desde tu propio puesto.">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- Fonts: Fraunces (display serif) + DM Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:opsz,wght@9..144,400..700&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:opsz,wght@9..144,400..700&display=optional" rel="stylesheet"></noscript>
   <!-- Socket.IO client -->
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" defer></script>
+  <script>
+    window.addEventListener("load", function () {
+      var s = document.createElement("script");
+      s.src = "https://cdn.socket.io/4.7.5/socket.io.min.js";
+      s.async = true;
+      document.head.appendChild(s);
+    });
+  </script>
 </head>
 <body>
   <app-root></app-root>
