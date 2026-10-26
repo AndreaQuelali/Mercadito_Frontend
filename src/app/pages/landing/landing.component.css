@@ -2,25 +2,25 @@
    Tokens locales de la landing; el modo oscuro sigue la clase .dark de ThemeService. */
 :host {
   display: block;
-  --l-bg: #fdfbf8;
-  --l-surface: #f1e7da;
-  --l-surface-hover: #e6d6c0;
-  --l-ink: #2a1e18;
-  --l-muted: #58443a;
-  --l-accent: #b3412c;
-  --l-accent-hover: #8f3322;
-  --l-on-accent: #fdfbf8;
-  --l-pink: #c83d68;
-  --l-gold: #d9a441;
-  --l-teal: #3e9c9a;
-  --l-green: #6b6f3a;
-  --l-on-green: #fdfbf8;
-  --l-on-gold: #2a1e18;
-  --l-foot-bg: #2a1e18;
-  --l-foot-ink: #fdfbf8;
-  --l-foot-muted: #d9c9b8;
-  --serif: 'Besley', Georgia, serif;
-  --sans: 'Libre Franklin', system-ui, sans-serif;
+  --l-bg: var(--color-bg-base);
+  --l-surface: var(--color-bg-subtle);
+  --l-surface-hover: var(--color-bg-surface-hover);
+  --l-ink: var(--color-text-main);
+  --l-muted: var(--color-text-muted);
+  --l-accent: var(--color-primary);
+  --l-accent-hover: var(--color-primary-hover);
+  --l-on-accent: var(--color-text-on-primary);
+  --l-pink: var(--color-accent-pink);
+  --l-gold: var(--color-secondary);
+  --l-teal: var(--color-accent-teal);
+  --l-green: var(--color-accent-green);
+  --l-on-green: var(--color-text-on-green);
+  --l-on-gold: var(--color-text-on-secondary);
+  --l-foot-bg: var(--color-bg-inverse);
+  --l-foot-ink: var(--color-text-on-inverse);
+  --l-foot-muted: var(--color-text-on-inverse-muted);
+  --serif: var(--font-display, "Besley"), Georgia, serif;
+  --sans: var(--font-body, "Libre Franklin"), system-ui, sans-serif;
   --m: clamp(20px, 3.2vw, 48px);
   --gap: clamp(88px, 10vw, 160px);
   --head: clamp(2.4rem, 1.5rem + 3vw, 4.5rem);
@@ -29,23 +29,6 @@
   background: var(--l-bg);
   color: var(--l-ink);
   font: 400 1.0625rem/1.6 var(--sans);
-}
-
-:host-context(html.dark) {
-  --l-bg: #1c1613;
-  --l-surface: #271e1a;
-  --l-surface-hover: #332822;
-  --l-ink: #f7f0e3;
-  --l-muted: #c8bdb2;
-  --l-accent: #e0704f;
-  --l-accent-hover: #eb8a6e;
-  --l-on-accent: #1c1613;
-  --l-pink: #db547f;
-  --l-gold: #e5b552;
-  --l-teal: #50b5b3;
-  --l-green: #7a995a;
-  --l-on-green: #1c1613;
-  --l-foot-bg: #120d0b;
 }
 
 :host *,
@@ -241,7 +224,7 @@ a {
   position: relative;
   margin: 0;
   min-height: calc(100svh - var(--nav-h));
-  background: #2a1e18;
+  background: var(--color-bg-inverse);
   overflow: hidden;
 }
 .stage img {
@@ -262,7 +245,7 @@ a {
   left: var(--m);
   bottom: 20px;
   z-index: 2;
-  color: #fdfbf8;
+  color: var(--color-text-on-inverse);
   font-size: 0.875rem;
   background: rgba(42, 30, 24, 0.8);
   padding: 6px 12px;

@@ -36,6 +36,11 @@ module.exports = {
         },
         base: 'var(--color-bg-base)',
         'on-primary': 'var(--color-text-on-primary)',
+        inverse: {
+          DEFAULT: 'var(--color-bg-inverse)',
+          text: 'var(--color-text-on-inverse)',
+          muted: 'var(--color-text-on-inverse-muted)',
+        },
         surface: {
           DEFAULT: 'var(--color-bg-surface)',
           elevated: 'var(--color-bg-surface-elevated)',

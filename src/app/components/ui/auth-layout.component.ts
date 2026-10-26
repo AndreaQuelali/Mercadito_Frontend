@@ -53,17 +53,16 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
     `
       .band { display: flex; height: 28px; }
       .band i { flex: 1; }
-      .band i:nth-child(1) { background: #c83d68; flex: 3; }
-      .band i:nth-child(2) { background: #d9a441; flex: 1; }
-      .band i:nth-child(3) { background: #3e9c9a; flex: 2; }
-      .band i:nth-child(4) { background: #6b6f3a; flex: 1; }
+      .band i:nth-child(1) { background: var(--color-accent-pink); flex: 3; }
+      .band i:nth-child(2) { background: var(--color-secondary); flex: 1; }
+      .band i:nth-child(3) { background: var(--color-accent-teal); flex: 2; }
+      .band i:nth-child(4) { background: var(--color-accent-green); flex: 1; }
       .band i:nth-child(5) { background: var(--color-primary); flex: 4; }
       .band i:nth-child(6) { background: var(--color-text-main); flex: 1; }
-      .band i:nth-child(7) { background: #d9a441; flex: 2; }
-      .band i:nth-child(8) { background: #c83d68; flex: 1; }
+      .band i:nth-child(7) { background: var(--color-secondary); flex: 2; }
+      .band i:nth-child(8) { background: var(--color-accent-pink); flex: 1; }
       .photo { filter: saturate(1.08) sepia(0.1); }
-      .panel { background: #2a1e18; color: #fdfbf8; }
-      :host-context(html.dark) .panel { background: #120d0b; }
+      .panel { background: var(--color-bg-inverse); color: var(--color-text-on-inverse); }
     `,
   ],
   template: `
@@ -74,20 +73,20 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
 
       <div class="flex-1 grid lg:grid-cols-2">
         <!-- Foto del mercado (escritorio) -->
-        <aside class="hidden lg:flex relative flex-col justify-end overflow-hidden bg-[#2a1e18]">
+        <aside class="hidden lg:flex relative flex-col justify-end overflow-hidden bg-inverse">
           <img
             [src]="current.src"
             [alt]="current.alt"
             class="photo absolute inset-0 h-full w-full object-cover"
           />
-          <p class="absolute z-10 left-8 top-8 bg-[rgba(42,30,24,0.8)] px-3 py-1.5 text-sm text-[#fdfbf8]">
+          <p class="absolute z-10 left-8 top-8 bg-[rgba(42,30,24,0.8)] px-3 py-1.5 text-sm text-inverse-text">
             {{ current.caption }}
           </p>
           <div class="panel relative z-10 p-8 xl:p-10">
             <p class="font-display text-3xl xl:text-4xl leading-tight font-bold max-w-md">
               {{ quote || 'El mercado de tu barrio, en tu celular.' }}
             </p>
-            <p class="mt-3 text-base max-w-md text-[#d9c9b8]">
+            <p class="mt-3 text-base max-w-md text-inverse-muted">
               {{ subtitle || 'Compra lo fresco del día a los puestos de tu zona, o abre el tuyo.' }}
             </p>
           </div>

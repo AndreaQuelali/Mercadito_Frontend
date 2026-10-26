@@ -43,6 +43,13 @@
   --color-success-bg: #ECFDF3;
   --color-success-border: #ABEFC6;
 
+  --color-bg-surface-hover: #E6D6C0;
+  --color-bg-inverse: #2A1E18;
+  --color-text-on-inverse: #FDFBF8;
+  --color-text-on-inverse-muted: #D9C9B8;
+  --color-text-on-secondary: #2A1E18;
+  --color-text-on-green: #FDFBF8;
+
   --shadow-sm: 0 2px 8px rgba(58, 42, 34, 0.05);
   --shadow-md: 0 4px 20px rgba(58, 42, 34, 0.08);
   --shadow-lg: 0 12px 36px rgba(58, 42, 34, 0.12);
@@ -89,6 +96,13 @@
   --color-success: #75E0A7;
   --color-success-bg: rgba(6, 118, 71, 0.2);
   --color-success-border: rgba(117, 224, 167, 0.35);
+
+  --color-bg-surface-hover: #332822;
+  --color-bg-inverse: #120D0B;
+  --color-text-on-inverse: #FDFBF8;
+  --color-text-on-inverse-muted: #D9C9B8;
+  --color-text-on-secondary: #2A1E18;
+  --color-text-on-green: #1C1613;
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
