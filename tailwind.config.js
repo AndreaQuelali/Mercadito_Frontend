@@ -45,6 +45,7 @@ module.exports = {
           DEFAULT: 'var(--color-bg-surface)',
           elevated: 'var(--color-bg-surface-elevated)',
           subtle: 'var(--color-bg-subtle)',
+          hover: 'var(--color-bg-surface-hover)',
         },
         text: {
           main: 'var(--color-text-main)',

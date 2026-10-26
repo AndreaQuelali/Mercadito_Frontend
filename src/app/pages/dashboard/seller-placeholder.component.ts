@@ -8,9 +8,9 @@ import { map } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule],
   template: `
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-    <h1 class="text-2xl font-display font-bold text-text-main">{{ title$ | async }}</h1>
-    <p class="mt-3 text-text-muted">Próximamente</p>
+  <main class="ui-page max-w-3xl">
+    <h1 class="ui-title">{{ title$ | async }}</h1>
+    <p class="ui-lead mt-3">Esta sección llega en una próxima versión.</p>
   </main>
   `,
 })

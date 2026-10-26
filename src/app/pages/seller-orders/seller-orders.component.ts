@@ -7,11 +7,11 @@ import { AuthService } from '../../services/auth.service';
 import { SellerService } from '../../services/seller.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string }> = {
-  pending:   { label: 'Pendiente',   classes: 'bg-amber-50 text-amber-700 border-amber-200' },
-  confirmed: { label: 'Confirmado',  classes: 'bg-blue-50 text-blue-700 border-blue-200' },
-  shipped:   { label: 'En camino',   classes: 'bg-purple-50 text-purple-700 border-purple-200' },
-  delivered: { label: 'Entregado',   classes: 'bg-green-50 text-green-700 border-green-200' },
-  cancelled: { label: 'Cancelado',   classes: 'bg-red-50 text-red-700 border-red-200' },
+  pending:   { label: 'Pendiente',   classes: 'st-pending' },
+  confirmed: { label: 'Confirmado',  classes: 'st-confirmed' },
+  shipped:   { label: 'En camino',   classes: 'st-shipped' },
+  delivered: { label: 'Entregado',   classes: 'st-delivered' },
+  cancelled: { label: 'Cancelado',   classes: 'st-cancelled' },
 };
 
 const NEXT_STATUS: Record<OrderStatus, OrderStatus | null> = {
@@ -35,76 +35,61 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">Órdenes de mi tienda</h1>
-        <p class="text-slate-500 text-sm mt-1">Gestiona el estado de los pedidos de tus clientes.</p>
-      </div>
-      <a routerLink="/dashboard" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4">
-          <path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>
-        </svg>
-        Panel de vendedor
-      </a>
+  <main class="ui-page max-w-5xl">
+    <header class="space-y-3 mb-8">
+      <h1 class="ui-title">Pedidos</h1>
+      <p class="ui-lead">Gestiona el estado de los pedidos de tus clientes.</p>
+    </header>
+
+    <p *ngIf="!auth.canManageStore()" class="ui-alert-warn mb-6">
+      Tu puesto está suspendido. Puedes ver las órdenes, pero no cambiar su estado.
+    </p>
+
+    <div *ngIf="loading()" class="space-y-3">
+      <div *ngFor="let i of [1,2,3]" class="ui-skel h-36"></div>
     </div>
 
-    <div *ngIf="!auth.canManageStore()"
-         class="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      Tu puesto está suspendido. Puedes ver las órdenes pero no cambiar su estado.
+    <div *ngIf="!loading() && orders().length === 0" class="ui-empty">
+      <h2 class="ui-h2">Aún no recibes pedidos</h2>
+      <p class="text-lg text-text-muted">Cuando un cliente compre en tu puesto, lo verás aquí.</p>
     </div>
 
-    <!-- Skeleton -->
-    <div *ngIf="loading()" class="space-y-4 animate-pulse">
-      <div *ngFor="let i of [1,2,3]" class="bg-white rounded-xl h-36 border border-slate-200"></div>
-    </div>
-
-    <!-- Empty -->
-    <div *ngIf="!loading() && orders().length === 0"
-         class="flex flex-col items-center py-20 text-center">
-      <p class="text-slate-500">Aún no has recibido pedidos.</p>
-    </div>
-
-    <!-- Orders -->
     <div *ngIf="!loading() && orders().length > 0" class="space-y-4">
-      <article *ngFor="let order of orders()"
-        class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 gap-3 flex-wrap">
+      <article *ngFor="let order of orders()" class="ui-panel space-y-5">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <span class="text-xs text-slate-400 font-mono">Orden</span>
-            <p class="font-bold text-slate-900 font-mono text-lg">#{{ order.id }}</p>
-            <p class="text-xs text-slate-400 mt-0.5">{{ order.createdAt | date:'d MMM y, HH:mm' }}</p>
+            <p class="text-text-muted">Orden</p>
+            <p class="font-display text-2xl font-bold">#{{ order.id }}</p>
+            <p class="text-text-muted">{{ order.createdAt | date:'d MMM y, HH:mm' }}</p>
           </div>
 
-          <span [class]="'text-xs font-medium border px-3 py-1 rounded-full ' + statusCfg(order.status).classes">
+          <span class="inline-block px-3 py-1 font-semibold" [ngClass]="statusCfg(order.status).classes">
             {{ statusCfg(order.status).label }}
           </span>
 
           <div class="text-right">
-            <p class="text-xs text-slate-400">Total</p>
-            <p class="font-bold text-brand-600 text-lg">Bs {{ order.total | number:'1.2-2' }}</p>
+            <p class="text-text-muted">Total</p>
+            <p class="text-xl font-bold">Bs {{ order.total | number:'1.2-2' }}</p>
           </div>
 
-          <!-- Advance status button -->
           <button
             *ngIf="auth.canManageStore() && nextStatus(order.status)"
+            type="button"
             (click)="advanceStatus(order)"
             [disabled]="updating() === order.id"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-700 text-white text-sm font-medium transition disabled:opacity-50"
+            class="ui-btn ui-btn-sm"
           >
-            <span *ngIf="updating() === order.id" class="h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span *ngIf="updating() === order.id" class="h-3 w-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             {{ nextStatusLabel(order.status) }}
           </button>
         </div>
 
-        <!-- Items -->
-        <div class="px-5 py-3 flex gap-3 flex-wrap">
-          <div *ngFor="let item of order.items" class="flex items-center gap-2 text-sm text-slate-600">
-            <img [src]="item.product.image" [alt]="item.product.name"
-                 class="w-10 h-10 object-cover rounded-lg" />
-            <span class="hidden sm:inline max-w-[100px] truncate">{{ item.product.name }}</span>
-            <span class="text-slate-400 text-xs">×{{ item.quantity }}</span>
-            <span class="text-slate-500 text-xs">Bs {{ item.unitPrice | number:'1.2-2' }}</span>
+        <div class="flex gap-4 flex-wrap items-center">
+          <div *ngFor="let item of order.items" class="flex items-center gap-3">
+            <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 object-cover" />
+            <span class="hidden sm:inline">{{ item.product.name }}</span>
+            <span class="text-text-muted">×{{ item.quantity }}</span>
+            <span class="text-text-muted">Bs {{ item.unitPrice | number:'1.2-2' }}</span>
           </div>
         </div>
       </article>

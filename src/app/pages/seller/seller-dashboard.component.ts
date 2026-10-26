@@ -12,45 +12,30 @@ import { SellerService } from '../../services/seller.service';
   standalone: true,
   imports: [CommonModule, RouterLink, SellerProductCardComponent],
   template: `
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <header class="flex items-center justify-between flex-wrap gap-3">
-      <div>
-        <h1 class="text-2xl font-semibold text-slate-900">Productos</h1>
-        <p class="text-slate-500">Gestiona el catálogo de tu puesto</p>
+  <main class="ui-page space-y-8">
+    <header class="flex items-end justify-between flex-wrap gap-4">
+      <div class="space-y-3">
+        <h1 class="ui-title">Productos</h1>
+        <p class="ui-lead">Gestiona el catálogo de tu puesto.</p>
       </div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <a *ngIf="auth.canManageStore()" routerLink="/dashboard/products/new"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-            <path fill-rule="evenodd" d="M12 4.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6A.75.75 0 0 1 12 4.5Z" clip-rule="evenodd"/>
-          </svg>
-          Nuevo Producto
-        </a>
-      </div>
+      <a *ngIf="auth.canManageStore()" id="seller-new-product" routerLink="/dashboard/products/new" class="ui-btn">Nuevo producto</a>
     </header>
 
-    <div *ngIf="!auth.canManageStore()"
-         class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      Tu puesto está suspendido. Puedes ver tus productos y órdenes, y editar la configuración del puesto, pero no crear ni modificar productos.
+    <p *ngIf="!auth.canManageStore()" class="ui-alert-warn">
+      Tu puesto está suspendido. Puedes ver tus productos y órdenes, y editar el puesto, pero no crear ni modificar productos.
+    </p>
+
+    <div *ngIf="loading()" class="space-y-3">
+      <div *ngFor="let i of [1,2,3]" class="ui-skel h-32"></div>
     </div>
 
-    <!-- Loading -->
-    <div *ngIf="loading()" class="space-y-4 animate-pulse">
-      <div *ngFor="let i of [1,2,3]" class="bg-white rounded-2xl h-32 border border-slate-200"></div>
+    <div *ngIf="!loading() && products().length === 0" class="ui-empty">
+      <h2 class="ui-h2">Aún no tienes productos</h2>
+      <p class="text-lg text-text-muted">Publica tu primer producto y empieza a vender.</p>
+      <p *ngIf="auth.canManageStore()"><a routerLink="/dashboard/products/new" class="ui-btn">Agregar producto</a></p>
     </div>
 
-    <!-- Empty state -->
-    <div *ngIf="!loading() && products().length === 0"
-         class="flex flex-col items-center py-20 text-center border-2 border-dashed border-slate-200 rounded-2xl">
-      <p class="text-slate-600 font-medium mb-1">Aún no tienes productos</p>
-      <p class="text-slate-400 text-sm mb-4">Publica tu primer producto y empieza a vender.</p>
-      <a *ngIf="auth.canManageStore()" routerLink="/dashboard/products/new" class="inline-flex items-center gap-2 text-brand-600 font-medium hover:underline text-sm">
-        + Agregar producto
-      </a>
-    </div>
-
-    <!-- Products list -->
-    <section *ngIf="!loading() && products().length > 0" class="space-y-4">
+    <section *ngIf="!loading() && products().length > 0" class="space-y-3">
       <app-seller-product-card
         *ngFor="let p of products()"
         [product]="p"

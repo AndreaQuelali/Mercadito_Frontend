@@ -113,7 +113,7 @@ export type ProductSort = 'name_asc' | 'price_asc' | 'price_desc';
       <app-product-card *ngFor="let p of filtered()" [product]="p" class="animate-fade-in" />
     </section>
 
-    <div *ngIf="!loading() && filtered().length === 0" class="ui-panel max-w-xl">
+    <div *ngIf="!loading() && filtered().length === 0" class="ui-empty">
       <h2 class="ui-h2 mb-2">No se encontraron productos</h2>
       <p class="text-lg text-text-muted">Prueba con otro término, otro rubro o un rango de precio distinto.</p>
     </div>

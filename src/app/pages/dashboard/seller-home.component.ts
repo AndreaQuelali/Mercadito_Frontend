@@ -9,46 +9,36 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <header>
-      <p class="text-sm text-text-muted">Panel de gestión</p>
-      <h1 class="text-2xl font-display font-bold text-text-main mt-1">
-        {{ sellerSvc.mine()?.businessName || 'Tu puesto' }}
-      </h1>
-      <p class="text-text-muted mt-1 max-w-xl">
-        Gestiona productos y pedidos. Ventas e inventario llegan en una próxima versión.
-      </p>
+  <main class="ui-page space-y-8">
+    <header class="space-y-3">
+      <h1 class="ui-title">{{ sellerSvc.mine()?.businessName || 'Tu puesto' }}</h1>
+      <p class="ui-lead">Gestiona tus productos y pedidos. Ventas e inventario llegan en una próxima versión.</p>
     </header>
 
-    <div *ngIf="!auth.canManageStore()"
-         class="rounded-xl border border-secondary/30 bg-secondary-light px-4 py-3 text-sm text-text-main">
+    <p *ngIf="!auth.canManageStore()" class="ui-alert-warn">
       Tu puesto está suspendido. Puedes ver productos y órdenes, y editar el perfil del puesto.
-    </div>
+    </p>
 
-    <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <a routerLink="/dashboard/products"
-         class="rounded-2xl border border-border-subtle bg-surface p-5 hover:border-primary transition">
-        <h2 class="font-display font-semibold text-text-main">Productos</h2>
-        <p class="text-sm text-text-muted mt-1">Lista, alta y edición de tu catálogo.</p>
-        <span class="inline-block mt-3 text-sm font-semibold text-primary">Ir a productos</span>
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <a routerLink="/dashboard/products" class="ui-panel block hover:bg-surface-hover transition">
+        <h2 class="ui-h2 !text-2xl">Productos</h2>
+        <p class="text-text-muted mt-2">Lista, alta y edición de tu catálogo.</p>
+        <span class="ui-link inline-block mt-4">Ir a productos</span>
       </a>
-      <a routerLink="/dashboard/orders"
-         class="rounded-2xl border border-border-subtle bg-surface p-5 hover:border-primary transition">
-        <h2 class="font-display font-semibold text-text-main">Pedidos</h2>
-        <p class="text-sm text-text-muted mt-1">Órdenes de tus clientes y su estado.</p>
-        <span class="inline-block mt-3 text-sm font-semibold text-primary">Ver pedidos</span>
+      <a routerLink="/dashboard/orders" class="ui-panel block hover:bg-surface-hover transition">
+        <h2 class="ui-h2 !text-2xl">Pedidos</h2>
+        <p class="text-text-muted mt-2">Órdenes de tus clientes y su estado.</p>
+        <span class="ui-link inline-block mt-4">Ver pedidos</span>
       </a>
-      <a routerLink="/dashboard/sales"
-         class="rounded-2xl border border-dashed border-border-medium bg-surface p-5">
-        <h2 class="font-display font-semibold text-text-main">Ventas</h2>
-        <p class="text-sm text-text-muted mt-1">Métricas de ventas de tu puesto.</p>
-        <span class="inline-block mt-3 text-xs font-bold uppercase tracking-wide text-text-subtle">Próximamente</span>
+      <a routerLink="/dashboard/sales" class="ui-panel block opacity-80">
+        <h2 class="ui-h2 !text-2xl">Ventas</h2>
+        <p class="text-text-muted mt-2">Métricas de ventas de tu puesto.</p>
+        <span class="inline-block mt-4 font-semibold text-text-muted">Pronto</span>
       </a>
-      <a routerLink="/dashboard/inventory"
-         class="rounded-2xl border border-dashed border-border-medium bg-surface p-5">
-        <h2 class="font-display font-semibold text-text-main">Inventario</h2>
-        <p class="text-sm text-text-muted mt-1">Stock y control de existencias.</p>
-        <span class="inline-block mt-3 text-xs font-bold uppercase tracking-wide text-text-subtle">Próximamente</span>
+      <a routerLink="/dashboard/inventory" class="ui-panel block opacity-80">
+        <h2 class="ui-h2 !text-2xl">Inventario</h2>
+        <p class="text-text-muted mt-2">Stock y control de existencias.</p>
+        <span class="inline-block mt-4 font-semibold text-text-muted">Pronto</span>
       </a>
     </section>
   </main>

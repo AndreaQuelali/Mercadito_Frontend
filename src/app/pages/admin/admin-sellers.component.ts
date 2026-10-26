@@ -10,45 +10,38 @@ import { ToastService } from '../../services/toast.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">Sellers</h1>
-        <p class="text-slate-500 text-sm mt-1">Suspende o reactiva puestos de vendedores.</p>
-      </div>
-      <a routerLink="/home" class="text-sm text-slate-500 hover:text-slate-800">Inicio</a>
+  <main class="ui-page max-w-5xl">
+    <header class="space-y-3 mb-8">
+      <h1 class="ui-title">Vendedores</h1>
+      <p class="ui-lead">Suspende o reactiva los puestos de los vendedores.</p>
+    </header>
+
+    <div *ngIf="loading()" class="space-y-3">
+      <div *ngFor="let i of [1,2,3]" class="ui-skel h-24"></div>
     </div>
 
-    <div *ngIf="loading()" class="space-y-3 animate-pulse">
-      <div *ngFor="let i of [1,2,3]" class="h-20 bg-white rounded-xl border border-slate-200"></div>
-    </div>
-
-    <div *ngIf="!loading() && sellers().length === 0" class="text-center py-16 text-slate-500">
-      No hay sellers registrados.
+    <div *ngIf="!loading() && sellers().length === 0" class="ui-empty">
+      <h2 class="ui-h2">No hay vendedores registrados</h2>
     </div>
 
     <div *ngIf="!loading() && sellers().length > 0" class="space-y-3">
-      <article *ngFor="let s of sellers()"
-        class="bg-white rounded-xl border border-slate-200 px-5 py-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p class="font-semibold text-slate-900">{{ s.businessName }}</p>
-          <p class="text-sm text-slate-500" *ngIf="s.user">
-            {{ s.user.firstName }} {{ s.user.lastName }} · {{ s.user.email }}
-          </p>
-          <p class="text-xs text-slate-400 mt-0.5" *ngIf="s.location">{{ s.location }}</p>
+      <article *ngFor="let s of sellers()" class="ui-panel flex flex-wrap items-center justify-between gap-4">
+        <div class="min-w-0">
+          <p class="font-display text-2xl font-bold leading-tight">{{ s.businessName }}</p>
+          <p class="text-text-muted" *ngIf="s.user">{{ s.user.firstName }} {{ s.user.lastName }} · {{ s.user.email }}</p>
+          <p class="text-text-muted" *ngIf="s.location">{{ s.location }}</p>
         </div>
         <div class="flex items-center gap-3">
-          <span [class]="s.status === 'active'
-            ? 'text-xs font-medium px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-200'
-            : 'text-xs font-medium px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200'">
+          <span class="inline-block px-3 py-1 font-semibold" [ngClass]="s.status === 'active' ? 'st-delivered' : 'st-pending'">
             {{ s.status === 'active' ? 'Activo' : 'Suspendido' }}
           </span>
           <button
+            type="button"
             (click)="toggleStatus(s)"
             [disabled]="updating() === s.id"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+            class="ui-btn ui-btn-ghost ui-btn-sm"
           >
-            <span *ngIf="updating() === s.id" class="h-3 w-3 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></span>
+            <span *ngIf="updating() === s.id" class="h-3 w-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             {{ s.status === 'active' ? 'Suspender' : 'Reactivar' }}
           </button>
         </div>

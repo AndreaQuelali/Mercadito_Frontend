@@ -23,7 +23,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-36"></div>
     </div>
 
-    <div *ngIf="!loading() && orders().length === 0" class="ui-panel max-w-xl space-y-4">
+    <div *ngIf="!loading() && orders().length === 0" class="ui-empty">
       <h2 class="ui-h2">Aún no has hecho pedidos</h2>
       <p class="text-lg text-text-muted">Cuando hagas una compra, aparecerá aquí.</p>
       <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>

@@ -10,52 +10,40 @@ import { ToastService } from '../../services/toast.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-  <main class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-2xl font-bold text-slate-900">Mi tienda</h1>
-        <p class="text-slate-500 text-sm mt-1">Edita los datos de tu perfil de vendedor.</p>
-      </div>
-      <a routerLink="/dashboard" class="text-sm text-slate-500 hover:text-slate-800">Volver al panel</a>
-    </div>
+  <main class="ui-page max-w-2xl">
+    <header class="space-y-3 mb-8">
+      <h1 class="ui-title">Mi puesto</h1>
+      <p class="ui-lead">Edita los datos de tu perfil de vendedor.</p>
+    </header>
 
-    <div *ngIf="seller()?.status === 'suspended'"
-         class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-      Tu puesto está suspendido. Puedes editar estos datos, pero no publicar ni gestionar productos hasta que un admin lo reactive.
-    </div>
+    <p *ngIf="seller()?.status === 'suspended'" class="ui-alert-warn mb-6">
+      Tu puesto está suspendido. Puedes editar estos datos, pero no publicar ni gestionar productos hasta que un administrador lo reactive.
+    </p>
 
-    <div *ngIf="loading()" class="flex justify-center py-16">
-      <div class="h-8 w-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    <div *ngIf="loading()" class="ui-skel h-64"></div>
 
-    <form *ngIf="!loading() && seller()" (ngSubmit)="onSubmit()"
-          class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">Nombre del puesto *</label>
-        <input [(ngModel)]="model.businessName" name="businessName" type="text" required
-          class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" />
-      </div>
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">Descripción</label>
-        <textarea [(ngModel)]="model.description" name="description" rows="3"
-          class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-      </div>
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">Ubicación</label>
-        <input [(ngModel)]="model.location" name="location" type="text"
-          class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" />
-      </div>
-      <div>
-        <label class="block text-sm text-slate-600 mb-1">URL del logo / avatar</label>
-        <input [(ngModel)]="model.avatarUrl" name="avatarUrl" type="url"
-          class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" />
-      </div>
+    <form *ngIf="!loading() && seller()" (ngSubmit)="onSubmit()" class="ui-panel space-y-5">
+      <label class="block">
+        <span class="ui-label">Nombre del puesto *</span>
+        <input id="st-name" [(ngModel)]="model.businessName" name="businessName" type="text" required class="ui-field" />
+      </label>
+      <label class="block">
+        <span class="ui-label">Descripción</span>
+        <textarea id="st-desc" [(ngModel)]="model.description" name="description" rows="3" class="ui-field"></textarea>
+      </label>
+      <label class="block">
+        <span class="ui-label">Ubicación</span>
+        <input id="st-location" [(ngModel)]="model.location" name="location" type="text" class="ui-field" />
+      </label>
+      <label class="block">
+        <span class="ui-label">URL del logo o avatar</span>
+        <input id="st-avatar" [(ngModel)]="model.avatarUrl" name="avatarUrl" type="url" class="ui-field" />
+      </label>
 
-      <div *ngIf="errorMsg()" class="text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3">{{ errorMsg() }}</div>
+      <p *ngIf="errorMsg()" class="ui-alert-error" role="alert">{{ errorMsg() }}</p>
 
-      <button type="submit" [disabled]="saving()"
-        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50">
-        <span *ngIf="saving()" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+      <button id="st-submit" type="submit" [disabled]="saving()" class="ui-btn">
+        <span *ngIf="saving()" class="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
         Guardar cambios
       </button>
     </form>

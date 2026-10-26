@@ -23,7 +23,7 @@ import { ToastService } from '../../services/toast.service';
     <div *ngIf="!orderId()" class="space-y-8">
       <h1 class="ui-title">Confirmar pedido</h1>
 
-      <div *ngIf="cart.items().length === 0" class="ui-panel space-y-3">
+      <div *ngIf="cart.items().length === 0" class="ui-empty">
         <p class="text-lg">Tu carrito está vacío.</p>
         <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>
       </div>

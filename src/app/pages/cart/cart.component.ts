@@ -12,7 +12,7 @@ import { ToastService } from '../../services/toast.service';
   <main class="ui-page max-w-6xl">
     <h1 class="ui-title mb-8">Mi carrito</h1>
 
-    <div *ngIf="cart.items().length === 0 && !loading" class="ui-panel max-w-xl space-y-4">
+    <div *ngIf="cart.items().length === 0 && !loading" class="ui-empty">
       <h2 class="ui-h2">Tu carrito está vacío</h2>
       <p class="text-lg text-text-muted">Explora el catálogo y agrega lo que necesites de los puestos.</p>
       <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>
