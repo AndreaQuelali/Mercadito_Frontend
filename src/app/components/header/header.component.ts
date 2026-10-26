@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,6 @@ import { CartService } from '../../services/cart.service';
   <header class="app-header">
     <div class="app-header__inner">
       <a [routerLink]="auth.isLoggedIn() ? '/home' : '/'" class="app-header__brand" aria-label="Mercadito">
-        <span class="brand-dot" aria-hidden="true"></span>
         <span class="brand-text">Mercadito</span>
       </a>
 
@@ -32,6 +32,15 @@ import { CartService } from '../../services/cart.service';
       </div>
 
       <nav class="app-header__nav" aria-label="Acciones">
+        <button
+          type="button"
+          class="icon-btn"
+          (click)="theme.toggle()"
+          [attr.aria-label]="theme.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        >
+          <svg *ngIf="!theme.isDark()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.35 15.35A9 9 0 0 1 8.65 3.65 9 9 0 1 0 20.35 15.35z"/></svg>
+          <svg *ngIf="theme.isDark()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
         <ng-container *ngIf="!auth.isLoggedIn()">
           <a routerLink="/auth/login" class="nav-text hidden-sm">Entrar</a>
           <a routerLink="/auth/register" class="btn-nav-primary">Crear cuenta</a>
@@ -87,7 +96,7 @@ import { CartService } from '../../services/cart.service';
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0 1 18 9.375v9.375a3 3 0 0 0 3-3V6.108c0-1.505-1.125-2.811-2.664-2.94A3 3 0 0 0 15 1.5h-1.5a3 3 0 0 0-2.663 1.618C8.662 3.295 7.554 4.542 7.502 6ZM13.5 3A1.5 1.5 0 0 0 12 4.5h4.5A1.5 1.5 0 0 0 15 3h-1.5Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V9.375Z" clip-rule="evenodd"/></svg>
                 Mis pedidos
               </a>
-              <hr>
+              <hr class="menu-sep">
               <button type="button" class="user-menu__logout" (click)="auth.logout()">
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
                 Cerrar sesión
@@ -97,6 +106,7 @@ import { CartService } from '../../services/cart.service';
         </ng-container>
       </nav>
     </div>
+    <div class="band" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   </header>
   `,
   styleUrls: ['./header.component.css'],
@@ -105,6 +115,7 @@ export class HeaderComponent {
   private searchSvc = inject(SearchService);
   private router = inject(Router);
   auth = inject(AuthService);
+  theme = inject(ThemeService);
   cartSvc = inject(CartService);
 
   menuOpen = signal(false);
