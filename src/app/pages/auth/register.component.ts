@@ -31,11 +31,12 @@ import {
   ],
   template: `
     <auth-layout
+      photo="calle"
       quote="Únete a la comunidad de tu mercado local."
       subtitle="Miles de productos frescos y artesanales, cerca de ti."
     >
-      <h1 class="text-3xl font-display font-bold text-text-main mb-2">Crear cuenta</h1>
-      <p class="text-text-muted mb-8">Empieza a comprar y vender en tu comunidad</p>
+      <h1 class="text-4xl font-display font-bold text-text-main mb-2 leading-tight">Crear cuenta</h1>
+      <p class="text-text-muted text-lg mb-8">Empieza a comprar y vender en tu comunidad</p>
 
       <form (ngSubmit)="onSubmit()" class="space-y-4" novalidate>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -115,7 +116,7 @@ import {
 
       <p class="mt-6 text-center text-sm text-text-muted">
         ¿Ya tienes cuenta?
-        <a routerLink="/auth/login" class="text-primary font-medium hover:underline">Inicia sesión</a>
+        <a routerLink="/auth/login" class="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">Inicia sesión</a>
       </p>
     </auth-layout>
   `,

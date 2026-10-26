@@ -28,7 +28,7 @@ let nextId = 0;
       <label
         *ngIf="label"
         [attr.for]="fieldId"
-        class="block text-sm font-medium text-text-main mb-1.5"
+        class="block text-base font-semibold text-text-main mb-1.5"
       >
         {{ label }}
       </label>
@@ -47,9 +47,9 @@ let nextId = 0;
           [value]="value"
           (input)="onInput($event)"
           (blur)="handleBlur()"
-          class="w-full bg-surface border border-border-medium rounded-xl px-4 py-3
-                 text-text-main placeholder:text-text-subtle
-                 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+          class="w-full bg-surface border-2 border-border-medium px-4 py-3
+                 text-text-main placeholder:text-text-muted
+                 focus:outline-none focus:border-primary
                  transition disabled:opacity-60"
           [class.pr-12]="type === 'password'"
           [class.border-danger]="!!error"
@@ -57,8 +57,8 @@ let nextId = 0;
         <button
           *ngIf="type === 'password'"
           type="button"
-          class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg
-                 text-text-subtle hover:text-text-main transition"
+          class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5
+                 text-text-muted hover:text-text-main transition"
           [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
           (click)="togglePassword()"
         >
@@ -71,8 +71,8 @@ let nextId = 0;
           </svg>
         </button>
       </div>
-      <p *ngIf="error" [id]="hintOrErrorId" class="mt-1.5 text-sm text-danger">{{ error }}</p>
-      <p *ngIf="!error && hint" [id]="hintOrErrorId" class="mt-1.5 text-sm text-text-subtle">{{ hint }}</p>
+      <p *ngIf="error" [id]="hintOrErrorId" class="mt-1.5 text-sm font-medium text-danger">{{ error }}</p>
+      <p *ngIf="!error && hint" [id]="hintOrErrorId" class="mt-1.5 text-sm text-text-muted">{{ hint }}</p>
     </div>
   `,
 })

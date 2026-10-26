@@ -27,12 +27,12 @@ import {
     UiAlertComponent,
   ],
   template: `
-    <auth-layout
+    <auth-layout photo="pan"
       quote="Recupera el acceso a tu puesto."
       subtitle="Te enviaremos un enlace si el correo está registrado."
     >
-      <h1 class="text-3xl font-display font-bold text-text-main mb-2">¿Olvidaste tu contraseña?</h1>
-      <p class="text-text-muted mb-8">
+      <h1 class="text-4xl font-display font-bold text-text-main mb-2 leading-tight">¿Olvidaste tu contraseña?</h1>
+      <p class="text-text-muted text-lg mb-8">
         Ingresa tu correo y te enviaremos instrucciones para restablecerla.
       </p>
 
@@ -68,15 +68,14 @@ import {
         </ui-alert>
         <a
           routerLink="/auth/login"
-          class="inline-flex w-full items-center justify-center font-semibold rounded-xl py-3 px-4
-                 bg-primary hover:bg-primary-hover text-white transition"
+          class="inline-flex w-full items-center justify-center font-semibold min-h-[52px] px-6 bg-primary hover:bg-primary-hover text-on-primary transition"
         >
           Volver al inicio de sesión
         </a>
       </div>
 
       <p *ngIf="!sent()" class="mt-6 text-center text-sm text-text-muted">
-        <a routerLink="/auth/login" class="text-primary font-medium hover:underline">Volver al inicio de sesión</a>
+        <a routerLink="/auth/login" class="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">Volver al inicio de sesión</a>
       </p>
     </auth-layout>
   `,

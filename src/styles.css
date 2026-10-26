@@ -4,9 +4,9 @@
 
 :root {
   /* Mercado Boliviano Theme Tokens - Light Mode */
-  --color-primary: #C65A3A;         /* 🧱 Terracota */
-  --color-primary-hover: #B04B2D;
-  --color-primary-light: #F9ECE8;
+  --color-primary: #B3412C;         /* 🧱 Terracota */
+  --color-primary-hover: #8F3322;
+  --color-primary-light: #F6E4DF;
 
   --color-secondary: #D9A441;       /* 🌽 Maíz */
   --color-secondary-hover: #C59132;
@@ -22,19 +22,19 @@
   --color-accent-teal: #3E9C9A;     /* 🩵 Turquesa */
   --color-accent-teal-light: #EBF6F6;
 
-  --color-bg-base: #fffefc;         /* 🥛 Crema */
-  --color-bg-surface: #FFFFFF;
+  --color-bg-base: #FDFBF8;         /* 🥛 Crema claro */
+  --color-bg-surface: #FFFEFC;
   --color-bg-surface-elevated: #FFFBF5;
-  --color-bg-subtle: #EFE7D8;
+  --color-bg-subtle: #F1E7DA;
 
   --color-text-main: #3A2A22;       /* 🪵 Café Tierra */
   --color-text-muted: #6B574C;
   --color-text-subtle: #968377;
-  --color-text-on-primary: #FFFFFF;
+  --color-text-on-primary: #FDFBF8;
 
   --color-border-subtle: #E6DCCD;
   --color-border-medium: #D4C6B1;
-  --color-border-focus: #C65A3A;
+  --color-border-focus: #B3412C;
 
   --color-danger: #B42318;
   --color-danger-bg: #FEF3F2;
@@ -46,7 +46,7 @@
   --shadow-sm: 0 2px 8px rgba(58, 42, 34, 0.05);
   --shadow-md: 0 4px 20px rgba(58, 42, 34, 0.08);
   --shadow-lg: 0 12px 36px rgba(58, 42, 34, 0.12);
-  --shadow-primary: 0 6px 24px rgba(198, 90, 58, 0.25);
+  --shadow-primary: none;
 }
 
 /* Dark Mode Tokens */
@@ -77,7 +77,7 @@
   --color-text-main: #F7F0E3;       /* Crema text in dark mode */
   --color-text-muted: #C8BDB2;
   --color-text-subtle: #968679;
-  --color-text-on-primary: #FFFFFF;
+  --color-text-on-primary: #1C1613;
 
   --color-border-subtle: #3D3029;
   --color-border-medium: #54433A;
@@ -104,18 +104,18 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   body {
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Libre Franklin', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3 {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Besley', Georgia, serif;
     font-weight: 700;
   }
 
   .font-display {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Besley', Georgia, serif;
   }
 
   html {

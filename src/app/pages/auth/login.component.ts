@@ -29,11 +29,12 @@ import {
   ],
   template: `
     <auth-layout
+      photo="verduras"
       quote="El mercado local, en la palma de tu mano."
       subtitle="Conectamos productores y compradores de tu comunidad."
     >
-      <h1 class="text-3xl font-display font-bold text-text-main mb-2">Bienvenido de vuelta</h1>
-      <p class="text-text-muted mb-8">Ingresa a tu cuenta para continuar</p>
+      <h1 class="text-4xl font-display font-bold text-text-main mb-2 leading-tight">Bienvenido de vuelta</h1>
+      <p class="text-text-muted text-lg mb-8">Ingresa a tu cuenta para continuar</p>
 
       <form (ngSubmit)="onSubmit()" class="space-y-5" novalidate>
         <ui-field
@@ -63,7 +64,7 @@ import {
           <div class="mt-2 text-right">
             <a
               routerLink="/auth/forgot-password"
-              class="text-sm text-primary font-medium hover:underline"
+              class="text-sm text-primary font-semibold underline underline-offset-4 hover:text-primary-hover"
             >
               ¿Olvidaste tu contraseña?
             </a>
@@ -85,7 +86,7 @@ import {
 
       <p class="mt-6 text-center text-sm text-text-muted">
         ¿No tienes cuenta?
-        <a routerLink="/auth/register" class="text-primary font-medium hover:underline">Regístrate gratis</a>
+        <a routerLink="/auth/register" class="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">Regístrate gratis</a>
       </p>
     </auth-layout>
   `,

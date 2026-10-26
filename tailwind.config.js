@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Fraunces"', 'Georgia', 'serif'],
-        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Besley"', 'Georgia', 'serif'],
+        sans: ['"Libre Franklin"', 'system-ui', 'sans-serif'],
         mono: ['"DM Mono"', 'monospace'],
       },
       colors: {
@@ -35,6 +35,7 @@ module.exports = {
           light: 'var(--color-accent-teal-light)',
         },
         base: 'var(--color-bg-base)',
+        'on-primary': 'var(--color-text-on-primary)',
         surface: {
           DEFAULT: 'var(--color-bg-surface)',
           elevated: 'var(--color-bg-surface-elevated)',

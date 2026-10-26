@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
       [type]="type"
       [disabled]="isInactive"
       [attr.aria-busy]="loading || null"
-      class="inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition
+      class="inline-flex items-center justify-center gap-2 font-semibold transition
              focus-visible:outline-none"
       [ngClass]="classes"
     >
@@ -39,7 +39,7 @@ export class UiButtonComponent {
   }
 
   get classes(): string {
-    const base = this.fullWidth ? 'w-full py-3 px-4' : 'px-4 py-2.5';
+    const base = this.fullWidth ? 'w-full min-h-[52px] px-6' : 'min-h-[52px] px-6';
     if (this.isInactive) {
       return `${base} bg-surface-subtle text-text-subtle border border-border-subtle
               cursor-not-allowed shadow-none`;
@@ -48,6 +48,6 @@ export class UiButtonComponent {
       return `${base} bg-transparent text-text-muted border border-border-medium
               hover:bg-surface-subtle hover:text-text-main`;
     }
-    return `${base} bg-primary hover:bg-primary-hover text-white shadow-theme-primary border border-transparent`;
+    return `${base} bg-primary hover:bg-primary-hover text-on-primary border border-transparent`;
   }
 }

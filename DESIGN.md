@@ -12,10 +12,10 @@ Conforme a lo estipulado en [`colores.md`](../colores.md), **los nombres de los 
 
 | Token Semántico | Referencia Cultural | Color HEX (Claro) | Color HEX (Oscuro) | Uso Principal |
 | :--- | :--- | :--- | :--- | :--- |
-| `primary` | Terracota | `#C65A3A` | `#E07A5F` | Botones principales, CTAs, elementos destacados |
+| `primary` | Terracota | `#B3412C` | `#E0704F` | Botones principales, CTAs, elementos destacados |
 | `secondary` | Maíz | `#D9A441` | `#F2C94C` | Destacados secundarios, badges especiales |
 | `success` | Verde Hoja | `#5F7745` | `#81B29A` | Estados de éxito, productos frescos, confirmaciones |
-| `background` | Crema | `#F7F0E3` | `#121212` | Fondo principal de la aplicación y páginas |
+| `background` | Crema claro | `#FDFBF8` | `#121212` | Fondo principal de la aplicación y páginas |
 | `surface` | Blanco Mármol / Grafito | `#FFFFFF` | `#1E1E1E` | Tarjetas, contenedores elevadas, paneles |
 | `text` | Café Tierra | `#3A2A22` | `#F4F1DE` | Texto principal, encabezados, cuerpo de texto |
 | `text-muted` | Café Claro / Gris | `#6E5D53` | `#A09A95` | Textos secundarios, descripciones, fechas |
@@ -86,7 +86,8 @@ La aplicación implementa soporte nativo para el modo oscuro alternando la clase
 
 ## 4. Tipografía y Jerarquía Visual
 
-- **Fuente Primaria**: 'Inter', 'Outfit', system-ui, sans-serif.
+- **Fuente Primaria**: 'Libre Franklin' (texto) y 'Besley' (títulos, `font-display`), con system-ui y Georgia como respaldo.
+- **Rediseño (rama feat/ui-redesign)**: esquinas rectas, sin sombras en reposo ni degradados, y la franja de aguayo como detalle de marca.
 - **Escala Tipográfica**:
   - `H1` / Título Principal: `text-3xl lg:text-4xl font-bold tracking-tight text-text`
   - `H2` / Sección: `text-2xl font-semibold text-text`

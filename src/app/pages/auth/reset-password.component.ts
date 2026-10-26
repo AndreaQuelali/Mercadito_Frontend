@@ -28,12 +28,12 @@ import {
     UiAlertComponent,
   ],
   template: `
-    <auth-layout
+    <auth-layout photo="queso"
       quote="Elige una contraseña nueva."
       subtitle="El enlace de recuperación es válido por un tiempo limitado."
     >
-      <h1 class="text-3xl font-display font-bold text-text-main mb-2">Nueva contraseña</h1>
-      <p class="text-text-muted mb-8">Ingresa y confirma tu nueva contraseña.</p>
+      <h1 class="text-4xl font-display font-bold text-text-main mb-2 leading-tight">Nueva contraseña</h1>
+      <p class="text-text-muted text-lg mb-8">Ingresa y confirma tu nueva contraseña.</p>
 
       <div *ngIf="!token" class="mb-5">
         <ui-alert tone="error">
@@ -84,8 +84,7 @@ import {
         <ui-alert tone="success">Contraseña actualizada. Ya puedes iniciar sesión.</ui-alert>
         <a
           routerLink="/auth/login"
-          class="inline-flex w-full items-center justify-center font-semibold rounded-xl py-3 px-4
-                 bg-primary hover:bg-primary-hover text-white transition"
+          class="inline-flex w-full items-center justify-center font-semibold min-h-[52px] px-6 bg-primary hover:bg-primary-hover text-on-primary transition"
         >
           Ir a iniciar sesión
         </a>
