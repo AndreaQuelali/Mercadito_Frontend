@@ -26,71 +26,67 @@ export type ProductSort = 'name_asc' | 'price_asc' | 'price_desc';
   standalone: true,
   imports: [CommonModule, FormsModule, ProductCardComponent],
   template: `
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-display font-bold text-text-main">Catálogo</h1>
-        <p class="text-sm text-text-muted">Busca, filtra y ordena productos del mercado.</p>
-      </div>
-    </div>
+  <main class="ui-page space-y-8">
+    <header class="space-y-3">
+      <h1 class="ui-title">Catálogo</h1>
+      <p class="ui-lead">Busca, filtra y ordena lo que hay hoy en los puestos del mercado.</p>
+    </header>
 
-    <!-- Filters -->
-    <div class="space-y-4 rounded-2xl border border-border-subtle bg-surface p-4">
-      <div class="flex flex-wrap gap-2">
+    <div class="ui-panel space-y-5">
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Rubros">
         <button
           *ngFor="let c of categories"
           type="button"
           (click)="selectCategory(c.key)"
-          class="px-4 py-1.5 rounded-full border text-sm font-medium transition-all"
-          [ngClass]="activeCategory() === c.key
-            ? 'bg-primary text-white border-primary'
-            : 'bg-surface text-text-muted border-border-medium hover:border-primary hover:text-text-main'"
+          class="ui-chip on-panel"
+          [class.is-active]="activeCategory() === c.key"
+          [attr.aria-pressed]="activeCategory() === c.key"
         >
           {{ c.label }}
         </button>
       </div>
 
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label class="block text-sm">
-          <span class="text-text-muted mb-1 block">Buscar</span>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <label class="block">
+          <span class="ui-label">Buscar</span>
           <input
+            id="catalog-search"
             type="search"
-            class="w-full rounded-xl border border-border-medium bg-base px-3 py-2 text-sm text-text-main
-                   focus:outline-none focus:ring-2 focus:ring-primary"
+            class="ui-field"
             placeholder="Nombre o descripción"
             [ngModel]="localQuery()"
             (ngModelChange)="onQueryChange($event)"
           />
         </label>
-        <label class="block text-sm">
-          <span class="text-text-muted mb-1 block">Precio mín.</span>
+        <label class="block">
+          <span class="ui-label">Precio mín. (Bs)</span>
           <input
+            id="catalog-min"
             type="number"
             min="0"
-            class="w-full rounded-xl border border-border-medium bg-base px-3 py-2 text-sm text-text-main
-                   focus:outline-none focus:ring-2 focus:ring-primary"
+            class="ui-field"
             placeholder="0"
             [ngModel]="minPrice()"
             (ngModelChange)="onMinPriceChange($event)"
           />
         </label>
-        <label class="block text-sm">
-          <span class="text-text-muted mb-1 block">Precio máx.</span>
+        <label class="block">
+          <span class="ui-label">Precio máx. (Bs)</span>
           <input
+            id="catalog-max"
             type="number"
             min="0"
-            class="w-full rounded-xl border border-border-medium bg-base px-3 py-2 text-sm text-text-main
-                   focus:outline-none focus:ring-2 focus:ring-primary"
+            class="ui-field"
             placeholder="Sin límite"
             [ngModel]="maxPrice()"
             (ngModelChange)="onMaxPriceChange($event)"
           />
         </label>
-        <label class="block text-sm">
-          <span class="text-text-muted mb-1 block">Ordenar</span>
+        <label class="block">
+          <span class="ui-label">Ordenar</span>
           <select
-            class="w-full rounded-xl border border-border-medium bg-base px-3 py-2 text-sm text-text-main
-                   focus:outline-none focus:ring-2 focus:ring-primary"
+            id="catalog-sort"
+            class="ui-field"
             [ngModel]="sort()"
             (ngModelChange)="onSortChange($event)"
           >
@@ -103,28 +99,23 @@ export type ProductSort = 'name_asc' | 'price_asc' | 'price_desc';
     </div>
 
     <section *ngIf="loading()" class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="bg-white rounded-xl shadow-card overflow-hidden">
-        <div class="aspect-[4/3] skeleton"></div>
+      <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="ui-panel !p-0">
+        <div class="aspect-[4/3] ui-skel"></div>
         <div class="p-4 space-y-3">
-          <div class="skeleton h-4 w-2/3"></div>
-          <div class="skeleton h-3 w-full"></div>
-          <div class="skeleton h-3 w-4/5"></div>
+          <div class="ui-skel h-5 w-2/3"></div>
+          <div class="ui-skel h-4 w-full"></div>
+          <div class="ui-skel h-4 w-4/5"></div>
         </div>
       </div>
     </section>
 
     <section *ngIf="!loading()" class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <app-product-card
-        *ngFor="let p of filtered()"
-        [product]="p"
-        class="animate-fade-in"
-      />
+      <app-product-card *ngFor="let p of filtered()" [product]="p" class="animate-fade-in" />
     </section>
 
-    <div *ngIf="!loading() && filtered().length === 0"
-         class="flex flex-col items-center py-20 text-center">
-      <p class="text-text-main font-medium">No se encontraron productos</p>
-      <p class="text-text-subtle text-sm mt-1">Prueba con otro término, categoría o rango de precio.</p>
+    <div *ngIf="!loading() && filtered().length === 0" class="ui-panel max-w-xl">
+      <h2 class="ui-h2 mb-2">No se encontraron productos</h2>
+      <p class="text-lg text-text-muted">Prueba con otro término, otro rubro o un rango de precio distinto.</p>
     </div>
   </main>
   `,
