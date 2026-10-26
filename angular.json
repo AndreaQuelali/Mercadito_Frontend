@@ -24,6 +24,11 @@
               "src/robots.txt",
               "src/sitemap.xml",
               "src/llms.txt",
+              {
+                "glob": "**/*",
+                "input": "src/.well-known",
+                "output": ".well-known"
+              },
               "src/assets"
             ],
             "styles": [
@@ -45,7 +50,8 @@
                   "maximumError": "40kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "sourceMap": { "scripts": true, "hidden": false }
             },
             "development": {
               "buildOptimizer": false,

@@ -92,8 +92,8 @@
   <!-- Hero Section -->
   <section class="landing-hero" aria-label="Mercadito Hero">
     <!-- Full Background Media & Dark Veil Overlay -->
-    <div class="landing-hero__media" [style.backgroundImage]="'url(' + heroImage + ')'" role="img"
-      aria-label="Puesto de mercado con frutas y verduras frescas"></div>
+    <img class="landing-hero__media" [src]="heroImage" [attr.srcset]="heroSrcset" sizes="100vw"
+      alt="Puesto de mercado con frutas y verduras frescas" decoding="async" width="1600" height="1067" />
     <div class="landing-hero__veil" aria-hidden="true"></div>
     <div class="landing-hero__grain" aria-hidden="true"></div>
 
@@ -465,7 +465,7 @@
       </div>
 
       <div>
-        <h4 class="footer-heading font-mono">EXPLORAR</h4>
+        <h2 class="footer-heading font-mono">EXPLORAR</h2>
         <ul class="footer-links">
           <li><a routerLink="/products">Todos los productos</a></li>
           <li><a href="#caracteristicas">Ventajas</a></li>
@@ -475,7 +475,7 @@
       </div>
 
       <div>
-        <h4 class="footer-heading font-mono">MI CUENTA</h4>
+        <h2 class="footer-heading font-mono">MI CUENTA</h2>
         <ul class="footer-links">
           <li><a routerLink="/auth/login">Iniciar sesión</a></li>
           <li><a routerLink="/auth/register">Crear cuenta</a></li>
@@ -484,7 +484,7 @@
       </div>
 
       <div>
-        <h4 class="footer-heading font-mono">CONTACTO</h4>
+        <h2 class="footer-heading font-mono">CONTACTO</h2>
         <ul class="footer-links">
           <li><a href="mailto:hola@mercadito.app">hola@mercadito.app</a></li>
           <li class="text-xs text-gray-400">Red de Mercados Cercanos</li>
