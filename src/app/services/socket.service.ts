@@ -41,6 +41,26 @@ export class SocketService implements OnDestroy {
       const d = data as { orderId: number; status: string };
       this.toast.info(`Tu pedido #${d.orderId} cambió a: ${d.status}`);
     });
+
+    // Seller events
+    this.socket.on('order:new', (data: unknown) => {
+      const d = data as { orderId: number; items: { name: string; quantity: number }[] };
+      const count = d.items.reduce((sum, i) => sum + i.quantity, 0);
+      this.toast.info(`Nuevo pedido #${d.orderId}: ${count} ${count === 1 ? 'unidad' : 'unidades'} de tus productos`);
+    });
+
+    this.socket.on('stock:low', (data: unknown) => {
+      const d = data as { name: string; stock: number };
+      const msg = d.stock === 0
+        ? `Se agotó el stock de "${d.name}"`
+        : `Stock bajo en "${d.name}": quedan ${d.stock}`;
+      this.toast.show(msg, 'info', 6000);
+    });
+
+    this.socket.on('review:new', (data: unknown) => {
+      const d = data as { name: string; rating: number };
+      this.toast.info(`Nueva reseña de ${d.rating}★ en "${d.name}"`);
+    });
   }
 
   disconnect(): void {
