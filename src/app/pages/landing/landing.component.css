@@ -413,78 +413,182 @@ a {
   padding: 22px 20px;
 }
 
-/* Cómo funciona */
-.slips {
+/* Cómo funciona: mostrador con pestañas */
+.counter {
+  --lane: var(--l-green);
+  --on-lane: var(--l-on-green);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--m);
-  align-items: start;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(18px, 3vw, 40px);
+  align-items: stretch;
+  background: var(--l-surface);
+  border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 36px);
 }
-.slip {
-  --p: clamp(24px, 3vw, 44px);
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 32px), calc(100% - 32px) 100%, 0 100%);
+.counter.is-sell {
+  --lane: var(--l-gold);
+  --on-lane: var(--l-on-gold);
 }
-.slip-buy {
-  background: var(--l-green);
-  color: var(--l-on-green);
+.cphoto {
+  position: relative;
+  margin: 0;
+  min-height: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--color-bg-inverse);
 }
-.slip-sell {
-  background: var(--l-gold);
-  color: var(--l-on-gold);
-}
-.slip img {
+.cphoto img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
-.slip-in {
-  padding: var(--p) var(--p) calc(var(--p) + 24px);
+.cphoto img.on {
+  opacity: 1;
 }
-.slip h3 {
-  font-size: clamp(2.4rem, 1.7rem + 2.2vw, 3.6rem);
-  margin-bottom: 4px;
+.cphoto figcaption {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 2;
+  background: rgba(42, 30, 24, 0.82);
+  color: var(--color-text-on-inverse);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  font-size: 0.9286rem;
 }
-.slip .sub {
-  font-size: var(--lead);
-  margin-bottom: 28px;
+.cpanel {
+  display: grid;
+  gap: 20px;
+  align-content: start;
 }
-.slip ol {
+.seg {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: var(--l-bg);
+  padding: 6px;
+  border-radius: calc(var(--radius) + 4px);
+  width: max-content;
+  max-width: 100%;
+}
+.seg button {
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--l-ink);
+  font: 600 1.0625rem/1 var(--sans);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.seg button[aria-selected='true'] {
+  background: var(--lane);
+  color: var(--on-lane);
+}
+.seg button:not([aria-selected='true']):hover {
+  background: var(--l-surface);
+}
+.panelset {
+  display: grid;
+  gap: 20px;
+  animation: flow-in 0.35s ease;
+}
+@keyframes flow-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.panelset h3 {
+  font-size: clamp(1.9rem, 1.5rem + 1.4vw, 2.6rem);
+}
+.csteps {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 22px;
-  position: relative;
 }
-.slip ol::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 10px;
-  bottom: 10px;
-  border-left: 4px dotted currentColor;
-  opacity: 0.6;
-}
-.slip li {
+.csteps li {
   display: grid;
-  gap: 2px;
-  padding-left: 44px;
+  grid-template-columns: 44px 1fr;
+  column-gap: 16px;
+  padding-bottom: 18px;
   position: relative;
 }
-.slip li::before {
+.csteps li:last-child {
+  padding-bottom: 0;
+}
+.csteps li::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 5px;
-  width: 18px;
-  height: 18px;
-  background: currentColor;
+  left: 19px;
+  top: 44px;
+  bottom: 0;
+  border-left: 4px dotted var(--lane);
+  opacity: 0.7;
 }
-.slip li b {
+.csteps li:last-child::before {
+  display: none;
+}
+.csteps .ic {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--lane);
+  color: var(--on-lane);
+  display: grid;
+  place-items: center;
+}
+.csteps .ic svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.csteps h4 {
   font: 700 1.35rem/1.2 var(--serif);
+  letter-spacing: -0.01em;
+  margin: 2px 0 0;
 }
-.slip li span {
-  font-size: 1.125rem;
+.csteps p {
+  color: var(--l-muted);
+}
+.cfoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+}
+.cfoot .btn {
+  background: var(--lane);
+  color: var(--on-lane);
+}
+.cfoot .btn:hover {
+  background: var(--lane);
+  filter: brightness(0.92);
+}
+.swap {
+  font: 600 1rem/1.3 var(--sans);
+  color: var(--l-ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 10px 0;
+  min-height: 44px;
 }
 
 /* Hecho para el barrio */
@@ -647,6 +751,13 @@ a {
   }
 }
 @media (max-width: 900px) {
+  .counter {
+    grid-template-columns: 1fr;
+  }
+  .cphoto {
+    min-height: 220px;
+    order: -1;
+  }
   :host {
     --nav-h: 72px;
   }
@@ -689,9 +800,6 @@ a {
   }
 }
 @media (max-width: 640px) {
-  .slips {
-    grid-template-columns: 1fr;
-  }
   .bar-login,
   #landing-sell-nav {
     display: none;

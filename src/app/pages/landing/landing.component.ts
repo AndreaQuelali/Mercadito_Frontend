@@ -132,6 +132,59 @@ const FAQ: FaqItem[] = [
   },
 ];
 
+type FlowRole = 'buy' | 'sell';
+type FlowIcon = 'search' | 'cart' | 'check' | 'box' | 'user' | 'store' | 'camera' | 'clipboard';
+
+interface FlowStep {
+  icon: FlowIcon;
+  title: string;
+  text: string;
+}
+
+interface Flow {
+  key: FlowRole;
+  tab: string;
+  title: string;
+  photo: string;
+  photoAlt: string;
+  caption: string;
+  steps: FlowStep[];
+  switchLabel: string;
+}
+
+const FLOWS: Record<FlowRole, Flow> = {
+  buy: {
+    key: 'buy',
+    tab: 'Quiero comprar',
+    title: 'Del catálogo a tu mesa',
+    photo: 'assets/landing/frutas-punata.jpg',
+    photoAlt: 'Cajones de frutas en un puesto del mercado de Punata',
+    caption: 'Mercado de Punata, Cochabamba',
+    steps: [
+      { icon: 'search', title: 'Explora el catálogo', text: 'Por rubro y por puesto.' },
+      { icon: 'cart', title: 'Arma tu carrito', text: 'Suma productos de varios puestos.' },
+      { icon: 'check', title: 'Confirma tu pedido', text: 'Inicias sesión y el puesto lo recibe.' },
+      { icon: 'box', title: 'Retira o recibe', text: 'En el mercado o en tu zona, como acuerden.' },
+    ],
+    switchLabel: 'Mira cómo lo vive el puesto →',
+  },
+  sell: {
+    key: 'sell',
+    tab: 'Quiero vender',
+    title: 'Tu puesto, en línea',
+    photo: 'assets/landing/calle-cliza.jpg',
+    photoAlt: 'Una vendedora empuja su carretilla por una calle de mercado en Cliza',
+    caption: 'Calle de mercado, Cliza',
+    steps: [
+      { icon: 'user', title: 'Crea tu cuenta', text: 'Es la misma con la que compras.' },
+      { icon: 'store', title: 'Elige “Quiero vender”', text: 'Y arma el perfil de tu puesto.' },
+      { icon: 'camera', title: 'Publica tus productos', text: 'Con precio, stock e imagen.' },
+      { icon: 'clipboard', title: 'Gestiona tus órdenes', text: 'Desde el celular, a tu ritmo.' },
+    ],
+    switchLabel: 'Mira cómo lo vive el comprador →',
+  },
+};
+
 const SLIDE_INTERVAL_MS = 5500;
 
 @Component({
@@ -158,7 +211,10 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   allProducts = signal<ProductCard[]>([]);
   loadingProducts = signal(true);
   mobileMenuOpen = signal(false);
+  flowRole = signal<FlowRole>('buy');
+  readonly flows = FLOWS;
 
+  flow = computed(() => FLOWS[this.flowRole()]);
   currentSlide = computed(() => this.slides[this.slideIndex()]);
   currentCategory = computed(
     () => this.categories.find((c) => c.key === this.selectedCategory()) ?? this.categories[0]
@@ -195,6 +251,22 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   sellLabel(): string {
     if (this.auth.hasSeller()) return 'Ir a mi tienda';
     return 'Quiero vender';
+  }
+
+  trackFlow(_: number, f: Flow): FlowRole {
+    return f.key;
+  }
+
+  setFlowRole(role: FlowRole): void {
+    this.flowRole.set(role);
+  }
+
+  onFlowKey(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    const next: FlowRole = this.flowRole() === 'buy' ? 'sell' : 'buy';
+    this.flowRole.set(next);
+    this.host.nativeElement.querySelector('#landing-tab-' + next)?.focus();
   }
 
   selectCategory(key: string): void {

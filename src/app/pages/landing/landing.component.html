@@ -147,34 +147,86 @@
       <h2 id="t-como" class="rv">Cómo funciona</h2>
       <p class="lead rv">Dos recorridos, una sola cuenta.</p>
 
-      <div class="slips">
-        <article class="slip slip-buy rv">
-          <img src="assets/landing/frutas-punata.jpg" alt="Cajones de frutas en un puesto del mercado de Punata" width="900" height="506" loading="lazy" />
-          <div class="slip-in">
-            <h3>Comprar</h3>
-            <p class="sub">Del catálogo a tu mesa.</p>
-            <ol>
-              <li><b>Explora el catálogo</b><span>Por rubro y por puesto.</span></li>
-              <li><b>Arma tu carrito</b><span>Suma productos de varios puestos.</span></li>
-              <li><b>Confirma tu pedido</b><span>Inicias sesión y el puesto lo recibe.</span></li>
-              <li><b>Retira o recibe</b><span>En el mercado o en tu zona, como acuerden.</span></li>
-            </ol>
-          </div>
-        </article>
+      <div class="counter rv" [class.is-sell]="flowRole() === 'sell'">
+        <figure class="cphoto">
+          <img
+            src="assets/landing/frutas-punata.jpg"
+            alt="Cajones de frutas en un puesto del mercado de Punata"
+            [class.on]="flowRole() === 'buy'"
+            width="900"
+            height="1125"
+            loading="lazy"
+            style="object-position: 50% 35%"
+          />
+          <img
+            src="assets/landing/calle-cliza.jpg"
+            alt="Una vendedora empuja su carretilla por una calle de mercado en Cliza"
+            [class.on]="flowRole() === 'sell'"
+            width="900"
+            height="1125"
+            loading="lazy"
+            style="object-position: 50% 55%"
+          />
+          <figcaption>{{ flow().caption }}</figcaption>
+        </figure>
 
-        <article class="slip slip-sell rv" style="--d: 100ms">
-          <img src="assets/landing/calle-cliza.jpg" alt="Una vendedora empuja su carretilla por una calle de mercado en Cliza" width="900" height="506" loading="lazy" />
-          <div class="slip-in">
-            <h3>Vender</h3>
-            <p class="sub">Tu puesto, en línea.</p>
-            <ol>
-              <li><b>Crea tu cuenta</b><span>Es la misma con la que compras.</span></li>
-              <li><b>Elige “Quiero vender”</b><span>Y arma el perfil de tu puesto.</span></li>
-              <li><b>Publica tus productos</b><span>Con precio, stock e imagen.</span></li>
-              <li><b>Gestiona tus órdenes</b><span>Desde el celular, a tu ritmo.</span></li>
-            </ol>
+        <div class="cpanel">
+          <div class="seg" role="tablist" aria-label="Elige tu lado" (keydown)="onFlowKey($event)">
+            <button
+              id="landing-tab-buy"
+              type="button"
+              role="tab"
+              [attr.aria-selected]="flowRole() === 'buy'"
+              [attr.tabindex]="flowRole() === 'buy' ? 0 : -1"
+              aria-controls="landing-flow-panel"
+              (click)="setFlowRole('buy')"
+            >
+              {{ flows.buy.tab }}
+            </button>
+            <button
+              id="landing-tab-sell"
+              type="button"
+              role="tab"
+              [attr.aria-selected]="flowRole() === 'sell'"
+              [attr.tabindex]="flowRole() === 'sell' ? 0 : -1"
+              aria-controls="landing-flow-panel"
+              (click)="setFlowRole('sell')"
+            >
+              {{ flows.sell.tab }}
+            </button>
           </div>
-        </article>
+
+          <div id="landing-flow-panel" role="tabpanel" [attr.aria-labelledby]="'landing-tab-' + flowRole()">
+            <div class="panelset" *ngFor="let f of [flow()]; trackBy: trackFlow">
+              <h3>{{ f.title }}</h3>
+              <ol class="csteps">
+                <li *ngFor="let s of f.steps">
+                  <span class="ic" [ngSwitch]="s.icon">
+                  <svg *ngSwitchCase="'search'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                  <svg *ngSwitchCase="'cart'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 12.4a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.8L20 8H6"/></svg>
+                  <svg *ngSwitchCase="'check'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg>
+                  <svg *ngSwitchCase="'box'" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/></svg>
+                  <svg *ngSwitchCase="'user'" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>
+                  <svg *ngSwitchCase="'store'" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/></svg>
+                  <svg *ngSwitchCase="'camera'" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4V8Z"/><circle cx="12" cy="13" r="3.5"/></svg>
+                  <svg *ngSwitchCase="'clipboard'" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg>
+                  </span>
+                  <div>
+                    <h4>{{ s.title }}</h4>
+                    <p>{{ s.text }}</p>
+                  </div>
+                </li>
+              </ol>
+              <div class="cfoot">
+                <a *ngIf="f.key === 'buy'" id="landing-flow-cta-buy" routerLink="/products" class="btn">Explorar productos</a>
+                <a *ngIf="f.key === 'sell'" id="landing-flow-cta-sell" [routerLink]="sellLink()" class="btn">{{ sellLabel() }}</a>
+                <button type="button" class="swap" (click)="setFlowRole(f.key === 'buy' ? 'sell' : 'buy')">
+                  {{ f.switchLabel }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
