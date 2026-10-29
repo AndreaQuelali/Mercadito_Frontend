@@ -10,6 +10,10 @@ module.exports = {
         sans: ['"Libre Franklin"', 'system-ui', 'sans-serif'],
         mono: ['"DM Mono"', 'monospace'],
       },
+      fontSize: {
+        xs: ['0.9286rem', { lineHeight: '1.4' }],
+        sm: ['0.9286rem', { lineHeight: '1.45' }],
+      },
       colors: {
         primary: {
           DEFAULT: 'var(--color-primary)',

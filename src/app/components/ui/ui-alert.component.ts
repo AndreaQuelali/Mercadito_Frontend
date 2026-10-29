@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
     <div
       role="alert"
       aria-live="polite"
-      class="text-base px-4 py-3 border-l-4"
+      class="text-base px-4 py-3 border-l-4 rounded-[var(--radius)]"
       [ngClass]="toneClasses"
     >
       <ng-content></ng-content>

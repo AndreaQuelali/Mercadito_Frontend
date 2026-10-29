@@ -101,7 +101,7 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
             <button
               type="button"
               (click)="theme.toggle()"
-              class="inline-flex h-11 w-11 items-center justify-center text-text-main hover:bg-surface-subtle transition"
+              class="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius)] text-text-main hover:bg-surface-subtle transition"
               [attr.aria-label]="theme.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
             >
               <svg *ngIf="!theme.isDark()" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">

@@ -5,6 +5,8 @@
 
 /* Tarjeta de producto: fondo en un tono, sin borde ni sombra */
 .pcard {
+  border-radius: var(--radius);
+  overflow: hidden;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -43,7 +45,7 @@
   padding: 0.35rem 0.8rem;
   background: var(--color-bg-inverse);
   color: var(--color-text-on-inverse);
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -55,7 +57,7 @@
   padding: 0.35rem 0.8rem;
   background: var(--color-secondary);
   color: var(--color-text-on-secondary);
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   font-weight: 600;
 }
 
@@ -93,7 +95,7 @@
 
 .pcard__seller {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   color: var(--color-text-muted);
 }
 
@@ -114,11 +116,12 @@
 }
 
 .pcard__unit {
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   color: var(--color-text-muted);
 }
 
 .pcard__add {
+  border-radius: var(--radius);
   width: 44px;
   height: 44px;
   border: none;
@@ -165,6 +168,7 @@
   .pcard,
   .pcard__media img,
   .pcard__add {
+    border-radius: var(--radius);
     transition: none;
   }
   .pcard__spin { animation: none; }

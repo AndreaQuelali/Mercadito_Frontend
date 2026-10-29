@@ -87,6 +87,7 @@ a {
 
 /* Botones y enlaces */
 .btn {
+  border-radius: var(--radius);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -178,6 +179,7 @@ a {
   text-decoration: none;
 }
 .icon-btn {
+  border-radius: var(--radius);
   width: 44px;
   height: 44px;
   display: inline-grid;
@@ -246,7 +248,7 @@ a {
   bottom: 20px;
   z-index: 2;
   color: var(--color-text-on-inverse);
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   background: rgba(42, 30, 24, 0.8);
   padding: 6px 12px;
 }
@@ -330,7 +332,7 @@ a {
 .hoy-photo figcaption {
   margin-top: 10px;
   color: var(--l-muted);
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
 }
 .tabs {
   display: flex;
@@ -339,6 +341,7 @@ a {
   margin-bottom: 28px;
 }
 .tabs button {
+  border-radius: var(--radius);
   min-height: 48px;
   padding: 0 20px;
   border: 0;
@@ -367,6 +370,7 @@ a {
   align-content: start;
 }
 .prod {
+  border-radius: var(--radius);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -397,10 +401,12 @@ a {
 }
 .plist-note,
 .plist-empty {
+  border-radius: var(--radius);
   grid-column: 1 / -1;
   color: var(--l-muted);
 }
 .plist-empty {
+  border-radius: var(--radius);
   display: grid;
   gap: 10px;
   background: var(--l-surface);
@@ -602,7 +608,7 @@ a {
 }
 .credits {
   margin-top: 16px;
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   color: var(--l-foot-muted);
   max-width: 70ch;
 }
@@ -627,6 +633,7 @@ a {
   .stage img,
   .btn,
   .prod {
+    border-radius: var(--radius);
     transition: none;
   }
 }

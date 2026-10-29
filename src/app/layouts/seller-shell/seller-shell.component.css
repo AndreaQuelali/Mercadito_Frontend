@@ -36,6 +36,7 @@
 }
 
 .seller-shell__mark {
+  border-radius: var(--radius);
   width: 2.5rem;
   height: 2.5rem;
   background: var(--color-secondary);
@@ -53,6 +54,7 @@
 }
 
 .seller-shell__item {
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -84,7 +86,7 @@
 
 .seller-shell__soon {
   margin-left: auto;
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   color: var(--color-text-on-inverse-muted);
 }
 
@@ -142,7 +144,7 @@
 }
 
 .seller-shell__store small {
-  font-size: 0.875rem;
+  font-size: 0.9286rem;
   color: var(--color-text-muted);
 }
 
@@ -177,6 +179,7 @@
 }
 
 .seller-shell__avatar {
+  border-radius: var(--radius);
   width: 44px;
   height: 44px;
   display: grid;
@@ -190,6 +193,7 @@
 
 /* Menú flotante: es lo único con sombra */
 .seller-shell__menu {
+  border-radius: var(--radius);
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);

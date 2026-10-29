@@ -47,7 +47,7 @@ let nextId = 0;
           [value]="value"
           (input)="onInput($event)"
           (blur)="handleBlur()"
-          class="w-full bg-surface border-2 border-border-medium px-4 py-3
+          class="w-full bg-surface border-2 border-border-medium rounded-[var(--radius)] px-4 py-3
                  text-text-main placeholder:text-text-muted
                  focus:outline-none focus:border-primary
                  transition disabled:opacity-60"

@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
       [type]="type"
       [disabled]="isInactive"
       [attr.aria-busy]="loading || null"
-      class="inline-flex items-center justify-center gap-2 font-semibold transition
+      class="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius)] transition
              focus-visible:outline-none"
       [ngClass]="classes"
     >
