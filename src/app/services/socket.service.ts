@@ -8,6 +8,7 @@ declare const io: (url: string, opts?: Record<string, unknown>) => SocketIOClien
 interface SocketIOClient {
   on(event: string, cb: (...args: unknown[]) => void): void;
   emit(event: string, ...args: unknown[]): void;
+  connect(): void;
   disconnect(): void;
   connected: boolean;
 }
@@ -26,8 +27,20 @@ export class SocketService implements OnDestroy {
     if (!token) return;
 
     this.socket = io(environment.apiUrl, {
-      auth: { token },
+      // Function form: every (re)connection sends the latest access token
+      auth: (cb: (data: Record<string, unknown>) => void) => cb({ token: this.auth.getToken() }),
       transports: ['websocket'],
+    });
+
+    // The server refuses an expired token and socket.io does not retry on its own:
+    // renew the session and connect again with the new token
+    this.socket.on('connect_error', (err: unknown) => {
+      if ((err as { message?: string })?.message === 'Invalid or expired token') {
+        this.auth.refresh().subscribe({
+          next: () => this.socket?.connect(),
+          error: () => undefined, // an invalid session is handled by the HTTP interceptor
+        });
+      }
     });
 
     this.socket.on('connect', () => {

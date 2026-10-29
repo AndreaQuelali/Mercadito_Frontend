@@ -1,8 +1,8 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { finalize, map, shareReplay, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export type UserRole = 'user' | 'admin';
@@ -19,7 +19,13 @@ export interface AuthUser {
 export interface LoginResponse {
   ok: boolean;
   message: string;
-  data: { token: string; id: string; email: string };
+  data: { token: string; refreshToken: string; id: string; email: string };
+}
+
+export interface RefreshResponse {
+  ok: boolean;
+  message: string;
+  data: { token: string; refreshToken: string; id: string; email: string };
 }
 
 export interface RegisterResponse {
@@ -29,6 +35,7 @@ export interface RegisterResponse {
 }
 
 const TOKEN_KEY = 'mercadito_token';
+const REFRESH_KEY = 'mercadito_refresh_token';
 
 function parseJwt(token: string): AuthUser | null {
   try {
@@ -74,8 +81,41 @@ export class AuthService {
   /** @deprecated use hasSeller / canManageStore */
   readonly isSeller = computed(() => this.hasSeller());
 
+  /** In-flight refresh shared by every caller, so concurrent 401s rotate the token only once */
+  private refresh$: Observable<string> | null = null;
+
   getToken(): string | null {
     return this._token();
+  }
+
+  hasRefreshToken(): boolean {
+    return !!localStorage.getItem(REFRESH_KEY);
+  }
+
+  /**
+   * Exchanges the stored refresh token for a new session (access + rotated refresh token).
+   * Emits the new access token; errors if there is no refresh token or the server rejects it.
+   */
+  refresh(): Observable<string> {
+    const refreshToken = localStorage.getItem(REFRESH_KEY);
+    if (!refreshToken) return throwError(() => new Error('No refresh token'));
+
+    if (!this.refresh$) {
+      this.refresh$ = this.http
+        .post<RefreshResponse>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
+        .pipe(
+          map((res) => {
+            if (!res.ok || !res.data?.token || !res.data?.refreshToken) {
+              throw new Error('Refresh failed');
+            }
+            this._setSession(res.data.token, res.data.refreshToken);
+            return res.data.token;
+          }),
+          finalize(() => (this.refresh$ = null)),
+          shareReplay({ bufferSize: 1, refCount: false })
+        );
+    }
+    return this.refresh$;
   }
 
   setToken(token: string): void {
@@ -92,7 +132,7 @@ export class AuthService {
       .pipe(
         tap((res) => {
           if (res.ok && res.data?.token) {
-            this._setToken(res.data.token);
+            this._setSession(res.data.token, res.data.refreshToken);
             this._sellerStatus.set(null);
           }
         })
@@ -123,10 +163,23 @@ export class AuthService {
   }
 
   logout(): void {
+    const refreshToken = localStorage.getItem(REFRESH_KEY);
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
     this._token.set(null);
+    // Revoke the session on the server (best effort; the local session is already gone)
+    if (refreshToken) {
+      this.http
+        .post(`${environment.apiUrl}/auth/logout`, { refreshToken })
+        .subscribe({ error: () => undefined });
+    }
     this._sellerStatus.set(null);
     this.router.navigateByUrl('/');
+  }
+
+  private _setSession(token: string, refreshToken: string): void {
+    if (refreshToken) localStorage.setItem(REFRESH_KEY, refreshToken);
+    this._setToken(token);
   }
 
   private _setToken(token: string): void {
