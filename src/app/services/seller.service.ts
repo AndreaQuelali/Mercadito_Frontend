@@ -36,6 +36,18 @@ export interface UpdateSellerPayload {
   location?: string | null;
 }
 
+export type SalesStatus = 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+
+export interface SalesSummary {
+  range: { from: string | null; to: string | null };
+  /** Decimal string, e.g. "42.00" */
+  total: string;
+  ordersCount: number;
+  unitsSold: number;
+  ordersByStatus: Record<SalesStatus, number>;
+  topProducts: { productId: number; name: string; units: number; revenue: string }[];
+}
+
 interface ApiResponse<T> {
   ok: boolean;
   message: string;
@@ -90,6 +102,20 @@ export class SellerService {
       tap((seller) => {
         this.auth.setSellerStatus(seller.status);
         this._mine.set(seller);
+      })
+    );
+  }
+
+  /** Sales summary of my store. Without a range it covers all time. */
+  getSales(range: { from?: Date; to?: Date } = {}): Observable<SalesSummary> {
+    const params: Record<string, string> = {};
+    if (range.from) params['from'] = range.from.toISOString();
+    if (range.to) params['to'] = range.to.toISOString();
+
+    return this.http.get<ApiResponse<SalesSummary>>(`${this.base}/sales`, { params }).pipe(
+      map((res) => {
+        if (!res.ok || !res.data) throw new Error(res.message || 'Sales not available');
+        return res.data;
       })
     );
   }

@@ -113,10 +113,9 @@ export const appRoutes: Routes = [
       {
         path: 'sales',
         loadComponent: () =>
-          import('./pages/dashboard/seller-placeholder.component').then(
-            (m) => m.SellerPlaceholderComponent
+          import('./pages/dashboard/seller-sales.component').then(
+            (m) => m.SellerSalesComponent
           ),
-        data: { title: 'Ventas' },
       },
       {
         path: 'inventory',
