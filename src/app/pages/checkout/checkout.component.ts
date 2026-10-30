@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
@@ -7,7 +8,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, RouterLink],
   template: `
   <main class="ui-page max-w-3xl">
     <div *ngIf="orderId()" class="space-y-6 py-8">
@@ -23,10 +24,9 @@ import { ToastService } from '../../services/toast.service';
     <div *ngIf="!orderId()" class="space-y-8">
       <h1 class="ui-title">Confirmar pedido</h1>
 
-      <div *ngIf="cart.items().length === 0" class="ui-empty">
-        <p class="text-lg">Tu carrito está vacío.</p>
-        <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>
-      </div>
+      <ui-empty *ngIf="cart.items().length === 0" icon="cart" title="Tu carrito está vacío" text="Agrega productos para poder confirmar un pedido.">
+        <a routerLink="/products" class="ui-btn">Explorar productos</a>
+      </ui-empty>
 
       <div *ngIf="cart.items().length > 0" class="space-y-6">
         <div class="ui-panel space-y-5">

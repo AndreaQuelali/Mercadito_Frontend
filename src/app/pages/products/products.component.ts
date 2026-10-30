@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,7 +25,7 @@ export type ProductSort = 'name_asc' | 'price_asc' | 'price_desc';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [UiEmptyComponent, CommonModule, FormsModule, ProductCardComponent],
   template: `
   <main class="ui-page space-y-8">
     <header class="space-y-3">
@@ -113,10 +114,9 @@ export type ProductSort = 'name_asc' | 'price_asc' | 'price_desc';
       <app-product-card *ngFor="let p of filtered()" [product]="p" class="animate-fade-in" />
     </section>
 
-    <div *ngIf="!loading() && filtered().length === 0" class="ui-empty">
-      <h2 class="ui-h2 mb-2">No se encontraron productos</h2>
-      <p class="text-lg text-text-muted">Prueba con otro término, otro rubro o un rango de precio distinto.</p>
-    </div>
+    <ui-empty *ngIf="!loading() && filtered().length === 0" variant="no-results" title="No se encontraron productos" text="Prueba con otro término, otro rubro o un rango de precio distinto.">
+      <button type="button" class="ui-btn ui-btn-ghost" (click)="clearFilters()">Limpiar filtros</button>
+    </ui-empty>
   </main>
   `,
 })
@@ -184,6 +184,15 @@ export class ProductsComponent implements OnInit {
         this.loading.set(false);
       },
     });
+  }
+
+  clearFilters(): void {
+    this.activeCategory.set('all');
+    this.localQuery.set('');
+    this.searchSvc.setQuery('');
+    this.minPrice.set(null);
+    this.maxPrice.set(null);
+    this.syncQueryParams();
   }
 
   selectCategory(key: string): void {

@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
@@ -7,16 +8,14 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, RouterLink],
   template: `
   <main class="ui-page max-w-6xl">
     <h1 class="ui-title mb-8">Mi carrito</h1>
 
-    <div *ngIf="cart.items().length === 0 && !loading" class="ui-empty">
-      <h2 class="ui-h2">Tu carrito está vacío</h2>
-      <p class="text-lg text-text-muted">Explora el catálogo y agrega lo que necesites de los puestos.</p>
-      <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>
-    </div>
+    <ui-empty *ngIf="cart.items().length === 0 && !loading" icon="cart" title="Tu carrito está vacío" text="Explora el catálogo y agrega lo que necesites de los puestos.">
+      <a routerLink="/products" class="ui-btn">Explorar productos</a>
+    </ui-empty>
 
     <div *ngIf="loading" class="space-y-3">
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-28"></div>

@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService, Order, OrderStatus } from '../../services/order.service';
@@ -14,7 +15,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, RouterLink],
   template: `
   <main class="ui-page max-w-5xl">
     <h1 class="ui-title mb-8">Mis pedidos</h1>
@@ -23,11 +24,9 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-36"></div>
     </div>
 
-    <div *ngIf="!loading() && orders().length === 0" class="ui-empty">
-      <h2 class="ui-h2">Aún no has hecho pedidos</h2>
-      <p class="text-lg text-text-muted">Cuando hagas una compra, aparecerá aquí.</p>
-      <p><a routerLink="/products" class="ui-btn">Explorar productos</a></p>
-    </div>
+    <ui-empty *ngIf="!loading() && orders().length === 0" icon="orders" title="Aún no has hecho pedidos" text="Cuando hagas una compra, aparecerá aquí.">
+      <a routerLink="/products" class="ui-btn">Explorar productos</a>
+    </ui-empty>
 
     <div *ngIf="!loading() && orders().length > 0" class="space-y-4">
       <article *ngFor="let order of orders()" class="ui-panel space-y-5">

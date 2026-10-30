@@ -123,3 +123,23 @@ La aplicación implementa soporte nativo para el modo oscuro alternando la clase
 - **Un solo café**: `#1C1613` es la letra en modo claro, el fondo en modo oscuro y las superficies invertidas (pie, paneles de foto, barra lateral del vendedor). El crema único es `#FDFBF8` (fondo claro y letra oscura).
 - **Botones y aguayo no cambian entre modos**: `primary`, `secondary`, `accent-green`, `accent-pink` y `accent-teal` tienen el mismo valor en claro y oscuro. Solo los enlaces sobre el fondo usan `--color-link`, que se aclara en modo oscuro para mantener el contraste.
 - **Excepción**: la franja de aguayo usa su propio café (`--color-aguayo-brown`, `#4A3328`).
+
+## 8. Estado vacío (`<ui-empty>`)
+
+Componente único para todo estado vacío (`src/app/components/ui/ui-empty.component.ts`). Sin fondo ni tarjeta, centrado en el espacio libre.
+
+**Anatomía:** icono grande de trazo sin fondo (72 px) con el color de la variante, título corto que dice qué pasa, una frase con el siguiente paso y las acciones (contenido proyectado).
+
+| Variante | Cuándo | Color del icono | Acción típica |
+| :--- | :--- | :--- | :--- |
+| `first` (por defecto) | Todavía no hay nada | `secondary` | Botón principal que invita a empezar |
+| `no-results` | La búsqueda o el filtro no encuentra nada | `accent-teal` | "Limpiar filtros" |
+| `error` | No se pudo cargar | `accent-pink` | "Reintentar" |
+
+**Reglas:** el título dice la situación sin disculparse; el texto da el paso siguiente; el botón nombra la acción ("Explorar productos", no "Aceptar"); un solo botón principal.
+
+```html
+<ui-empty icon="orders" title="Aún no has hecho pedidos" text="Cuando hagas una compra, aparecerá aquí.">
+  <a routerLink="/products" class="ui-btn">Explorar productos</a>
+</ui-empty>
+```

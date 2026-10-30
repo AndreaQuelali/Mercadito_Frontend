@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../services/products.service';
@@ -10,7 +11,7 @@ import { SellerService } from '../../services/seller.service';
 @Component({
   selector: 'app-seller-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, SellerProductCardComponent],
+  imports: [UiEmptyComponent, CommonModule, RouterLink, SellerProductCardComponent],
   template: `
   <main class="ui-page space-y-8">
     <header class="flex items-end justify-between flex-wrap gap-4">
@@ -29,11 +30,9 @@ import { SellerService } from '../../services/seller.service';
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-32"></div>
     </div>
 
-    <div *ngIf="!loading() && products().length === 0" class="ui-empty">
-      <h2 class="ui-h2">Aún no tienes productos</h2>
-      <p class="text-lg text-text-muted">Publica tu primer producto y empieza a vender.</p>
-      <p *ngIf="auth.canManageStore()"><a routerLink="/dashboard/products/new" class="ui-btn">Agregar producto</a></p>
-    </div>
+    <ui-empty *ngIf="!loading() && products().length === 0" icon="store" title="Aún no tienes productos" text="Publica tu primer producto y empieza a vender.">
+      <a *ngIf="auth.canManageStore()" routerLink="/dashboard/products/new" class="ui-btn">Agregar producto</a>
+    </ui-empty>
 
     <section *ngIf="!loading() && products().length > 0" class="space-y-3">
       <app-seller-product-card

@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { OrderService, Order, OrderStatus } from '../../services/order.service';
@@ -33,7 +34,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 @Component({
   selector: 'app-seller-orders',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, RouterLink],
   template: `
   <main class="ui-page max-w-5xl">
     <header class="space-y-3 mb-8">
@@ -49,10 +50,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-36"></div>
     </div>
 
-    <div *ngIf="!loading() && orders().length === 0" class="ui-empty">
-      <h2 class="ui-h2">Aún no recibes pedidos</h2>
-      <p class="text-lg text-text-muted">Cuando un cliente compre en tu puesto, lo verás aquí.</p>
-    </div>
+    <ui-empty *ngIf="!loading() && orders().length === 0" icon="orders" title="Aún no recibes pedidos" text="Cuando un cliente compre en tu puesto, lo verás aquí."></ui-empty>
 
     <div *ngIf="!loading() && orders().length > 0" class="space-y-4">
       <article *ngFor="let order of orders()" class="ui-panel space-y-5">

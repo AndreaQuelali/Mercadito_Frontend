@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Seller, SellerService } from '../../services/seller.service';
@@ -8,7 +9,7 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-admin-sellers',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, RouterLink],
   template: `
   <main class="ui-page max-w-5xl">
     <header class="space-y-3 mb-8">
@@ -20,9 +21,7 @@ import { ToastService } from '../../services/toast.service';
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-24"></div>
     </div>
 
-    <div *ngIf="!loading() && sellers().length === 0" class="ui-empty">
-      <h2 class="ui-h2">No hay vendedores registrados</h2>
-    </div>
+    <ui-empty *ngIf="!loading() && sellers().length === 0" icon="users" title="No hay vendedores registrados" text="Cuando alguien abra un puesto, aparecerá aquí para que lo administres."></ui-empty>
 
     <div *ngIf="!loading() && sellers().length > 0" class="space-y-3">
       <article *ngFor="let s of sellers()" class="ui-panel flex flex-wrap items-center justify-between gap-4">
