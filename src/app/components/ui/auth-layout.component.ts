@@ -2,6 +2,7 @@ import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
+import { UiLogoComponent } from './ui-logo.component';
 
 export type AuthPhotoKey = 'verduras' | 'calle' | 'pan' | 'queso' | 'frutas' | 'aguayos';
 
@@ -47,7 +48,7 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
 @Component({
   selector: 'auth-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UiLogoComponent],
   host: { class: 'block' },
   styles: [
     `
@@ -95,8 +96,8 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
         <!-- Formulario -->
         <main class="flex flex-col min-h-0">
           <div class="flex items-center justify-between px-5 sm:px-8 lg:px-12 pt-5">
-            <a routerLink="/" class="font-display text-2xl font-bold tracking-tight" aria-label="Mercadito, ir al inicio">
-              Mercadito
+            <a routerLink="/" class="text-2xl" aria-label="Mercadito, ir al inicio">
+              <ui-logo></ui-logo>
             </a>
             <button
               type="button"

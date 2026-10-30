@@ -36,15 +36,8 @@
 }
 
 .seller-shell__mark {
-  border-radius: var(--radius);
-  width: 2.5rem;
-  height: 2.5rem;
-  background: var(--color-secondary);
-  color: var(--color-text-on-secondary);
-  display: grid;
-  place-items: center;
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--color-text-on-inverse);
 }
 
 .seller-shell__nav {

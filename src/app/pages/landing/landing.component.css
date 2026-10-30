@@ -151,9 +151,10 @@ a {
   padding-block: 10px;
 }
 .brand {
-  font: 700 1.6rem/1 var(--serif);
+  display: inline-flex;
+  font-size: 1.5rem;
+  line-height: 1;
   text-decoration: none;
-  letter-spacing: -0.02em;
 }
 .bar-nav {
   display: flex;

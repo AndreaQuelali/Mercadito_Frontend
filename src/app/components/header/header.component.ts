@@ -4,17 +4,18 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
+import { UiLogoComponent } from '../ui/ui-logo.component';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, UiLogoComponent],
   template: `
   <header class="app-header">
     <div class="app-header__inner">
       <a [routerLink]="auth.isLoggedIn() ? '/home' : '/'" class="app-header__brand" aria-label="Mercadito">
-        <span class="brand-text">Mercadito</span>
+        <ui-logo class="brand-text" [collapseOnSmall]="true"></ui-logo>
       </a>
 
       <div class="app-header__search">

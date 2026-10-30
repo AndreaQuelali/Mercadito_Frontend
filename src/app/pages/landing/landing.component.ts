@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { ProductService } from '../../services/products.service';
 import { ProductCard } from '../../components/product-card/product-card.component';
+import { UiLogoComponent } from '../../components/ui/ui-logo.component';
 
 interface HeroSlide {
   src: string;
@@ -190,7 +191,7 @@ const SLIDE_INTERVAL_MS = 5500;
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UiLogoComponent],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
 })
