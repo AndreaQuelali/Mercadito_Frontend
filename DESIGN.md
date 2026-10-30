@@ -17,7 +17,7 @@ Conforme a lo estipulado en [`colores.md`](../colores.md), **los nombres de los 
 | `success` | Verde Hoja | `#5F7745` | `#81B29A` | Estados de éxito, productos frescos, confirmaciones |
 | `background` | Crema claro | `#FDFBF8` | `#121212` | Fondo principal de la aplicación y páginas |
 | `surface` | Blanco Mármol / Grafito | `#FFFFFF` | `#1E1E1E` | Tarjetas, contenedores elevadas, paneles |
-| `text` | Café Tierra | `#3A2A22` | `#F4F1DE` | Texto principal, encabezados, cuerpo de texto |
+| `text` | Café único | `#1C1613` | `#FDFBF8` | Texto principal, encabezados, cuerpo de texto |
 | `text-muted` | Café Claro / Gris | `#6E5D53` | `#A09A95` | Textos secundarios, descripciones, fechas |
 | `accent` | Fucsia Aguayo | `#C83D68` | `#E65C84` | Acentos, promociones, ofertas de alto impacto |
 | `info` | Turquesa | `#3E9C9A` | `#56C2C0` | Mensajes informativos, elementos secundarios |
@@ -116,3 +116,10 @@ La aplicación implementa soporte nativo para el modo oscuro alternando la clase
 
 - **Transiciones**: Usar `transition-all duration-200 ease-in-out` para responder suavemente al pasar el cursor (hover), enfocar (focus) o presionar (active).
 - **Glassmorphism**: Para elementos emergentes y barras de navegación superiores fijas (`backdrop-blur-md bg-surface/80 border-b border-border`).
+
+
+## 7. Reglas de color del rediseño
+
+- **Un solo café**: `#1C1613` es la letra en modo claro, el fondo en modo oscuro y las superficies invertidas (pie, paneles de foto, barra lateral del vendedor). El crema único es `#FDFBF8` (fondo claro y letra oscura).
+- **Botones y aguayo no cambian entre modos**: `primary`, `secondary`, `accent-green`, `accent-pink` y `accent-teal` tienen el mismo valor en claro y oscuro. Solo los enlaces sobre el fondo usan `--color-link`, que se aclara en modo oscuro para mantener el contraste.
+- **Excepción**: la franja de aguayo usa su propio café (`--color-aguayo-brown`, `#4A3328`).

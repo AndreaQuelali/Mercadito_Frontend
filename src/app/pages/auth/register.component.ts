@@ -116,7 +116,7 @@ import {
 
       <p class="mt-6 text-center text-sm text-text-muted">
         ¿Ya tienes cuenta?
-        <a routerLink="/auth/login" class="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">Inicia sesión</a>
+        <a routerLink="/auth/login" class="text-link font-semibold underline underline-offset-4 hover:text-link-hover">Inicia sesión</a>
       </p>
     </auth-layout>
   `,

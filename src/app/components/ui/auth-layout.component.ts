@@ -58,7 +58,7 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
       .band i:nth-child(3) { background: var(--color-accent-teal); flex: 2; }
       .band i:nth-child(4) { background: var(--color-accent-green); flex: 1; }
       .band i:nth-child(5) { background: var(--color-primary); flex: 4; }
-      .band i:nth-child(6) { background: var(--color-text-main); flex: 1; }
+      .band i:nth-child(6) { background: var(--color-aguayo-brown); flex: 1; }
       .band i:nth-child(7) { background: var(--color-secondary); flex: 2; }
       .band i:nth-child(8) { background: var(--color-accent-pink); flex: 1; }
       .photo { filter: saturate(1.08) sepia(0.1); }
@@ -79,7 +79,7 @@ const PHOTOS: Record<AuthPhotoKey, AuthPhoto> = {
             [alt]="current.alt"
             class="photo absolute inset-0 h-full w-full object-cover"
           />
-          <p class="absolute z-10 left-8 top-8 bg-[rgba(42,30,24,0.8)] px-3 py-1.5 text-sm text-inverse-text">
+          <p class="absolute z-10 left-8 top-8 bg-[rgba(28,22,19,0.8)] px-3 py-1.5 text-sm text-inverse-text">
             {{ current.caption }}
           </p>
           <div class="panel relative z-10 p-8 xl:p-10">

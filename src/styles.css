@@ -28,7 +28,7 @@
   --color-bg-surface-elevated: #FFFBF5;
   --color-bg-subtle: #F1E7DA;
 
-  --color-text-main: #3A2A22;       /* 🪵 Café Tierra */
+  --color-text-main: #1C1613;       /* 🪵 Café único: letra en claro, fondo en oscuro */
   --color-text-muted: #6B574C;
   --color-text-subtle: #968377;
   --color-text-on-primary: #FDFBF8;
@@ -44,11 +44,17 @@
   --color-success-bg: #ECFDF3;
   --color-success-border: #ABEFC6;
 
+  /* Café propio de la franja de aguayo (único tono distinto al café de marca) */
+  --color-aguayo-brown: #4A3328;
+  /* Color de enlaces sobre el fondo: cambia con el tema para mantener contraste; los botones no */
+  --color-link: #B3412C;
+  --color-link-hover: #8F3322;
+
   --color-bg-surface-hover: #E6D6C0;
-  --color-bg-inverse: #2A1E18;
+  --color-bg-inverse: #1C1613;
   --color-text-on-inverse: #FDFBF8;
   --color-text-on-inverse-muted: #D9C9B8;
-  --color-text-on-secondary: #2A1E18;
+  --color-text-on-secondary: #1C1613;
   --color-text-on-green: #FDFBF8;
 
   --shadow-sm: 0 2px 8px rgba(58, 42, 34, 0.05);
@@ -59,22 +65,15 @@
 
 /* Dark Mode Tokens */
 [data-theme="dark"], html.dark {
-  --color-primary: #E0704F;
-  --color-primary-hover: #C65A3A;
+  /* Botones y aguayo (primary, secondary, green, pink, teal) no cambian entre claro y oscuro */
   --color-primary-light: rgba(198, 90, 58, 0.2);
 
-  --color-secondary: #E5B552;
-  --color-secondary-hover: #D9A441;
   --color-secondary-light: rgba(217, 164, 65, 0.2);
 
-  --color-accent-green: #7A995A;
-  --color-accent-green-hover: #5F7745;
   --color-accent-green-light: rgba(95, 119, 69, 0.2);
 
-  --color-accent-pink: #DB547F;
   --color-accent-pink-light: rgba(200, 61, 104, 0.2);
 
-  --color-accent-teal: #50B5B3;
   --color-accent-teal-light: rgba(62, 156, 154, 0.2);
 
   --color-bg-base: #1C1613;
@@ -82,14 +81,15 @@
   --color-bg-surface-elevated: #332822;
   --color-bg-subtle: #231A15;
 
-  --color-text-main: #F7F0E3;       /* Crema text in dark mode */
+  --color-text-main: #FDFBF8;       /* Crema único */
   --color-text-muted: #C8BDB2;
   --color-text-subtle: #968679;
-  --color-text-on-primary: #1C1613;
 
   --color-border-subtle: #3D3029;
   --color-border-medium: #54433A;
   --color-border-focus: #E0704F;
+  --color-link: #E0704F;
+  --color-link-hover: #EB8A6E;
 
   --color-danger: #F97066;
   --color-danger-bg: rgba(180, 35, 24, 0.2);
@@ -99,16 +99,15 @@
   --color-success-border: rgba(117, 224, 167, 0.35);
 
   --color-bg-surface-hover: #332822;
-  --color-bg-inverse: #120D0B;
+  --color-bg-inverse: #1C1613;
   --color-text-on-inverse: #FDFBF8;
   --color-text-on-inverse-muted: #D9C9B8;
-  --color-text-on-secondary: #2A1E18;
-  --color-text-on-green: #1C1613;
+  --color-text-on-secondary: #1C1613;
 
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
-  --shadow-primary: 0 6px 24px rgba(224, 112, 79, 0.3);
+  --shadow-primary: none;
 }
 
 @layer base {
@@ -295,12 +294,12 @@
   }
 
   .ui-link {
-    color: var(--color-primary);
+    color: var(--color-link);
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 4px;
   }
-  .ui-link:hover { color: var(--color-primary-hover); }
+  .ui-link:hover { color: var(--color-link-hover); }
 
   .ui-qty {
     border-radius: var(--radius);

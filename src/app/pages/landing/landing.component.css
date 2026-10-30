@@ -131,7 +131,7 @@ a {
 .band i:nth-child(3) { background: var(--l-teal); flex: 2; }
 .band i:nth-child(4) { background: var(--l-green); flex: 1; }
 .band i:nth-child(5) { background: var(--l-accent); flex: 4; }
-.band i:nth-child(6) { background: var(--l-ink); flex: 1; }
+.band i:nth-child(6) { background: var(--color-aguayo-brown); flex: 1; }
 .band i:nth-child(7) { background: var(--l-gold); flex: 2; }
 .band i:nth-child(8) { background: var(--l-pink); flex: 1; }
 
@@ -249,7 +249,7 @@ a {
   z-index: 2;
   color: var(--color-text-on-inverse);
   font-size: 0.9286rem;
-  background: rgba(42, 30, 24, 0.8);
+  background: rgba(28, 22, 19, 0.8);
   padding: 6px 12px;
 }
 .hero-body {
@@ -454,7 +454,7 @@ a {
   left: 14px;
   bottom: 14px;
   z-index: 2;
-  background: rgba(42, 30, 24, 0.82);
+  background: rgba(28, 22, 19, 0.82);
   color: var(--color-text-on-inverse);
   padding: 4px 10px;
   border-radius: var(--radius);
@@ -661,11 +661,12 @@ a {
   color: var(--l-on-accent);
 }
 .cta .btn {
-  background: var(--l-bg);
-  color: var(--l-accent);
+  background: var(--color-text-on-primary);
+  color: var(--color-bg-inverse);
 }
 .cta .btn:hover {
-  background: var(--l-surface);
+  background: var(--color-text-on-primary);
+  filter: brightness(0.92);
 }
 .cta :focus-visible {
   outline-color: var(--l-on-accent);

@@ -64,7 +64,7 @@ import {
           <div class="mt-2 text-right">
             <a
               routerLink="/auth/forgot-password"
-              class="text-sm text-primary font-semibold underline underline-offset-4 hover:text-primary-hover"
+              class="text-sm text-link font-semibold underline underline-offset-4 hover:text-link-hover"
             >
               ¿Olvidaste tu contraseña?
             </a>
@@ -86,7 +86,7 @@ import {
 
       <p class="mt-6 text-center text-sm text-text-muted">
         ¿No tienes cuenta?
-        <a routerLink="/auth/register" class="text-primary font-semibold underline underline-offset-4 hover:text-primary-hover">Regístrate gratis</a>
+        <a routerLink="/auth/register" class="text-link font-semibold underline underline-offset-4 hover:text-link-hover">Regístrate gratis</a>
       </p>
     </auth-layout>
   `,

@@ -40,6 +40,10 @@ module.exports = {
         },
         base: 'var(--color-bg-base)',
         'on-primary': 'var(--color-text-on-primary)',
+        link: {
+          DEFAULT: 'var(--color-link)',
+          hover: 'var(--color-link-hover)',
+        },
         inverse: {
           DEFAULT: 'var(--color-bg-inverse)',
           text: 'var(--color-text-on-inverse)',

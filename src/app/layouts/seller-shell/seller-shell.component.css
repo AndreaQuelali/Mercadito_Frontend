@@ -264,7 +264,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(42, 30, 24, 0.55);
+    background: rgba(28, 22, 19, 0.55);
     z-index: 45;
   }
 
