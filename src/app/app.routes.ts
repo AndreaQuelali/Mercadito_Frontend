@@ -120,10 +120,9 @@ export const appRoutes: Routes = [
       {
         path: 'inventory',
         loadComponent: () =>
-          import('./pages/dashboard/seller-placeholder.component').then(
-            (m) => m.SellerPlaceholderComponent
+          import('./pages/dashboard/seller-inventory.component').then(
+            (m) => m.SellerInventoryComponent
           ),
-        data: { title: 'Inventario' },
       },
       {
         path: 'store',
@@ -135,10 +134,9 @@ export const appRoutes: Routes = [
       {
         path: 'settings',
         loadComponent: () =>
-          import('./pages/dashboard/seller-placeholder.component').then(
-            (m) => m.SellerPlaceholderComponent
+          import('./pages/dashboard/seller-settings-notifications.component').then(
+            (m) => m.SellerSettingsNotificationsComponent
           ),
-        data: { title: 'Configuración' },
       },
     ],
   },

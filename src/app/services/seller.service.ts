@@ -48,6 +48,14 @@ export interface SalesSummary {
   topProducts: { productId: number; name: string; units: number; revenue: string }[];
 }
 
+export type SellerEventKey = 'order:new' | 'stock:low' | 'review:new';
+
+export interface NotificationSettings {
+  preferences: Record<SellerEventKey, boolean>;
+  /** A sale that leaves a product at or below this stock triggers `stock:low`. Set by the server */
+  lowStockThreshold: number;
+}
+
 interface ApiResponse<T> {
   ok: boolean;
   message: string;
@@ -104,6 +112,26 @@ export class SellerService {
         this._mine.set(seller);
       })
     );
+  }
+
+  getNotificationSettings(): Observable<NotificationSettings> {
+    return this.http
+      .get<ApiResponse<NotificationSettings>>(`${this.base}/notification-settings`)
+      .pipe(map((res) => this.settingsOf(res)));
+  }
+
+  /** Partial update: send only the events that change. */
+  updateNotificationSettings(
+    patch: Partial<Record<SellerEventKey, boolean>>
+  ): Observable<NotificationSettings> {
+    return this.http
+      .patch<ApiResponse<NotificationSettings>>(`${this.base}/notification-settings`, patch)
+      .pipe(map((res) => this.settingsOf(res)));
+  }
+
+  private settingsOf(res: ApiResponse<NotificationSettings>): NotificationSettings {
+    if (!res.ok || !res.data) throw new Error(res.message || 'Settings not available');
+    return res.data;
   }
 
   /** Sales summary of my store. Without a range it covers all time. */

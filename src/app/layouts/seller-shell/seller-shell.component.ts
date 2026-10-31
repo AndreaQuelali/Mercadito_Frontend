@@ -26,15 +26,14 @@ export class SellerShellComponent implements OnInit {
     path: string;
     icon: 'home' | 'box' | 'orders' | 'chart' | 'stock' | 'store' | 'gear';
     exact?: boolean;
-    soon?: boolean;
   }[] = [
     { label: 'Inicio', path: '/dashboard', icon: 'home', exact: true },
     { label: 'Productos', path: '/dashboard/products', icon: 'box' },
     { label: 'Pedidos', path: '/dashboard/orders', icon: 'orders' },
-    { label: 'Ventas', path: '/dashboard/sales', icon: 'chart', soon: true },
-    { label: 'Inventario', path: '/dashboard/inventory', icon: 'stock', soon: true },
+    { label: 'Ventas', path: '/dashboard/sales', icon: 'chart' },
+    { label: 'Inventario', path: '/dashboard/inventory', icon: 'stock' },
     { label: 'Mi tienda', path: '/dashboard/store', icon: 'store' },
-    { label: 'Configuración', path: '/dashboard/settings', icon: 'gear', soon: true },
+    { label: 'Configuración', path: '/dashboard/settings', icon: 'gear' },
   ];
 
   storeName = () => this.sellerSvc.mine()?.businessName || 'Mi tienda';

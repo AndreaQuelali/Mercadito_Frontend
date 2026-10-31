@@ -83,18 +83,6 @@
   font-weight: 700;
 }
 
-.seller-shell__soon {
-  margin-left: auto;
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text-subtle);
-  background: var(--color-bg-subtle);
-  padding: 0.12rem 0.4rem;
-  border-radius: 0.3rem;
-}
-
 .seller-shell__main {
   min-width: 0;
   display: flex;

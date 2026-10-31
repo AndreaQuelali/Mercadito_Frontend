@@ -16,7 +16,7 @@ import { AuthService } from '../../services/auth.service';
         {{ sellerSvc.mine()?.businessName || 'Tu puesto' }}
       </h1>
       <p class="text-text-muted mt-1 max-w-xl">
-        Gestiona productos, pedidos y ventas. El inventario llega en una próxima versión.
+        Gestiona productos, pedidos, ventas e inventario.
       </p>
     </header>
 
@@ -45,10 +45,10 @@ import { AuthService } from '../../services/auth.service';
         <span class="inline-block mt-3 text-sm font-semibold text-primary">Ver ventas</span>
       </a>
       <a routerLink="/dashboard/inventory"
-         class="rounded-2xl border border-dashed border-border-medium bg-surface p-5">
+         class="rounded-2xl border border-border-subtle bg-surface p-5 hover:border-primary transition">
         <h2 class="font-display font-semibold text-text-main">Inventario</h2>
         <p class="text-sm text-text-muted mt-1">Stock y control de existencias.</p>
-        <span class="inline-block mt-3 text-xs font-bold uppercase tracking-wide text-text-subtle">Próximamente</span>
+        <span class="inline-block mt-3 text-sm font-semibold text-primary">Ver inventario</span>
       </a>
     </section>
   </main>
