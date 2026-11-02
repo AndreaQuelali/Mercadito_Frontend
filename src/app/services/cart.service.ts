@@ -85,10 +85,11 @@ export class CartService {
   }
 
   checkout(): Observable<{ orderId: number }> {
+    // The API answers with the created order (`id`), not with an `orderId` field
     return this.http
-      .post<ApiResponse<{ orderId: number }>>(`${environment.apiUrl}/cart/checkout`, {})
+      .post<ApiResponse<{ id: number }>>(`${environment.apiUrl}/cart/checkout`, {})
       .pipe(
-        map((r) => r.data),
+        map((r) => ({ orderId: r.data.id })),
         tap(() => this._cart.set(null))
       );
   }
