@@ -122,7 +122,28 @@ Admins gestionan sellers en `/admin/sellers` (suspender / reactivar).
 | `npm start` | Servidor de desarrollo en `:4200` |
 | `npm run build` | Build de producción en `dist/` |
 | `npm run watch` | Build continuo en modo development |
-| `npm test` | Ejecutar tests unitarios (Karma) |
+| `npm test` | Ejecutar tests unitarios (Karma, modo watch) |
+| `npm run test:ci` | Tests unitarios una sola vez, con Chrome headless |
+| `npm run e2e` | Tests end-to-end (Playwright) contra un backend real desechable. Ver [Pruebas e2e](#pruebas-e2e) |
+| `npm run e2e:ui` | Lo mismo con la interfaz de Playwright, para depurar |
+
+### Pruebas e2e
+
+Los tests de `e2e/tests` (Playwright) recorren tres flujos contra el **backend real**:
+
+- `auth.spec.ts`: registro, login, sesión que sobrevive a un reload, correo repetido, contraseña incorrecta y redirección de páginas protegidas.
+- `buy.spec.ts`: buscar un producto, agregarlo al carrito, pagar, ver el pedido, bajada de stock, aviso `order:new` al vendedor y renovación automática de un access token vencido.
+- `seller.spec.ts`: crear el puesto, publicar un producto, ajustar stock en Inventario y apagar una notificación en Configuración.
+
+`npm run e2e` hace todo solo (`e2e/run.mjs`):
+
+1. Levanta Postgres y Redis desechables desde `../Mercadito_Backend/docker-compose.e2e.yaml` (puertos propios **5434** y **6380**, sin volúmenes: no toca tu base de datos de desarrollo ni otros servicios en 3000/5432/6379).
+2. Aplica las migraciones de Prisma a esa base vacía.
+3. Playwright arranca el backend en **:3100** y la app en **:4201** (configuración `e2e` de Angular, que apunta a esa API), corre los tests y apaga todo.
+
+Los tests crean sus propios datos por la API (correos y productos únicos), así que no necesitan un seed.
+
+Requisitos: Docker en marcha, Google Chrome instalado y las dependencias del backend instaladas. Sin Chrome: `E2E_BROWSER=chromium npx playwright install chromium` y luego `E2E_BROWSER=chromium npm run e2e`. Para depurar, `E2E_KEEP_INFRA=1` deja los contenedores arriba; si el backend vive en otra carpeta, `MERCADITO_BACKEND_DIR=<ruta>`. El reporte HTML queda en `playwright-report/`.
 
 ---
 

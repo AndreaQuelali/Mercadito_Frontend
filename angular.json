@@ -60,6 +60,20 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "e2e": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": false,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.e2e.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -72,6 +86,9 @@
             },
             "development": {
               "browserTarget": "mercadito_frontend:build:development"
+            },
+            "e2e": {
+              "browserTarget": "mercadito_frontend:build:e2e"
             }
           },
           "defaultConfiguration": "development"
@@ -101,18 +118,6 @@
               "src/styles.css"
             ],
             "scripts": []
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "mercadito_frontend:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "mercadito_frontend:serve:production"
-            }
           }
         }
       }

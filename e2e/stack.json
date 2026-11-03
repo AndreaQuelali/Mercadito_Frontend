@@ -1,0 +1,7 @@
+{
+  "apiPort": 3100,
+  "appPort": 4201,
+  "databaseUrl": "postgresql://e2e:e2e@localhost:5434/mercadito_e2e",
+  "redisPort": 6380,
+  "jwtSecret": "e2e-only-secret"
+}

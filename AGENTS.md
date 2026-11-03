@@ -8,7 +8,7 @@ Este documento establece las pautas, convenciones y estándares técnicos obliga
 
 - **Framework**: Angular 16 (TypeScript 5, RxJS 7).
 - **Estilos & UI**: Tailwind CSS 3 con sistema de diseño personalizado ("Mercado Boliviano").
-- **Pruebas**: Karma + Jasmine (Unit Tests), Protractor / Cypress (E2E).
+- **Pruebas**: Karma + Jasmine (Unit Tests), Playwright (E2E, `npm run e2e`).
 - **Propósito**: Aplicación web frontend para la plataforma de comercio electrónico Mercadito.
 
 ---
