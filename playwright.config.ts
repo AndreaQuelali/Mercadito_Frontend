@@ -54,6 +54,12 @@ export default defineConfig({
         CORS_ORIGIN: `http://localhost:${stack.appPort}`,
         NODE_ENV: 'test',
         SMTP_HOST: '',
+        // Semantic search without Voyage: deterministic embeddings, and a low limit so the 429 test is quick
+        EMBEDDINGS_PROVIDER: 'fake',
+        SEARCH_RATE_LIMIT_PER_MIN: '8',
+        // Shopping assistant without OpenAI: a scripted model (SPEC 09)
+        LLM_PROVIDER: 'fake',
+        ASSISTANT_RATE_LIMIT_PER_MIN: '30',
       },
     },
     {

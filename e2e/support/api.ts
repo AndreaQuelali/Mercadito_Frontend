@@ -38,7 +38,7 @@ export async function loginViaApi(request: APIRequestContext, user: TestUser) {
   return { token: body.data.token as string, refreshToken: body.data.refreshToken as string };
 }
 
-const authHeader = (token: string) => ({ Authorization: `Bearer ${token}` });
+export const authHeader = (token: string) => ({ Authorization: `Bearer ${token}` });
 
 export interface SeededProduct {
   id: number;
@@ -53,7 +53,7 @@ export interface SeededProduct {
 /** A seller with one published product, created through the API */
 export async function seedProduct(
   request: APIRequestContext,
-  overrides: Partial<{ name: string; price: number; stock: number }> = {}
+  overrides: Partial<{ name: string; price: number; stock: number; category: string; description: string }> = {}
 ): Promise<SeededProduct> {
   const seller = await registerViaApi(request, newUser('seller'));
   const { token } = await loginViaApi(request, seller);
@@ -75,8 +75,8 @@ export async function seedProduct(
       price: overrides.price ?? 12.5,
       stock,
       unit: 'kilogramo',
-      category: 'verduras',
-      description: 'Tomate fresco de valle',
+      category: overrides.category ?? 'verduras',
+      description: overrides.description ?? 'Tomate fresco de valle',
       image: 'https://example.com/tomate.jpg',
     },
   });

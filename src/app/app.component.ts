@@ -4,6 +4,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ToastComponent } from './components/toast/toast.component';
+import { AssistantLauncherComponent } from './components/assistant/assistant-launcher.component';
 import { SocketService } from './services/socket.service';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
@@ -11,11 +12,12 @@ import { ThemeService } from './services/theme.service';
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [CommonModule, HeaderComponent, RouterOutlet, ToastComponent],
+  imports: [CommonModule, HeaderComponent, RouterOutlet, ToastComponent, AssistantLauncherComponent],
   template: `
     <app-header *ngIf="showGlobalHeader()"></app-header>
     <router-outlet></router-outlet>
     <app-toast></app-toast>
+    <app-assistant-launcher></app-assistant-launcher>
   `,
   styleUrls: ['./app.component.css'],
 })
