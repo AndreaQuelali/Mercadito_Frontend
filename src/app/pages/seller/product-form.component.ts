@@ -26,78 +26,63 @@ const UNIT_OPTIONS: { value: ProductUnit; label: string }[] = [
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div *ngIf="!auth.canManageStore()"
-         class="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+  <main class="ui-page max-w-4xl">
+    <p *ngIf="!auth.canManageStore()" class="ui-alert-warn mb-6">
       Tu puesto está suspendido. No puedes crear ni editar productos.
-      <a routerLink="/dashboard/products" class="underline ml-1">Volver al panel</a>
-    </div>
+      <a routerLink="/dashboard/products" class="ui-link ml-1">Volver a productos</a>
+    </p>
 
-    <div class="bg-white rounded-2xl border border-slate-200 p-6">
-      <h2 class="text-xl font-semibold text-slate-900">{{ isEdit ? 'Editar Producto' : 'Nuevo Producto' }}</h2>
+    <h1 class="ui-title mb-8">{{ isEdit ? 'Editar producto' : 'Nuevo producto' }}</h1>
 
-      <div *ngIf="loading()" class="mt-8 flex justify-center">
-        <div class="h-8 w-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+    <div *ngIf="loading()" class="ui-skel h-64"></div>
+
+    <form *ngIf="!loading() && auth.canManageStore()" (ngSubmit)="onSubmit()" class="ui-panel grid grid-cols-1 md:grid-cols-2 gap-5">
+      <label class="block">
+        <span class="ui-label">Nombre del producto</span>
+        <input id="pf-name" [(ngModel)]="model.name" name="name" type="text" class="ui-field" required />
+      </label>
+      <label class="block">
+        <span class="ui-label">Categoría</span>
+        <select id="pf-category" [(ngModel)]="model.category" name="category" class="ui-field" required>
+          <option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</option>
+        </select>
+      </label>
+
+      <label class="block md:col-span-2">
+        <span class="ui-label">Descripción</span>
+        <textarea id="pf-desc" [(ngModel)]="model.description" name="description" rows="4" class="ui-field" required></textarea>
+      </label>
+
+      <label class="block">
+        <span class="ui-label">Precio (Bs)</span>
+        <input id="pf-price" [(ngModel)]="model.price" name="price" type="number" min="0" step="0.01" class="ui-field" required />
+      </label>
+      <label class="block">
+        <span class="ui-label">Unidad</span>
+        <select id="pf-unit" [(ngModel)]="model.unit" name="unit" class="ui-field" required>
+          <option *ngFor="let u of units" [value]="u.value">{{ u.label }}</option>
+        </select>
+      </label>
+
+      <label class="block">
+        <span class="ui-label">Stock disponible</span>
+        <input id="pf-stock" [(ngModel)]="model.stock" name="stock" type="number" min="0" class="ui-field" required />
+      </label>
+      <label class="block">
+        <span class="ui-label">URL de la imagen</span>
+        <input id="pf-image" [(ngModel)]="model.image" name="image" type="url" placeholder="https://..." class="ui-field" required />
+      </label>
+
+      <p *ngIf="errorMsg()" class="md:col-span-2 ui-alert-error" role="alert">{{ errorMsg() }}</p>
+
+      <div class="md:col-span-2 flex flex-wrap items-center gap-3 pt-2">
+        <button id="pf-submit" type="submit" [disabled]="saving()" class="ui-btn">
+          <span *ngIf="saving()" class="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+          {{ isEdit ? 'Guardar cambios' : 'Publicar' }}
+        </button>
+        <a routerLink="/dashboard/products" class="ui-btn ui-btn-ghost">Cancelar</a>
       </div>
-
-      <form *ngIf="!loading() && auth.canManageStore()" (ngSubmit)="onSubmit()" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">Nombre del Producto</label>
-          <input [(ngModel)]="model.name" name="name" type="text"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required />
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">Categoría</label>
-          <select [(ngModel)]="model.category" name="category"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required>
-            <option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</option>
-          </select>
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="block text-sm text-slate-600 mb-1">Descripción</label>
-          <textarea [(ngModel)]="model.description" name="description" rows="4"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">Precio</label>
-          <input [(ngModel)]="model.price" name="price" type="number" min="0" step="0.01"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required />
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">Unidad</label>
-          <select [(ngModel)]="model.unit" name="unit"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required>
-            <option *ngFor="let u of units" [value]="u.value">{{ u.label }}</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">Stock Disponible</label>
-          <input [(ngModel)]="model.stock" name="stock" type="number" min="0"
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required />
-        </div>
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">URL de Imagen</label>
-          <input [(ngModel)]="model.image" name="image" type="url" placeholder="https://..."
-            class="w-full rounded-md bg-slate-50 border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500" required />
-        </div>
-
-        <div *ngIf="errorMsg()" class="md:col-span-2 text-red-600 text-sm bg-red-50 rounded-lg px-4 py-3">
-          {{ errorMsg() }}
-        </div>
-
-        <div class="md:col-span-2 flex items-center gap-3 pt-2">
-          <button type="submit" [disabled]="saving()"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50">
-            <span *ngIf="saving()" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            {{ isEdit ? 'Guardar Cambios' : 'Publicar' }}
-          </button>
-          <a routerLink="/dashboard/products" class="px-4 py-2 rounded-full border border-slate-300 hover:bg-slate-50">Cancelar</a>
-        </div>
-      </form>
-    </div>
+    </form>
   </main>
   `
 })

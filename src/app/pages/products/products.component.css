@@ -78,7 +78,7 @@
 }
 
 .products-count span {
-  color: var(--color-primary);
+  color: var(--color-link);
   font-family: 'DM Mono', monospace;
   font-weight: 700;
 }

@@ -13,93 +13,74 @@ const SECTION_SIZE = 8;
   standalone: true,
   imports: [CommonModule, RouterLink, ProductCardComponent],
   template: `
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-    <header class="space-y-2">
-      <p class="text-sm text-text-muted">Mercado Boliviano</p>
-      <h1 class="text-3xl sm:text-4xl font-display font-bold text-text-main">
-        Hola{{ firstName() ? ', ' + firstName() : '' }}
-      </h1>
-      <p class="text-text-muted max-w-xl">
-        Descubre puestos locales, encuentra lo fresco del día y vuelve a tus favoritos del barrio.
-      </p>
-    </header>
-
-    <!-- Categories -->
-    <section class="space-y-3">
-      <div class="flex items-center justify-between gap-3">
-        <h2 class="text-lg font-display font-semibold text-text-main">Categorías</h2>
-        <a routerLink="/products" class="text-sm font-medium text-primary hover:underline">Ver catálogo</a>
+  <main class="ui-page space-y-16">
+    <section class="grid gap-8 lg:grid-cols-2 lg:items-center">
+      <div class="space-y-6">
+        <h1 class="ui-title">Hola{{ firstName() ? ', ' + firstName() : '' }}</h1>
+        <p class="ui-lead">
+          Descubre los puestos de tu barrio, encuentra lo fresco del día y vuelve a tus favoritos.
+        </p>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Rubros">
+          <a
+            *ngFor="let c of browseCategories"
+            [routerLink]="['/products']"
+            [queryParams]="{ category: c.key }"
+            class="ui-chip"
+          >
+            {{ c.label }}
+          </a>
+        </div>
+        <p><a routerLink="/products" class="ui-btn">Ver el catálogo</a></p>
       </div>
-      <div class="flex flex-wrap gap-2">
-        <a
-          *ngFor="let c of browseCategories"
-          [routerLink]="['/products']"
-          [queryParams]="{ category: c.key }"
-          class="px-4 py-2 rounded-full border border-border-medium bg-surface text-sm font-medium
-                 text-text-muted hover:border-primary hover:text-primary transition"
-        >
-          {{ c.label }}
-        </a>
-      </div>
+      <figure class="m-0">
+        <img
+          src="assets/landing/interior-cliza.jpg"
+          alt="Interior del mercado de Cliza, Cochabamba"
+          class="w-full aspect-[3/2] object-cover"
+          width="1500"
+          height="1000"
+        />
+      </figure>
     </section>
 
-    <!-- Loading -->
-    <div *ngIf="loading()" class="space-y-8">
-      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-xl shadow-card overflow-hidden">
-          <div class="aspect-[4/3] skeleton"></div>
-          <div class="p-4 space-y-3">
-            <div class="skeleton h-4 w-2/3"></div>
-            <div class="skeleton h-3 w-full"></div>
-          </div>
+    <div *ngIf="loading()" class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div *ngFor="let i of [1,2,3,4]" class="ui-panel !p-0">
+        <div class="aspect-[4/3] ui-skel"></div>
+        <div class="p-4 space-y-3">
+          <div class="ui-skel h-5 w-2/3"></div>
+          <div class="ui-skel h-4 w-full"></div>
         </div>
       </div>
     </div>
 
     <ng-container *ngIf="!loading()">
-      <!-- Featured -->
-      <section class="space-y-4">
-        <div class="flex items-end justify-between gap-3">
+      <section class="space-y-6">
+        <div class="flex items-end justify-between gap-4">
           <div>
-            <h2 class="text-xl font-display font-bold text-text-main">Destacados</h2>
-            <p class="text-sm text-text-muted">Selección para empezar a explorar.</p>
+            <h2 class="ui-h2">Destacados</h2>
+            <p class="text-lg text-text-muted mt-1">Una selección para empezar.</p>
           </div>
-          <a routerLink="/products" class="text-sm font-medium text-primary hover:underline shrink-0">Ver todos</a>
+          <a routerLink="/products" class="ui-link shrink-0">Ver todos</a>
         </div>
-        <div *ngIf="featured().length === 0" class="text-sm text-text-subtle py-6">
-          Aún no hay productos publicados.
-        </div>
+        <p *ngIf="featured().length === 0" class="text-lg text-text-muted">Aún no hay productos publicados.</p>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <app-product-card *ngFor="let p of featured()" [product]="p" class="animate-fade-in" />
         </div>
       </section>
 
-      <!-- Newest -->
-      <section class="space-y-4">
-        <div class="flex items-end justify-between gap-3">
+      <section class="space-y-6">
+        <div class="flex items-end justify-between gap-4">
           <div>
-            <h2 class="text-xl font-display font-bold text-text-main">Recién llegados</h2>
-            <p class="text-sm text-text-muted">Últimas publicaciones del mercado.</p>
+            <h2 class="ui-h2">Recién llegados</h2>
+            <p class="text-lg text-text-muted mt-1">Lo último que publicaron los puestos.</p>
           </div>
-          <a routerLink="/products" class="text-sm font-medium text-primary hover:underline shrink-0">Ver todos</a>
+          <a routerLink="/products" class="ui-link shrink-0">Ver todos</a>
         </div>
-        <div *ngIf="newest().length === 0" class="text-sm text-text-subtle py-6">
-          Aún no hay productos publicados.
-        </div>
+        <p *ngIf="newest().length === 0" class="text-lg text-text-muted">Aún no hay productos publicados.</p>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <app-product-card *ngFor="let p of newest()" [product]="p" class="animate-fade-in" />
         </div>
       </section>
-
-      <div class="flex justify-center pt-2 pb-6">
-        <a
-          routerLink="/products"
-          class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover
-                 text-white font-semibold shadow-theme-primary transition"
-        >
-          Ver todo el catálogo
-        </a>
-      </div>
     </ng-container>
   </main>
   `,

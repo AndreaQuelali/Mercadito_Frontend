@@ -4,11 +4,12 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { SellerService } from '../../services/seller.service';
+import { UiLogoComponent } from '../../components/ui/ui-logo.component';
 
 @Component({
   selector: 'app-seller-shell',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, UiLogoComponent],
   templateUrl: './seller-shell.component.html',
   styleUrls: ['./seller-shell.component.css'],
 })

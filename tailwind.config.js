@@ -6,9 +6,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Fraunces"', 'Georgia', 'serif'],
-        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Besley"', 'Georgia', 'serif'],
+        sans: ['"Libre Franklin"', 'system-ui', 'sans-serif'],
         mono: ['"DM Mono"', 'monospace'],
+      },
+      fontSize: {
+        xs: ['0.9286rem', { lineHeight: '1.4' }],
+        sm: ['0.9286rem', { lineHeight: '1.45' }],
       },
       colors: {
         primary: {
@@ -35,10 +39,21 @@ module.exports = {
           light: 'var(--color-accent-teal-light)',
         },
         base: 'var(--color-bg-base)',
+        'on-primary': 'var(--color-text-on-primary)',
+        link: {
+          DEFAULT: 'var(--color-link)',
+          hover: 'var(--color-link-hover)',
+        },
+        inverse: {
+          DEFAULT: 'var(--color-bg-inverse)',
+          text: 'var(--color-text-on-inverse)',
+          muted: 'var(--color-text-on-inverse-muted)',
+        },
         surface: {
           DEFAULT: 'var(--color-bg-surface)',
           elevated: 'var(--color-bg-surface-elevated)',
           subtle: 'var(--color-bg-subtle)',
+          hover: 'var(--color-bg-surface-hover)',
         },
         text: {
           main: 'var(--color-text-main)',

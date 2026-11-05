@@ -4,6 +4,7 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -13,64 +14,184 @@ import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { ProductService } from '../../services/products.service';
 import { ProductCard } from '../../components/product-card/product-card.component';
+import { UiLogoComponent } from '../../components/ui/ui-logo.component';
 
-const CATEGORIES = [
-  { key: 'verduras', label: 'Verduras' },
-  { key: 'frutas', label: 'Frutas' },
-  { key: 'panaderia', label: 'Panadería' },
-  { key: 'lacteos', label: 'Lácteos' },
-  { key: 'artesanias', label: 'Artesanías' },
+interface HeroSlide {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+interface Category {
+  key: string;
+  label: string;
+  image: string;
+  alt: string;
+  caption: string;
+}
+
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+const HERO_SLIDES: HeroSlide[] = [
+  {
+    src: 'assets/landing/verduras-punata.jpg',
+    alt: 'Puesto de verduras con zanahorias, vainitas y pimentones en el mercado de Punata',
+    caption: 'Mercado de Punata, Cochabamba',
+  },
+  {
+    src: 'assets/landing/frutas-10enero.jpg',
+    alt: 'Granadas y frutillas en un puesto del Mercado 10 de Enero',
+    caption: 'Mercado 10 de Enero, La Paz',
+  },
+  {
+    src: 'assets/landing/calle-cliza.jpg',
+    alt: 'Una vendedora empuja una carretilla por una calle de mercado en Cliza',
+    caption: 'Calle de mercado, Cliza',
+  },
+  {
+    src: 'assets/landing/queso.jpg',
+    alt: 'Queso fresco y papayas en un mercado',
+    caption: 'Queso fresco en un mercado',
+  },
+  {
+    src: 'assets/landing/pan-horno.jpg',
+    alt: 'Pan recién salido del horno',
+    caption: 'Pan de horno, La Paz',
+  },
+  {
+    src: 'assets/landing/aguayos.jpg',
+    alt: 'Aguayos de colores apilados en un puesto',
+    caption: 'Aguayos en un mercado de El Alto',
+  },
 ];
 
-const TESTIMONIALS = [
+const CATEGORIES: Category[] = [
   {
-    quote: 'Compro las verduras del mismo puesto que veía los sábados, pero sin madrugar.',
-    name: 'María L.',
-    role: 'Vecina del centro',
+    key: 'verduras',
+    label: 'Verduras',
+    image: 'assets/landing/verduras-cliza.jpg',
+    alt: 'Puesto de papas, verduras y legumbres en Cliza',
+    caption: 'Papas, verduras y legumbres, Cliza',
   },
   {
-    quote: 'En una tarde armé mi puesto digital y esa misma semana llegaron los primeros pedidos.',
-    name: 'Don Héctor',
-    role: 'Vendedor de frutas',
+    key: 'frutas',
+    label: 'Frutas',
+    image: 'assets/landing/frutas-punata.jpg',
+    alt: 'Cajones de frutas en un puesto del mercado de Punata',
+    caption: 'Frutas en cajón, mercado de Punata',
   },
   {
-    quote: 'Mis clientes del barrio ahora me encuentran aunque no puedan venir al mercado.',
-    name: 'Lucía R.',
-    role: 'Panadera artesanal',
+    key: 'panaderia',
+    label: 'Panadería',
+    image: 'assets/landing/pan-horno.jpg',
+    alt: 'Pan recién salido del horno',
+    caption: 'Pan de horno, La Paz',
+  },
+  {
+    key: 'lacteos',
+    label: 'Lácteos',
+    image: 'assets/landing/queso.jpg',
+    alt: 'Queso fresco sobre una mesa de mercado',
+    caption: 'Queso fresco en un mercado',
+  },
+  {
+    key: 'artesanias',
+    label: 'Artesanías',
+    image: 'assets/landing/aguayos.jpg',
+    alt: 'Aguayos de colores en un puesto',
+    caption: 'Aguayos en un mercado de El Alto',
   },
 ];
 
-const FAQ = [
+const FAQ: FaqItem[] = [
+  {
+    q: '¿Necesito otra cuenta para vender?',
+    a: 'No. Una sola cuenta sirve para comprar y para vender. Cuando quieras, eliges “Quiero vender”, completas el nombre de tu puesto y publicas tus productos.',
+  },
   {
     q: '¿Cómo compro en Mercadito?',
-    a: 'Explora el catálogo, agrega productos al carrito e inicia sesión para confirmar tu pedido. Recibes el estado del pedido desde tu cuenta.',
+    a: 'Explora el catálogo, agrega productos al carrito e inicia sesión para confirmar tu pedido. Sigues el estado desde tu cuenta.',
   },
   {
-    q: '¿Puedo comprar y vender con la misma cuenta?',
-    a: 'Sí. Todos los usuarios pueden comprar. Cuando quieras vender, activa tu puesto con “Quiero vender” y publicas productos sin crear otra cuenta.',
-  },
-  {
-    q: '¿Cómo empiezo a vender?',
-    a: 'Regístrate, elige “Quiero vender”, completa el nombre de tu puesto y publica tus productos con precio, stock e imagen.',
+    q: '¿Cómo recibo mi pedido?',
+    a: 'Lo acuerdas con el puesto: muchos coordinan retiro en el mercado o entrega en tu zona. Revisa la comunicación con el vendedor al confirmar.',
   },
   {
     q: '¿Mercadito procesa pagos en línea?',
-    a: 'En esta etapa los pedidos se gestionan entre comprador y vendedor según el acuerdo del puesto. El catálogo y el flujo de órdenes ya están en la app.',
+    a: 'En esta etapa los pedidos se gestionan entre comprador y vendedor según el acuerdo del puesto, incluido el pago.',
   },
   {
-    q: '¿Puedo retirar en el mercado?',
-    a: 'Sí: muchos puestos coordinan retiro en el mercado o entrega en la zona. Revisa la comunicación con el vendedor al confirmar el pedido.',
+    q: '¿Qué puedo publicar?',
+    a: 'Verduras, frutas, panadería, lácteos y artesanías, con precio, stock e imagen.',
   },
   {
     q: '¿Qué pasa si mi puesto queda suspendido?',
-    a: 'Puedes ver tus productos y órdenes, y editar la configuración del puesto. La publicación y los cambios de estado se reactivan cuando un admin levante la suspensión.',
+    a: 'Puedes ver tus productos y órdenes, y editar la configuración del puesto. La publicación se reactiva cuando un administrador levante la suspensión.',
   },
 ];
+
+type FlowRole = 'buy' | 'sell';
+type FlowIcon = 'search' | 'cart' | 'check' | 'box' | 'user' | 'store' | 'camera' | 'clipboard';
+
+interface FlowStep {
+  icon: FlowIcon;
+  title: string;
+  text: string;
+}
+
+interface Flow {
+  key: FlowRole;
+  tab: string;
+  title: string;
+  photo: string;
+  photoAlt: string;
+  caption: string;
+  steps: FlowStep[];
+  switchLabel: string;
+}
+
+const FLOWS: Record<FlowRole, Flow> = {
+  buy: {
+    key: 'buy',
+    tab: 'Quiero comprar',
+    title: 'Del catálogo a tu mesa',
+    photo: 'assets/landing/frutas-punata.jpg',
+    photoAlt: 'Cajones de frutas en un puesto del mercado de Punata',
+    caption: 'Mercado de Punata, Cochabamba',
+    steps: [
+      { icon: 'search', title: 'Explora el catálogo', text: 'Por rubro y por puesto.' },
+      { icon: 'cart', title: 'Arma tu carrito', text: 'Suma productos de varios puestos.' },
+      { icon: 'check', title: 'Confirma tu pedido', text: 'Inicias sesión y el puesto lo recibe.' },
+      { icon: 'box', title: 'Retira o recibe', text: 'En el mercado o en tu zona, como acuerden.' },
+    ],
+    switchLabel: 'Mira cómo lo vive el puesto →',
+  },
+  sell: {
+    key: 'sell',
+    tab: 'Quiero vender',
+    title: 'Tu puesto, en línea',
+    photo: 'assets/landing/calle-cliza.jpg',
+    photoAlt: 'Una vendedora empuja su carretilla por una calle de mercado en Cliza',
+    caption: 'Calle de mercado, Cliza',
+    steps: [
+      { icon: 'user', title: 'Crea tu cuenta', text: 'Es la misma con la que compras.' },
+      { icon: 'store', title: 'Elige “Quiero vender”', text: 'Y arma el perfil de tu puesto.' },
+      { icon: 'camera', title: 'Publica tus productos', text: 'Con precio, stock e imagen.' },
+      { icon: 'clipboard', title: 'Gestiona tus órdenes', text: 'Desde el celular, a tu ritmo.' },
+    ],
+    switchLabel: 'Mira cómo lo vive el comprador →',
+  },
+};
+
+const SLIDE_INTERVAL_MS = 5500;
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UiLogoComponent],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
 })
@@ -81,32 +202,33 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
   private productSvc = inject(ProductService);
   private host = inject(ElementRef<HTMLElement>);
 
-  categories = CATEGORIES;
-  testimonials = TESTIMONIALS;
-  faq = FAQ;
+  readonly slides = HERO_SLIDES;
+  readonly categories = CATEGORIES;
+  readonly faq = FAQ;
+  readonly year = new Date().getFullYear();
 
+  slideIndex = signal(0);
+  selectedCategory = signal<string>(CATEGORIES[0].key);
   allProducts = signal<ProductCard[]>([]);
-  selectedCategory = signal<string | null>(null);
   loadingProducts = signal(true);
-  activeMode = signal<'buyer' | 'seller'>('buyer');
-  addedToast = signal<string | null>(null);
-
   mobileMenuOpen = signal(false);
+  flowRole = signal<FlowRole>('buy');
+  readonly flows = FLOWS;
 
-  // Cursor Aura tracking
-  auraX = signal(0);
-  auraY = signal(0);
-  showAura = signal(false);
+  flow = computed(() => FLOWS[this.flowRole()]);
+  currentSlide = computed(() => this.slides[this.slideIndex()]);
+  currentCategory = computed(
+    () => this.categories.find((c) => c.key === this.selectedCategory()) ?? this.categories[0]
+  );
+  categoryProducts = computed(() => {
+    const key = this.selectedCategory();
+    return this.allProducts()
+      .filter((p) => p.category?.toLowerCase() === key)
+      .slice(0, 4);
+  });
 
   private observer?: IntersectionObserver;
-
-  readonly heroImage =
-    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=800&q=60';
-  readonly heroSrcset =
-    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=800&q=60 800w, ' +
-    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1600&q=65 1600w';
-  readonly communityImage =
-    'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80';
+  private slideTimer?: ReturnType<typeof setInterval>;
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen.set(!this.mobileMenuOpen());
@@ -132,35 +254,29 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
     return 'Quiero vender';
   }
 
-  filteredProducts(): ProductCard[] {
-    const cat = this.selectedCategory();
-    const items = this.allProducts();
-    if (!cat) return items.slice(0, 4);
-    const filtered = items.filter(
-      (p) => p.category?.toLowerCase() === cat.toLowerCase()
-    );
-    return filtered.length > 0 ? filtered.slice(0, 4) : items.slice(0, 4);
+  trackFlow(_: number, f: Flow): FlowRole {
+    return f.key;
   }
 
-  selectCategory(catKey: string | null): void {
-    this.selectedCategory.set(catKey);
+  setFlowRole(role: FlowRole): void {
+    this.flowRole.set(role);
   }
 
-  setMode(mode: 'buyer' | 'seller'): void {
-    this.activeMode.set(mode);
-  }
-
-  addToQuickCart(productName: string, event: Event): void {
+  onFlowKey(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
     event.preventDefault();
-    event.stopPropagation();
-    this.addedToast.set(`¡${productName} agregado al carrito!`);
-    setTimeout(() => this.addedToast.set(null), 2500);
+    const next: FlowRole = this.flowRole() === 'buy' ? 'sell' : 'buy';
+    this.flowRole.set(next);
+    this.host.nativeElement.querySelector('#landing-tab-' + next)?.focus();
   }
 
-  onMouseMove(e: MouseEvent): void {
-    this.auraX.set(e.clientX);
-    this.auraY.set(e.clientY);
-    if (!this.showAura()) this.showAura.set(true);
+  selectCategory(key: string): void {
+    this.selectedCategory.set(key);
+  }
+
+  goToSlide(index: number): void {
+    this.slideIndex.set(index);
+    this.startSlideshow();
   }
 
   ngOnInit(): void {
@@ -182,10 +298,12 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     if (typeof window === 'undefined') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.host.nativeElement
-        .querySelectorAll('.fade-up')
-        .forEach((el: Element) => el.classList.add('is-visible'));
+    this.startSlideshow();
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = this.host.nativeElement.querySelectorAll('.rv');
+    if (reduced || typeof IntersectionObserver === 'undefined') {
+      items.forEach((el: Element) => el.classList.add('in'));
       return;
     }
 
@@ -193,20 +311,33 @@ export class LandingComponent implements OnInit, AfterViewInit, OnDestroy {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
+            entry.target.classList.add('in');
             this.observer?.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }
+      { threshold: 0.12 }
     );
-
-    this.host.nativeElement
-      .querySelectorAll('.fade-up')
-      .forEach((el: Element) => this.observer?.observe(el));
+    items.forEach((el: Element) => this.observer?.observe(el));
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.stopSlideshow();
+  }
+
+  private startSlideshow(): void {
+    this.stopSlideshow();
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this.slideTimer = setInterval(
+      () => this.slideIndex.set((this.slideIndex() + 1) % this.slides.length),
+      SLIDE_INTERVAL_MS
+    );
+  }
+
+  private stopSlideshow(): void {
+    if (this.slideTimer) clearInterval(this.slideTimer);
+    this.slideTimer = undefined;
   }
 }
