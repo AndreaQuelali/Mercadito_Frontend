@@ -91,6 +91,19 @@ Admins gestionan sellers en `/admin/sellers` (suspender / reactivar).
 
 ---
 
+## Asistente de compras
+
+Un botón flotante abre un panel de chat donde el comprador pregunta por productos, ve tarjetas con su detalle y **confirma o rechaza** cada cambio que el asistente propone (agregar, cambiar o quitar del carrito, hacer el pedido). El asistente nunca ejecuta nada por su cuenta: todo pasa por los botones **Confirmar** / **Rechazar**.
+
+- **Dónde aparece:** `/home`, `/products`, `/product/:id`, `/cart`, `/checkout` y `/orders`. No aparece en la landing, en `/auth/*` ni en `/dashboard*`.
+- **Requisitos:** el backend debe tener `OPENAI_API_KEY`. Sin la key, `GET /assistant/status` responde `enabled: false` y el botón no se muestra: la app se ve como siempre. Ver el README del backend.
+- **Visitantes sin sesión:** ven el botón; el panel los lleva a `/auth/login?returnUrl=<página actual>` y vuelven a la misma página al entrar.
+- **Privacidad:** la primera vez se pide aceptar un aviso: los mensajes (y el carrito y pedidos que el asistente consulte) se envían a OpenAI para generar las respuestas. La aceptación se guarda en `localStorage` (`mercadito_assistant_notice_v1`) y queda una línea fija en el pie del panel.
+- **Conversación:** el `conversationId` vive en `sessionStorage` (`mercadito_assistant_conversation`): recargar la página la retoma mientras exista en el servidor (24 h). "Nueva conversación" y cerrar sesión la descartan.
+- **Teclado:** Enter envía, Shift+Enter hace salto de línea, Esc cierra el panel y devuelve el foco al botón. Los mensajes admiten hasta 1000 caracteres.
+
+---
+
 ## Rutas disponibles
 
 | Ruta | Acceso | Descripción |
@@ -129,7 +142,9 @@ Admins gestionan sellers en `/admin/sellers` (suspender / reactivar).
 
 ### Pruebas e2e
 
-Los tests de `e2e/tests` (Playwright) recorren tres flujos contra el **backend real**:
+Los tests de `e2e/tests` (Playwright) recorren estos flujos contra el **backend real**:
+
+- `assistant.spec.ts` y `assistant-ui.spec.ts`: el asistente de compras, por API y por la interfaz (botón, aviso de privacidad, confirmar y rechazar, retomar la conversación). El backend se levanta con el modelo y los embeddings falsos, sin OpenAI.
 
 - `auth.spec.ts`: registro, login, sesión que sobrevive a un reload, correo repetido, contraseña incorrecta y redirección de páginas protegidas.
 - `buy.spec.ts`: buscar un producto, agregarlo al carrito, pagar, ver el pedido, bajada de stock, aviso `order:new` al vendedor y renovación automática de un access token vencido.
@@ -152,7 +167,7 @@ Requisitos: Docker en marcha, Google Chrome instalado y las dependencias del bac
 ```
 src/
 ├── app/
-│   ├── components/       # Componentes reutilizables (header, product-card, toast…)
+│   ├── components/       # Componentes reutilizables (header, product-card, toast, assistant…)
 │   ├── guards/           # authGuard, sellerGuard, noSellerGuard, adminGuard
 │   ├── interceptors/     # AuthInterceptor (adjunta JWT a peticiones)
 │   ├── pages/            # auth, home, cart, seller, admin…

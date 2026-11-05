@@ -46,7 +46,10 @@ async function seedUniqueProduct(request: APIRequestContext, stock = 20) {
 
 test.describe('Shopping assistant (API)', () => {
   test('is enabled and requires a session', async ({ request }) => {
-    expect((await request.get(`${API}/assistant/status`)).status()).toBe(401);
+    // The status is public (SPEC 10): the UI needs it to decide whether to show the button
+    const anon = await request.get(`${API}/assistant/status`);
+    expect(anon.status()).toBe(200);
+    expect((await anon.json()).data).toEqual({ enabled: true, model: 'fake' });
     expect((await request.post(`${API}/assistant/messages`, { data: { message: 'hola' } })).status()).toBe(401);
 
     const token = await newBuyerToken(request);
