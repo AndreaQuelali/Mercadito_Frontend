@@ -17,7 +17,7 @@ test.describe('Buying', () => {
     // Open it and add two units
     await page.getByRole('heading', { name: product.name }).click();
     await expect(page).toHaveURL(new RegExp(`/product/${product.id}$`));
-    await page.getByRole('button', { name: '+', exact: true }).click();
+    await page.getByRole('button', { name: 'Agregar una unidad' }).click();
     await page.getByRole('button', { name: 'Agregar al carrito' }).click();
 
     // The cart shows the line and the total (2 x 12.50)

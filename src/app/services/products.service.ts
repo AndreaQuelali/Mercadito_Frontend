@@ -18,6 +18,7 @@ export interface ProductDto {
   category: ProductCategory;
   description: string;
   image: string;
+  updatedAt?: string;
   seller?: { id?: number; firstName?: string; lastName?: string } | string;
 }
 
@@ -81,6 +82,7 @@ export class ProductService {
           stock: p.stock,
           category: p.category,
           image: p.image,
+          updatedAt: p.updatedAt,
           featured: false,
         })))
       );

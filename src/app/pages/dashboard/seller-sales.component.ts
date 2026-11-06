@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { RouterLink } from '@angular/router';
 import { SalesStatus, SalesSummary, SellerService } from '../../services/seller.service';
 
@@ -29,106 +30,98 @@ const STATUS_ORDER: { key: SalesStatus; label: string; counts: boolean }[] = [
 @Component({
   selector: 'app-seller-sales',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, UiEmptyComponent],
   template: `
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <header class="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p class="text-sm text-text-muted">Panel de gestión</p>
-        <h1 class="text-2xl font-display font-bold text-text-main mt-1">Ventas</h1>
-        <p class="text-text-muted mt-1 max-w-xl text-sm">
+  <main class="ui-page space-y-8">
+    <header class="flex flex-wrap items-end justify-between gap-5">
+      <div class="space-y-3">
+        <h1 class="ui-title">Ventas</h1>
+        <p class="ui-lead">
           Ingresos de pedidos pagados, confirmados, en camino y entregados.
           Los pendientes y cancelados no suman.
         </p>
       </div>
 
-      <div role="group" aria-label="Período" class="inline-flex rounded-xl border border-border-subtle bg-surface p-1">
+      <div role="group" aria-label="Período" class="flex flex-wrap gap-2">
         <button *ngFor="let p of periods" type="button" [id]="'sales-period-' + p.key"
                 (click)="select(p)" [attr.aria-pressed]="period().key === p.key"
-                class="px-3 py-1.5 text-sm font-semibold rounded-lg transition"
-                [ngClass]="period().key === p.key
-                  ? 'bg-primary text-white'
-                  : 'text-text-muted hover:text-text-main'">
+                class="ui-chip" [class.is-active]="period().key === p.key">
           {{ p.label }}
         </button>
       </div>
     </header>
 
     <!-- Loading -->
-    <div *ngIf="loading()" class="space-y-4 animate-pulse" aria-busy="true" aria-label="Cargando ventas">
+    <div *ngIf="loading()" class="space-y-4" aria-busy="true" aria-label="Cargando ventas">
       <div class="grid gap-4 sm:grid-cols-3">
-        <div *ngFor="let i of [1,2,3]" class="h-24 rounded-2xl border border-border-subtle bg-surface"></div>
+        <div *ngFor="let i of [1,2,3]" class="ui-skel h-28"></div>
       </div>
-      <div class="h-56 rounded-2xl border border-border-subtle bg-surface"></div>
+      <div class="ui-skel h-56"></div>
     </div>
 
     <!-- Error -->
-    <div *ngIf="!loading() && error()" role="alert"
-         class="rounded-xl border border-danger-border bg-danger-bg px-4 py-3 text-sm text-danger flex items-center justify-between gap-3 flex-wrap">
-      <span>No pudimos cargar tus ventas.</span>
-      <button type="button" id="sales-retry" (click)="load()"
-              class="font-semibold underline underline-offset-2">Reintentar</button>
-    </div>
+    <ui-empty *ngIf="!loading() && error()" variant="error" title="No pudimos cargar tus ventas" text="Revisa tu conexión e inténtalo de nuevo.">
+      <button type="button" id="sales-retry" (click)="load()" class="ui-btn ui-btn-ghost">Reintentar</button>
+    </ui-empty>
 
     <ng-container *ngIf="!loading() && !error() && summary() as s">
       <!-- Empty -->
-      <div *ngIf="isEmpty()" id="sales-empty"
-           class="rounded-2xl border border-dashed border-border-medium bg-surface px-6 py-14 text-center">
-        <p class="font-display font-semibold text-text-main">Aún no hay ventas en este período</p>
-        <p class="text-sm text-text-muted mt-1">
-          Cuando un pedido se confirme, verás aquí tus ingresos y tus productos más vendidos.
-        </p>
-        <a routerLink="/dashboard/orders" class="inline-block mt-4 text-sm font-semibold text-primary">Ver pedidos</a>
+      <div *ngIf="isEmpty()" id="sales-empty">
+        <ui-empty icon="orders" title="Aún no hay ventas en este período" text="Cuando un pedido se confirme, verás aquí tus ingresos y tus productos más vendidos.">
+          <a routerLink="/dashboard/orders" class="ui-btn ui-btn-ghost">Ver pedidos</a>
+        </ui-empty>
       </div>
 
       <ng-container *ngIf="!isEmpty()">
         <!-- Totals -->
         <section aria-label="Resumen" class="grid gap-4 sm:grid-cols-3">
-          <div class="rounded-2xl border border-border-subtle bg-surface p-5">
-            <p class="text-sm text-text-muted">Ingresos</p>
-            <p id="sales-total" class="mt-1 text-2xl font-display font-bold text-text-main">Bs {{ money(s.total) }}</p>
+          <div class="ui-panel">
+            <p class="text-text-muted">Ingresos</p>
+            <p id="sales-total" class="ui-title mt-1">Bs {{ money(s.total) }}</p>
           </div>
-          <div class="rounded-2xl border border-border-subtle bg-surface p-5">
-            <p class="text-sm text-text-muted">Pedidos</p>
-            <p id="sales-orders" class="mt-1 text-2xl font-display font-bold text-text-main">{{ s.ordersCount }}</p>
+          <div class="ui-panel">
+            <p class="text-text-muted">Pedidos</p>
+            <p id="sales-orders" class="ui-title mt-1">{{ s.ordersCount }}</p>
           </div>
-          <div class="rounded-2xl border border-border-subtle bg-surface p-5">
-            <p class="text-sm text-text-muted">Unidades vendidas</p>
-            <p id="sales-units" class="mt-1 text-2xl font-display font-bold text-text-main">{{ s.unitsSold }}</p>
+          <div class="ui-panel">
+            <p class="text-text-muted">Unidades vendidas</p>
+            <p id="sales-units" class="ui-title mt-1">{{ s.unitsSold }}</p>
           </div>
         </section>
 
-        <div class="grid gap-6 lg:grid-cols-5">
+        <div class="grid gap-4 lg:grid-cols-5">
           <!-- Top products -->
-          <section aria-labelledby="top-title" class="lg:col-span-3 rounded-2xl border border-border-subtle bg-surface p-5">
-            <h2 id="top-title" class="font-display font-semibold text-text-main">Más vendidos</h2>
-            <ol class="mt-4 space-y-4">
-              <li *ngFor="let p of s.topProducts; let i = index">
-                <div class="flex items-baseline justify-between gap-3 text-sm">
-                  <span class="text-text-main font-medium truncate">
-                    <span class="text-text-subtle mr-1">{{ i + 1 }}.</span>{{ p.name }}
-                  </span>
-                  <span class="text-text-muted shrink-0">
-                    {{ p.units }} {{ p.units === 1 ? 'unidad' : 'unidades' }} · Bs {{ money(p.revenue) }}
-                  </span>
+          <section aria-labelledby="top-title" class="lg:col-span-3 ui-panel">
+            <h2 id="top-title" class="ui-h2">Más vendidos</h2>
+            <ol class="mt-5 space-y-[18px]">
+              <li *ngFor="let p of s.topProducts; let i = index"
+                  class="grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3.5">
+                <img [src]="p.image || ''" [alt]="p.name"
+                     class="h-14 w-14 rounded-[var(--radius)] object-cover bg-surface-hover" />
+                <div class="min-w-0">
+                  <div class="truncate text-[15px] font-semibold text-text-main">{{ i + 1 }}. {{ p.name }}</div>
+                  <div class="mt-2 h-2.5 overflow-hidden rounded-[var(--radius)] bg-base" aria-hidden="true">
+                    <div class="h-full rounded-[var(--radius)] bg-primary" [style.width.%]="barWidth(p.units)"></div>
+                  </div>
                 </div>
-                <div class="mt-1.5 h-2 rounded-full bg-surface-subtle overflow-hidden" aria-hidden="true">
-                  <div class="h-full rounded-full bg-primary" [style.width.%]="barWidth(p.units)"></div>
+                <div class="flex min-w-[96px] flex-col items-end">
+                  <span class="text-[17px] font-bold tabular-nums text-text-main">Bs {{ money(p.revenue) }}</span>
+                  <span class="text-[13px] text-text-muted">{{ p.units }} {{ p.units === 1 ? 'unidad' : 'unidades' }}</span>
                 </div>
               </li>
             </ol>
           </section>
 
           <!-- By status -->
-          <section aria-labelledby="status-title" class="lg:col-span-2 rounded-2xl border border-border-subtle bg-surface p-5">
-            <h2 id="status-title" class="font-display font-semibold text-text-main">Pedidos por estado</h2>
-            <dl class="mt-4 space-y-2 text-sm">
-              <div *ngFor="let st of statuses" class="flex items-center justify-between">
-                <dt class="text-text-muted">
-                  {{ st.label }}
-                  <span *ngIf="!st.counts" class="text-text-subtle text-xs">(no suma)</span>
+          <section aria-labelledby="status-title" class="lg:col-span-2 ui-panel">
+            <h2 id="status-title" class="ui-h2">Pedidos por estado</h2>
+            <dl class="mt-5 space-y-3">
+              <div *ngFor="let st of statuses" class="flex items-center justify-between gap-3">
+                <dt class="flex items-center gap-2.5">
+                  <span class="rounded-[var(--radius)] px-3 py-[3px] text-sm font-semibold" [ngClass]="badgeClass(st.key)">{{ st.label }}</span>
+                  <span *ngIf="!st.counts" class="text-[13px] text-text-muted">no suma</span>
                 </dt>
-                <dd class="font-semibold text-text-main">{{ s.ordersByStatus[st.key] }}</dd>
+                <dd class="text-lg font-bold">{{ s.ordersByStatus[st.key] }}</dd>
               </div>
             </dl>
           </section>
@@ -193,6 +186,19 @@ export class SellerSalesComponent implements OnInit {
 
   money(value: string): string {
     return Number(value).toLocaleString('es-BO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  /** One color per status, all with cream text; cancelled is solid red so it reads on the panel */
+  badgeClass(key: SalesStatus): string {
+    const onColor = 'text-[color:var(--color-text-on-primary)]';
+    return {
+      pending: 'bg-secondary ' + onColor,
+      paid: 'bg-[color:var(--color-bg-inverse)] text-[color:var(--color-text-on-inverse)]',
+      confirmed: 'bg-accent-teal ' + onColor,
+      shipped: 'bg-accent-pink ' + onColor,
+      delivered: 'bg-accent-green ' + onColor,
+      cancelled: 'bg-danger ' + onColor,
+    }[key];
   }
 
   barWidth(units: number): number {

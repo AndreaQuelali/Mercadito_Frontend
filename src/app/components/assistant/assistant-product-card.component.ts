@@ -12,7 +12,7 @@ import type { ProductCard } from '../product-card/product-card.component';
     <a
       *ngIf="product"
       [id]="'assistant-product-' + product.id"
-      class="flex items-center gap-3 rounded-xl border border-border-subtle bg-surface p-2 no-underline transition hover:border-primary"
+      class="grid grid-cols-[52px_minmax(0,1fr)_auto] items-center gap-3 rounded-[var(--radius)] border border-border-subtle bg-base py-2 pl-2 pr-3 no-underline transition hover:bg-surface-subtle"
       [routerLink]="['/product', product.id]"
       (click)="opened.emit()"
     >
@@ -20,22 +20,23 @@ import type { ProductCard } from '../product-card/product-card.component';
         [src]="product.image"
         [alt]="product.name"
         loading="lazy"
-        class="h-14 w-14 flex-shrink-0 rounded-lg bg-surface-subtle object-cover"
+        class="h-[52px] w-[52px] rounded-[var(--radius)] bg-surface-hover object-cover"
       />
-      <span class="min-w-0 flex-1">
-        <span class="block truncate text-sm font-semibold text-text-main">{{ product.name }}</span>
-        <span class="block font-mono text-xs text-text-muted">
-          Bs {{ product.price | number: '1.2-2' }}
-          <ng-container *ngIf="product.unit"> / {{ product.unit }}</ng-container>
+      <span class="flex min-w-0 flex-col leading-snug">
+        <span class="truncate font-display text-[16px] font-bold text-text-main">{{ product.name }}</span>
+        <span class="text-sm text-text-main">
+          <strong class="font-bold">Bs {{ product.price | number: '1.2-2' }}</strong>
+          <span *ngIf="product.unit" class="text-text-muted"> por {{ product.unit }}</span>
         </span>
         <span
           *ngIf="product.stock !== undefined"
-          class="block text-xs"
-          [ngClass]="product.stock > 0 ? 'text-text-subtle' : 'text-danger'"
+          class="text-[13px]"
+          [ngClass]="product.stock > 0 ? 'text-text-muted' : 'text-danger'"
         >
-          {{ product.stock > 0 ? 'Stock: ' + product.stock : 'Agotado' }}
+          {{ product.stock > 0 ? product.stock + ' disponibles' : 'Agotado' }}
         </span>
       </span>
+      <svg viewBox="0 0 24 24" class="h-[18px] w-[18px] text-text-muted" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
     </a>
   `,
 })

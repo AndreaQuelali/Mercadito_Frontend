@@ -17,7 +17,7 @@ async function acceptNoticeInAdvance(page: Page) {
 
 async function openAssistant(page: Page) {
   await page.locator('#assistant-launcher').click();
-  await expect(page.getByRole('dialog', { name: 'Asistente de compras' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Asistente' })).toBeVisible();
 }
 
 async function say(page: Page, text: string) {
@@ -246,6 +246,6 @@ test.describe('Shopping assistant (UI)', () => {
 
     await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
     const background = await page.locator('#assistant-panel').evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(background).toBe('rgb(39, 30, 26)'); // --color-bg-surface in dark mode (#271E1A)
+    expect(background).toBe('rgb(28, 22, 19)'); // --color-bg-base in dark mode (#1C1613)
   });
 });

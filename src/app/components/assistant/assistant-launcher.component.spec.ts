@@ -154,7 +154,7 @@ describe('AssistantLauncherComponent', () => {
 
       const dialog = q('#assistant-panel')!;
       expect(dialog.getAttribute('role')).toBe('dialog');
-      expect(q(`#${dialog.getAttribute('aria-labelledby')}`)!.textContent).toContain('Asistente de compras');
+      expect(q(`#${dialog.getAttribute('aria-labelledby')}`)!.textContent).toContain('Asistente');
       expect(document.activeElement).toBe(q('#assistant-input'));
       expect(q('#assistant-messages')!.getAttribute('aria-live')).toBe('polite');
       expect(document.body.classList.contains('assistant-open')).toBeTrue();
@@ -277,7 +277,7 @@ describe('AssistantLauncherComponent', () => {
       expect(card.getAttribute('href')).toBe('/product/7');
       expect(card.textContent).toContain('Tomate');
       expect(card.textContent).toContain('Bs 12.50');
-      expect(card.textContent).toContain('Stock: 4');
+      expect(card.textContent).toContain('4 disponibles');
       expect(card.querySelector('img')!.getAttribute('alt')).toBe('Tomate');
       expect(card.querySelector('button')).toBeNull();
       expect(qa('[data-role="assistant"] button').length).toBe(0);

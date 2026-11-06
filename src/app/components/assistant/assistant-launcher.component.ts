@@ -23,7 +23,7 @@ export function isMarketplacePath(url: string): boolean {
         #launcher
         id="assistant-launcher"
         type="button"
-        class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition hover:bg-primary-hover focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-light"
+        class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-[var(--radius)] bg-primary text-[color:var(--color-text-on-primary)] transition hover:-translate-y-0.5 hover:bg-primary-hover focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-light"
         [ngClass]="{ 'lg:right-[424px]': svc.open() }"
         aria-label="Abrir asistente de compras"
         aria-haspopup="dialog"

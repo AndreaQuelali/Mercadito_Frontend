@@ -9,37 +9,35 @@ export function formatRemaining(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-/** One proposed change: summary, Confirm / Reject, a countdown to its expiry, and its final state */
+/**
+ * One proposed change. While it waits it is a card with Confirm / Reject and a countdown;
+ * once it is resolved it shrinks to a discreet line with its outcome.
+ */
 @Component({
   selector: 'app-assistant-action-card',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div
-      *ngIf="action"
-      [id]="'assistant-action-' + action.id"
-      class="rounded-xl border bg-surface-elevated p-3 text-sm"
-      [ngClass]="{
-        'border-primary': action.state === 'pending' || action.state === 'confirming',
-        'border-success-border': action.state === 'confirmed',
-        'border-border-subtle': action.state === 'rejected' || action.state === 'expired',
-        'border-danger-border': action.state === 'failed'
-      }"
-      [attr.data-state]="action.state"
-    >
-      <p class="m-0 font-medium text-text-main" [id]="'assistant-action-summary-' + action.id">
-        {{ action.summary }}
-      </p>
-
-      <ng-container *ngIf="action.state === 'pending' || action.state === 'confirming'">
-        <p class="mb-0 mt-1 text-xs text-text-muted" [id]="'assistant-action-timer-' + action.id">
-          Vence en {{ remainingText() }}
+    <div *ngIf="action" [id]="'assistant-action-' + action.id" [attr.data-state]="action.state">
+      <!-- Pendiente de confirmar -->
+      <div
+        *ngIf="action.state === 'pending' || action.state === 'confirming'"
+        class="flex flex-col gap-3 rounded-[var(--radius)] border border-border-subtle bg-surface-subtle p-3.5"
+      >
+        <div class="flex items-center justify-between gap-2 text-[13px] text-text-muted">
+          <span class="inline-flex items-center gap-1.5 font-semibold text-text-main">
+            <span class="h-2 w-2 rounded-full bg-secondary" aria-hidden="true"></span>Necesita tu confirmación
+          </span>
+          <span [id]="'assistant-action-timer-' + action.id">Vence en {{ remainingText() }}</span>
+        </div>
+        <p class="m-0 text-[15px] font-semibold leading-snug text-text-main" [id]="'assistant-action-summary-' + action.id">
+          {{ action.summary }}
         </p>
-        <div class="mt-2 flex gap-2">
+        <div class="flex gap-2">
           <button
             type="button"
             [id]="'assistant-confirm-' + action.id"
-            class="flex-1 rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+            class="ui-btn ui-btn-sm flex-1 !text-sm"
             [disabled]="action.state === 'confirming'"
             (click)="confirm.emit(action.id)"
           >
@@ -48,37 +46,42 @@ export function formatRemaining(ms: number): string {
           <button
             type="button"
             [id]="'assistant-reject-' + action.id"
-            class="flex-1 rounded-lg border border-border-medium bg-surface px-3 py-1.5 text-sm font-semibold text-text-main transition hover:bg-surface-subtle disabled:cursor-not-allowed disabled:opacity-60"
+            class="ui-btn ui-btn-ghost ui-btn-sm flex-1 !text-sm"
             [disabled]="action.state === 'confirming'"
             (click)="reject.emit(action.id)"
           >
             Rechazar
           </button>
         </div>
-      </ng-container>
+      </div>
 
+      <!-- Resultado: una línea discreta -->
       <p
         *ngIf="action.state === 'confirmed'"
-        class="mb-0 mt-1 text-xs font-semibold text-success"
+        class="m-0 flex items-start gap-2 text-sm text-text-main"
         [id]="'assistant-action-status-' + action.id"
       >
-        Confirmada
+        <svg viewBox="0 0 24 24" class="mt-0.5 h-[18px] w-[18px] flex-none text-accent-green" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12.5 3 3 5-6" /></svg>
+        <span><strong class="font-semibold">Confirmada:</strong> {{ action.summary }}</span>
       </p>
       <p
         *ngIf="action.state === 'rejected'"
-        class="mb-0 mt-1 text-xs text-text-muted"
+        class="m-0 flex items-start gap-2 text-sm text-text-muted"
         [id]="'assistant-action-status-' + action.id"
       >
-        Rechazada
+        <svg viewBox="0 0 24 24" class="mt-0.5 h-[18px] w-[18px] flex-none" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9 9l6 6M15 9l-6 6" /></svg>
+        <span><strong class="font-semibold">Rechazada:</strong> {{ action.summary }}</span>
       </p>
       <p
         *ngIf="action.state === 'expired' || action.state === 'failed'"
-        class="mb-0 mt-1 text-xs"
+        class="m-0 flex items-start gap-2 text-sm"
         [ngClass]="action.state === 'failed' ? 'text-danger' : 'text-text-muted'"
         role="status"
         [id]="'assistant-action-status-' + action.id"
       >
-        {{ action.error || (action.state === 'expired' ? 'Venció' : 'No se pudo completar') }}
+        <svg *ngIf="action.state === 'failed'" viewBox="0 0 24 24" class="mt-0.5 h-[18px] w-[18px] flex-none" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19L12 3Z" /><path d="M12 10v4M12 17.5v.01" /></svg>
+        <svg *ngIf="action.state === 'expired'" viewBox="0 0 24 24" class="mt-0.5 h-[18px] w-[18px] flex-none" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+        <span><strong class="font-semibold">{{ action.summary }}:</strong> {{ action.error || (action.state === 'expired' ? 'Venció' : 'No se pudo completar') }}</span>
       </p>
     </div>
   `,

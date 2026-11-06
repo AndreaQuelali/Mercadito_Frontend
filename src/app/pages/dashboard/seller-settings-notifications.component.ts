@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { NotificationSettings, SellerEventKey, SellerService } from '../../services/seller.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -24,53 +25,46 @@ const EVENTS: { key: SellerEventKey; title: string; description: string }[] = [
 @Component({
   selector: 'app-seller-settings-notifications',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiEmptyComponent],
   template: `
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <header>
-      <p class="text-sm text-text-muted">Panel de gestión</p>
-      <h1 class="text-2xl font-display font-bold text-text-main mt-1">Configuración</h1>
-      <p class="text-text-muted mt-1 text-sm">Elige qué avisos quieres recibir en tiempo real.</p>
+  <main class="ui-page space-y-8">
+    <header class="space-y-3">
+      <h1 class="ui-title">Configuración</h1>
+      <p class="ui-lead">Elige qué avisos quieres recibir de tu puesto en tiempo real.</p>
     </header>
 
     <!-- Loading -->
-    <div *ngIf="loading()" class="space-y-3 animate-pulse" aria-busy="true" aria-label="Cargando configuración">
-      <div *ngFor="let i of [1,2,3]" class="h-20 rounded-2xl border border-border-subtle bg-surface"></div>
+    <div *ngIf="loading()" class="max-w-3xl space-y-3" aria-busy="true" aria-label="Cargando configuración">
+      <div *ngFor="let i of [1,2,3]" class="ui-skel h-20"></div>
     </div>
 
     <!-- Error -->
-    <div *ngIf="!loading() && !settings()" role="alert"
-         class="rounded-xl border border-danger-border bg-danger-bg px-4 py-3 text-sm text-danger flex items-center justify-between gap-3 flex-wrap">
-      <span>No pudimos cargar tu configuración.</span>
-      <button type="button" id="settings-retry" (click)="load()"
-              class="font-semibold underline underline-offset-2">Reintentar</button>
-    </div>
+    <ui-empty *ngIf="!loading() && !settings()" variant="error" title="No pudimos cargar tu configuración" text="Revisa tu conexión e inténtalo de nuevo.">
+      <button type="button" id="settings-retry" (click)="load()" class="ui-btn ui-btn-ghost">Reintentar</button>
+    </ui-empty>
 
-    <section *ngIf="!loading() && settings() as s" aria-labelledby="notif-title"
-             class="rounded-2xl border border-border-subtle bg-surface">
-      <h2 id="notif-title" class="px-5 pt-5 font-display font-semibold text-text-main">Notificaciones</h2>
+    <section *ngIf="!loading() && settings() as s" aria-labelledby="notif-title" class="ui-panel max-w-3xl space-y-2">
+      <h2 id="notif-title" class="ui-h2 mb-3">Notificaciones</h2>
 
-      <ul class="divide-y divide-border-subtle mt-2">
-        <li *ngFor="let e of events" class="px-5 py-4 flex items-center justify-between gap-4">
-          <div>
-            <p [id]="'label-' + e.key" class="font-medium text-text-main">{{ e.title }}</p>
-            <p class="text-sm text-text-muted">{{ e.description }}</p>
-          </div>
+      <div *ngFor="let e of events" class="flex items-center justify-between gap-4 rounded-[var(--radius)] bg-base px-4 py-3.5">
+        <div>
+          <p [id]="'label-' + e.key" class="text-[16px] font-semibold text-text-main">{{ e.title }}</p>
+          <p class="text-text-muted">{{ e.description }}</p>
+        </div>
 
-          <button type="button" role="switch" [id]="'toggle-' + e.key"
-                  [attr.aria-checked]="s.preferences[e.key]"
-                  [attr.aria-labelledby]="'label-' + e.key"
-                  [disabled]="saving() === e.key"
-                  (click)="toggle(e.key)"
-                  class="relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-60"
-                  [ngClass]="s.preferences[e.key] ? 'bg-primary' : 'bg-border-medium'">
-            <span class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform"
-                  [ngClass]="s.preferences[e.key] ? 'translate-x-5' : ''"></span>
-          </button>
-        </li>
-      </ul>
+        <button type="button" role="switch" [id]="'toggle-' + e.key"
+                [attr.aria-checked]="s.preferences[e.key]"
+                [attr.aria-labelledby]="'label-' + e.key"
+                [disabled]="saving() === e.key"
+                (click)="toggle(e.key)"
+                class="relative h-8 w-[60px] shrink-0 rounded-full transition disabled:opacity-60"
+                [ngClass]="s.preferences[e.key] ? 'bg-accent-green' : 'bg-text-muted'">
+          <span class="absolute left-1 top-1 h-6 w-6 rounded-full bg-base transition-transform"
+                [ngClass]="s.preferences[e.key] ? 'translate-x-7' : ''"></span>
+        </button>
+      </div>
 
-      <p class="px-5 py-4 border-t border-border-subtle text-sm text-text-muted">
+      <p class="pt-3 text-[13px] text-text-muted">
         El aviso de stock bajo salta cuando una venta deja un producto con
         <strong class="text-text-main">{{ s.lowStockThreshold }}</strong> unidades o menos.
         Este valor lo define el servidor.

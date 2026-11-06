@@ -45,7 +45,7 @@ export interface SalesSummary {
   ordersCount: number;
   unitsSold: number;
   ordersByStatus: Record<SalesStatus, number>;
-  topProducts: { productId: number; name: string; units: number; revenue: string }[];
+  topProducts: { productId: number; name: string; image?: string; units: number; revenue: string }[];
 }
 
 export type SellerEventKey = 'order:new' | 'stock:low' | 'review:new';

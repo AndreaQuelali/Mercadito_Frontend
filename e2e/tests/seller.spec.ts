@@ -47,12 +47,25 @@ test.describe('Selling', () => {
     await expect(row).toContainText(product.name);
     await expect(row).toContainText('En stock');
 
+    await expect(page.locator('#inventory-stat-low')).toHaveText('0');
+
+    // Typing a new number marks the row and enables Guardar
     await page.locator(`#stock-${product.id}`).fill('2');
+    await expect(page.locator(`#save-${product.id}`)).toBeEnabled();
     await page.locator(`#save-${product.id}`).click();
 
     await expect(row).toContainText('Stock bajo');
-    await expect(page.locator('#inventory-alert')).toContainText('1 producto necesita reposición');
+    await expect(page.locator('#inventory-stat-low')).toHaveText('1');
+    await expect(page.locator(`#save-${product.id}`)).toBeDisabled();
     expect((await getProduct(request, product.id)).stock).toBe(2);
+
+    // The stepper and the search
+    await page.locator(`#plus-${product.id}`).click();
+    await expect(page.locator(`#stock-${product.id}`)).toHaveValue('3');
+    await page.locator('#inventory-search').fill('no existe ningún producto así');
+    await expect(page.locator('#inventory-no-results')).toBeVisible();
+    await page.locator('#inventory-clear').click();
+    await expect(row).toBeVisible();
   });
 
   test('the seller turns off a notification type in the settings', async ({ page, request }) => {

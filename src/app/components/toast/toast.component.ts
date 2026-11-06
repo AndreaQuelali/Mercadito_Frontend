@@ -7,7 +7,7 @@ import { ToastService, Toast } from '../../services/toast.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-  <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none" aria-live="polite">
+  <div class="fixed bottom-24 right-6 z-[70] flex flex-col gap-3 pointer-events-none" aria-live="polite">
     <div
       *ngFor="let t of toastSvc.toasts(); trackBy: trackById"
       class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-slide-up"

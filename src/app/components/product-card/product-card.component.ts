@@ -17,6 +17,7 @@ export type ProductCard = {
   featured?: boolean;
   seller?: string;
   location?: string;
+  updatedAt?: string;
 };
 
 @Component({

@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
   <main class="ui-page space-y-8">
     <header class="space-y-3">
       <h1 class="ui-title">{{ sellerSvc.mine()?.businessName || 'Tu puesto' }}</h1>
-      <p class="ui-lead">Gestiona tus productos y pedidos. Ventas e inventario llegan en una próxima versión.</p>
+      <p class="ui-lead">Gestiona tus productos y pedidos, revisa tus ventas y controla tu inventario.</p>
     </header>
 
     <p *ngIf="!auth.canManageStore()" class="ui-alert-warn">
@@ -30,15 +30,15 @@ import { AuthService } from '../../services/auth.service';
         <p class="text-text-muted mt-2">Órdenes de tus clientes y su estado.</p>
         <span class="ui-link inline-block mt-4">Ver pedidos</span>
       </a>
-      <a routerLink="/dashboard/sales" class="ui-panel block opacity-80">
+      <a routerLink="/dashboard/sales" class="ui-panel block hover:bg-surface-hover transition">
         <h2 class="ui-h2 !text-2xl">Ventas</h2>
-        <p class="text-text-muted mt-2">Métricas de ventas de tu puesto.</p>
-        <span class="inline-block mt-4 font-semibold text-text-muted">Pronto</span>
+        <p class="text-text-muted mt-2">Ingresos y productos más vendidos.</p>
+        <span class="ui-link inline-block mt-4">Ver ventas</span>
       </a>
-      <a routerLink="/dashboard/inventory" class="ui-panel block opacity-80">
+      <a routerLink="/dashboard/inventory" class="ui-panel block hover:bg-surface-hover transition">
         <h2 class="ui-h2 !text-2xl">Inventario</h2>
         <p class="text-text-muted mt-2">Stock y control de existencias.</p>
-        <span class="inline-block mt-4 font-semibold text-text-muted">Pronto</span>
+        <span class="ui-link inline-block mt-4">Ver inventario</span>
       </a>
     </section>
   </main>
