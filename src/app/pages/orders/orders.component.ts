@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { OrderService, Order, OrderStatus } from '../../services/order.service';
+import { OrderService, OrderStatus, Purchase } from '../../services/order.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step: number }> = {
   pending:   { label: 'Pendiente',   classes: 'st-pending',  step: 1 },
@@ -24,16 +24,27 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
       <div *ngFor="let i of [1,2,3]" class="ui-skel h-36"></div>
     </div>
 
-    <ui-empty *ngIf="!loading() && orders().length === 0" icon="orders" title="Aún no has hecho pedidos" text="Cuando hagas una compra, aparecerá aquí.">
+    <ui-empty *ngIf="!loading() && !failed() && purchases().length === 0" icon="orders" title="Aún no has hecho pedidos" text="Cuando hagas una compra, aparecerá aquí.">
       <a routerLink="/products" class="ui-btn">Explorar productos</a>
     </ui-empty>
 
-    <div *ngIf="!loading() && orders().length > 0" class="space-y-4">
-      <article *ngFor="let order of orders()" class="ui-panel space-y-5">
+    <p *ngIf="!loading() && failed()" class="ui-alert-error" role="alert">No pudimos cargar tus pedidos. Intenta de nuevo más tarde.</p>
+
+    <div *ngIf="!loading() && purchases().length > 0" class="space-y-8">
+      <section *ngFor="let purchase of purchases()" class="space-y-4" [attr.data-checkout]="purchase.checkoutId">
+        <header class="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 class="ui-h2">Compra del {{ purchase.createdAt | date:'d MMM, y' }}</h2>
+          <p class="text-text-muted">
+            {{ purchase.fulfillment === 'delivery' ? 'Entrega a domicilio' : 'Retiro en el puesto' }}
+            · {{ purchase.orders.length }} {{ purchase.orders.length === 1 ? 'pedido' : 'pedidos' }}
+            · Bs {{ purchase.total | number:'1.2-2' }}
+          </p>
+        </header>
+      <article *ngFor="let order of purchase.orders" class="ui-panel space-y-5">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p class="text-text-muted">Orden</p>
-            <p class="font-display text-2xl font-bold">#{{ order.id }}</p>
+            <p class="text-text-muted">{{ order.seller?.businessName || 'Puesto' }}</p>
+            <p class="font-display text-2xl font-bold">Orden #{{ order.id }}</p>
           </div>
           <span class="inline-block px-3 py-1 font-semibold" [ngClass]="statusCfg(order.status).classes">
             {{ statusCfg(order.status).label }}
@@ -43,6 +54,13 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
             <p class="text-xl font-bold">Bs {{ order.total | number:'1.2-2' }}</p>
           </div>
         </div>
+
+        <p class="text-text-muted">
+          <ng-container *ngIf="order.fulfillment === 'delivery'; else pickup">
+            Entrega en: {{ order.address }}<span *ngIf="order.addressRef"> ({{ order.addressRef }})</span>
+          </ng-container>
+          <ng-template #pickup>Retiro en: {{ order.seller?.location || 'el puesto' }}</ng-template>
+        </p>
 
         <div *ngIf="order.status !== 'cancelled'">
           <div class="grid grid-cols-4 gap-1" aria-hidden="true">
@@ -63,19 +81,22 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
           <span *ngIf="order.items.length > 4" class="text-text-muted">+{{ order.items.length - 4 }} más</span>
         </div>
       </article>
+      </section>
     </div>
   </main>
   `
 })
 export class OrdersComponent implements OnInit {
   private orderSvc = inject(OrderService);
-  orders = signal<Order[]>([]);
+  purchases = signal<Purchase[]>([]);
   loading = signal(true);
+  failed = signal(false);
 
   ngOnInit(): void {
     this.orderSvc.listMine().subscribe({
-      next: (orders) => { this.orders.set(orders); this.loading.set(false); },
-      error: () => this.loading.set(false),
+      next: (purchases) => { this.purchases.set(purchases); this.loading.set(false); },
+      // The API answers 400 when the user has no orders yet: that is the empty state, not a failure
+      error: (err) => { this.failed.set(err?.status >= 500 || err?.status === 0); this.loading.set(false); },
     });
   }
 

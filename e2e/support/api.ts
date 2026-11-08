@@ -95,3 +95,22 @@ export async function listNotifications(request: APIRequestContext, token: strin
   expect(res.status(), 'list notifications').toBe(200);
   return (await res.json()).data.items as { type: string; payload: Record<string, unknown> }[];
 }
+
+export interface SellerOrder {
+  id: number;
+  status: string;
+  total: string;
+  checkoutId: string;
+  fulfillment: 'pickup' | 'delivery';
+  address: string | null;
+  addressRef: string | null;
+  contactPhone: string;
+  items: { productId: number }[];
+}
+
+/** Orders of the seller's own stand */
+export async function listSellerOrders(request: APIRequestContext, sellerToken: string) {
+  const res = await request.get(`${API}/order/seller/mine`, { headers: authHeader(sellerToken) });
+  expect(res.status(), 'list seller orders').toBe(200);
+  return (await res.json()).data as SellerOrder[];
+}

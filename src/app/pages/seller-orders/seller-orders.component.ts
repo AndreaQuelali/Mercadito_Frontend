@@ -39,7 +39,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
   <main class="ui-page max-w-5xl">
     <header class="space-y-3 mb-8">
       <h1 class="ui-title">Pedidos</h1>
-      <p class="ui-lead">Gestiona el estado de los pedidos de tus clientes.</p>
+      <p class="ui-lead">Gestiona el estado de los pedidos de tu puesto y mira cómo entregarlos.</p>
     </header>
 
     <p *ngIf="!auth.canManageStore()" class="ui-alert-warn mb-6">
@@ -59,6 +59,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
             <p class="text-text-muted">Orden</p>
             <p class="font-display text-2xl font-bold">#{{ order.id }}</p>
             <p class="text-text-muted">{{ order.createdAt | date:'d MMM y, HH:mm' }}</p>
+            <p *ngIf="order.user" class="text-text-muted">{{ order.user.firstName }} {{ order.user.lastName }}</p>
           </div>
 
           <span class="inline-block px-3 py-1 font-semibold" [ngClass]="statusCfg(order.status).classes">
@@ -82,12 +83,19 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
           </button>
         </div>
 
+        <div class="ui-panel space-y-1" [attr.data-fulfillment]="order.fulfillment">
+          <p class="font-semibold">{{ order.fulfillment === 'delivery' ? 'Entrega a domicilio' : 'Retira en el puesto' }}</p>
+          <p *ngIf="order.fulfillment === 'delivery'">{{ order.address }}<span *ngIf="order.addressRef"> — {{ order.addressRef }}</span></p>
+          <p>Teléfono: <a [href]="'tel:' + order.contactPhone" class="underline">{{ order.contactPhone }}</a></p>
+          <p *ngIf="order.note" class="text-text-muted">Nota: {{ order.note }}</p>
+        </div>
+
         <div class="flex gap-4 flex-wrap items-center">
           <div *ngFor="let item of order.items" class="flex items-center gap-3">
             <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 object-cover" />
             <span class="hidden sm:inline">{{ item.product.name }}</span>
             <span class="text-text-muted">×{{ item.quantity }}</span>
-            <span class="text-text-muted">Bs {{ item.unitPrice | number:'1.2-2' }}</span>
+            <span class="text-text-muted">Bs {{ item.price | number:'1.2-2' }}</span>
           </div>
         </div>
       </article>

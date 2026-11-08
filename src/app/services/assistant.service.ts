@@ -311,12 +311,18 @@ export class AssistantService {
           this.toast.success('Listo, el asistente aplicó tu confirmación');
 
           if (action.type === 'checkout') {
-            const orderId = (res.data.result as { id?: number | string } | null)?.id;
+            // One order per stand: the result is { checkoutId, orders: [{ id }] }
+            const orders = (res.data.result as { orders?: { id: number | string }[] } | null)?.orders ?? [];
+            const ids = orders.map((o) => `#${o.id}`);
+            const text =
+              ids.length === 0 ? 'Pedido creado.'
+              : ids.length === 1 ? `Pedido ${ids[0]} creado.`
+              : `Pedidos ${ids.join(', ')} creados.`;
             this.entries.update((e) => [
               ...e,
               {
                 kind: 'event',
-                text: orderId !== undefined ? `Pedido #${orderId} creado.` : 'Pedido creado.',
+                text,
                 link: { label: 'Ver mis pedidos', url: '/orders' },
               },
             ]);
