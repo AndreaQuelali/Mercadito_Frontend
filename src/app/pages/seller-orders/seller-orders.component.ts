@@ -3,7 +3,8 @@ import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { OrderService, Order, OrderStatus } from '../../services/order.service';
+import { OrderHistoryComponent } from '../../components/order-history/order-history.component';
+import { OrderService, Order, OrderStatus, SELLER_CAN_CANCEL } from '../../services/order.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { SellerService } from '../../services/seller.service';
@@ -38,7 +39,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 @Component({
   selector: 'app-seller-orders',
   standalone: true,
-  imports: [UiEmptyComponent, CommonModule, FormsModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, FormsModule, RouterLink, OrderHistoryComponent],
   template: `
   <main class="ui-page max-w-5xl">
     <header class="space-y-3 mb-8">
@@ -85,7 +86,23 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
             <span *ngIf="updating() === order.id" class="h-3 w-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             {{ nextStatusLabel(order.status) }}
           </button>
+          <button
+            *ngIf="auth.canManageStore() && canCancel(order)"
+            type="button" class="ui-btn ui-btn-sm ui-btn-danger" [id]="'cancel-order-' + order.id"
+            (click)="cancelling.set(order.id)"
+          >Cancelar</button>
         </div>
+
+        <form *ngIf="cancelling() === order.id" class="ui-panel space-y-2" (ngSubmit)="cancelOrder(order)" novalidate>
+          <label [for]="'cancel-reason-' + order.id" class="ui-label">Motivo de la cancelación (obligatorio)</label>
+          <input [id]="'cancel-reason-' + order.id" name="cancelReason" type="text" maxlength="300" class="ui-field"
+                 [ngModel]="cancelReason()" (ngModelChange)="cancelReason.set($event)" />
+          <p class="text-text-muted">El stock de los productos vuelve al inventario y el comprador recibe el motivo.</p>
+          <div class="flex gap-2">
+            <button type="submit" class="ui-btn ui-btn-sm ui-btn-danger" [disabled]="!cancelReason().trim() || updating() === order.id">Cancelar pedido</button>
+            <button type="button" class="ui-btn ui-btn-sm ui-btn-ghost" (click)="cancelling.set(null)">Volver</button>
+          </div>
+        </form>
 
         <div class="ui-panel space-y-1" [attr.data-fulfillment]="order.fulfillment">
           <p class="font-semibold">{{ order.fulfillment === 'delivery' ? 'Entrega a domicilio' : 'Retira en el puesto' }}</p>
@@ -125,6 +142,8 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
           </form>
         </div>
 
+        <app-order-history [events]="order.events ?? []"></app-order-history>
+
         <div class="flex gap-4 flex-wrap items-center">
           <div *ngFor="let item of order.items" class="flex items-center gap-3">
             <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 object-cover" />
@@ -147,6 +166,8 @@ export class SellerOrdersComponent implements OnInit {
   loading = signal(true);
   updating = signal<number | null>(null);
   rejecting = signal<number | null>(null);
+  cancelling = signal<number | null>(null);
+  cancelReason = signal('');
   reason = signal('');
 
   ngOnInit(): void {
@@ -174,6 +195,29 @@ export class SellerOrdersComponent implements OnInit {
   private replace(updated: Order): void {
     // The PATCH answer keeps the order shape but not the buyer: keep what the list already shows
     this.orders.update((list) => list.map((o) => (o.id === updated.id ? { ...o, ...updated, user: o.user } : o)));
+  }
+
+  canCancel(o: Order): boolean { return SELLER_CAN_CANCEL.includes(o.status); }
+
+  cancelOrder(order: Order): void {
+    const reason = this.cancelReason().trim();
+    if (!reason) return;
+    this.updating.set(order.id);
+    this.orderSvc.updateStatus(order.id, 'cancelled', reason).subscribe({
+      next: (updated) => {
+        this.orders.update((list) => list.map((o) => (o.id === updated.id ? { ...o, ...updated, user: o.user, events: undefined } : o)));
+        // The PATCH answer has no history: reload the list so the new event shows up
+        this.orderSvc.listSeller().subscribe((orders) => this.orders.set(orders));
+        this.toast.success(`Orden #${order.id} cancelada`);
+        this.cancelling.set(null);
+        this.cancelReason.set('');
+        this.updating.set(null);
+      },
+      error: (err) => {
+        this.toast.error(err?.error?.message ?? 'No se pudo cancelar el pedido');
+        this.updating.set(null);
+      },
+    });
   }
 
   confirmPayment(order: Order): void {
@@ -208,13 +252,14 @@ export class SellerOrdersComponent implements OnInit {
     this.orderSvc.updateStatus(order.id, next).subscribe({
       next: (updated) => {
         this.orders.update((list) =>
-          list.map((o) => (o.id === updated.id ? updated : o))
+          list.map((o) => (o.id === updated.id ? { ...o, ...updated, user: o.user, events: o.events } : o))
         );
+        this.orderSvc.listSeller().subscribe((orders) => this.orders.set(orders));
         this.toast.success(`Orden #${order.id} actualizada a "${STATUS_CONFIG[next].label}"`);
         this.updating.set(null);
       },
-      error: () => {
-        this.toast.error('No se pudo actualizar el estado de la orden');
+      error: (err) => {
+        this.toast.error(err?.error?.message ?? 'No se pudo actualizar el estado de la orden');
         this.updating.set(null);
       },
     });

@@ -2,7 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Order, OrderService, OrderStatus, PaymentStatus, Purchase } from '../../services/order.service';
+import { FormsModule } from '@angular/forms';
+import { OrderHistoryComponent } from '../../components/order-history/order-history.component';
+import { BUYER_CAN_CANCEL, Order, OrderService, OrderStatus, PaymentStatus, Purchase } from '../../services/order.service';
+import { ToastService } from '../../services/toast.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step: number }> = {
   pending:   { label: 'Pendiente',   classes: 'st-pending',  step: 1 },
@@ -16,7 +19,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [UiEmptyComponent, CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, FormsModule, RouterLink, OrderHistoryComponent],
   template: `
   <main class="ui-page max-w-5xl">
     <h1 class="ui-title mb-8">Mis pedidos</h1>
@@ -71,6 +74,10 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
           <ng-template #pickup>Retiro en: {{ order.seller?.location || 'el puesto' }}</ng-template>
         </p>
 
+        <p *ngIf="order.status === 'cancelled'" class="ui-alert-error" role="status" [attr.data-cancelled]="order.id">
+          Pedido cancelado{{ cancelReason(order) ? ': ' + cancelReason(order) : '' }}.
+        </p>
+
         <div *ngIf="order.status !== 'cancelled'">
           <div class="grid grid-cols-4 gap-1" aria-hidden="true">
             <i *ngFor="let step of [1,2,3,4]" class="block h-2"
@@ -89,6 +96,26 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
           </div>
           <span *ngIf="order.items.length > 4" class="text-text-muted">+{{ order.items.length - 4 }} más</span>
         </div>
+        <app-order-history [events]="order.events ?? []"></app-order-history>
+
+        <div *ngIf="canCancel(order)" class="space-y-3">
+          <button *ngIf="confirming() !== order.id" type="button" class="ui-btn ui-btn-sm ui-btn-danger" [id]="'cancel-' + order.id"
+                  (click)="confirming.set(order.id)">Cancelar pedido</button>
+          <form *ngIf="confirming() === order.id" class="ui-panel space-y-3" (ngSubmit)="cancel(order)" novalidate>
+            <p class="font-semibold">¿Seguro que quieres cancelar la orden #{{ order.id }}?</p>
+            <p *ngIf="order.paymentStatus === 'paid' || order.paymentStatus === 'proof_uploaded'" class="ui-alert-warn" id="cancel-refund-note">
+              Ya pagaste este pedido: la cancelación no devuelve el dinero automáticamente. Coordina la devolución con el puesto.
+            </p>
+            <label [for]="'cancel-reason-' + order.id" class="ui-label">Motivo (opcional)</label>
+            <input [id]="'cancel-reason-' + order.id" name="reason" type="text" maxlength="300" class="ui-field"
+                   [ngModel]="reason()" (ngModelChange)="reason.set($event)" />
+            <p *ngIf="cancelError()" class="ui-alert-error" role="alert">{{ cancelError() }}</p>
+            <div class="flex gap-2">
+              <button type="submit" class="ui-btn ui-btn-sm ui-btn-danger" [disabled]="cancelling() === order.id">Sí, cancelar pedido</button>
+              <button type="button" class="ui-btn ui-btn-sm ui-btn-ghost" (click)="confirming.set(null)">Volver</button>
+            </div>
+          </form>
+        </div>
       </article>
       </section>
     </div>
@@ -100,12 +127,43 @@ export class OrdersComponent implements OnInit {
   purchases = signal<Purchase[]>([]);
   loading = signal(true);
   failed = signal(false);
+  confirming = signal<number | null>(null);
+  cancelling = signal<number | null>(null);
+  cancelError = signal<string | null>(null);
+  reason = signal('');
+  private toast = inject(ToastService);
 
   ngOnInit(): void {
     this.orderSvc.listMine().subscribe({
       next: (purchases) => { this.purchases.set(purchases); this.loading.set(false); },
       // The API answers 400 when the user has no orders yet: that is the empty state, not a failure
       error: (err) => { this.failed.set(err?.status >= 500 || err?.status === 0); this.loading.set(false); },
+    });
+  }
+
+  canCancel(o: Order): boolean { return BUYER_CAN_CANCEL.includes(o.status); }
+
+  /** Reason of the cancellation, from the history */
+  cancelReason(o: Order): string | null {
+    return [...(o.events ?? [])].reverse().find((e) => e.to === 'cancelled')?.reason ?? null;
+  }
+
+  cancel(order: Order): void {
+    this.cancelling.set(order.id);
+    this.cancelError.set(null);
+    this.orderSvc.cancel(order.id, this.reason().trim() || undefined).subscribe({
+      next: () => {
+        // Reload so status, history and the purchase total are the server's
+        this.orderSvc.listMine().subscribe((purchases) => this.purchases.set(purchases));
+        this.toast.success(`Pedido #${order.id} cancelado`);
+        this.confirming.set(null);
+        this.reason.set('');
+        this.cancelling.set(null);
+      },
+      error: (err) => {
+        this.cancelError.set(err?.error?.message ?? 'No se pudo cancelar el pedido.');
+        this.cancelling.set(null);
+      },
     });
   }
 

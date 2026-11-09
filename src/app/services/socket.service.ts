@@ -51,8 +51,12 @@ export class SocketService implements OnDestroy {
     });
 
     this.socket.on('order:status', (data: unknown) => {
-      const d = data as { orderId: number; status: string };
-      this.toast.info(`Tu pedido #${d.orderId} cambió a: ${d.status}`);
+      const d = data as { orderId: number; status: string; reason?: string };
+      const labels: Record<string, string> = {
+        pending: 'Pendiente', paid: 'Pagado', confirmed: 'Confirmado',
+        shipped: 'En camino', delivered: 'Entregado', cancelled: 'Cancelado',
+      };
+      this.toast.info(`Pedido #${d.orderId}: ${labels[d.status] ?? d.status}${d.reason ? ' — ' + d.reason : ''}`);
     });
 
     // Payments: the seller hears about proofs, the buyer about the verdict

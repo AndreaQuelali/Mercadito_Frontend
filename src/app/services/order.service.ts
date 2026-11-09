@@ -6,6 +6,22 @@ import { environment } from '../../environments/environment';
 
 export type OrderStatus = 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
 
+/** One change of the order status (who, when, from/to, why) */
+export interface OrderEvent {
+  id: number;
+  actorRole: 'buyer' | 'seller' | 'admin';
+  from: OrderStatus;
+  to: OrderStatus;
+  reason: string | null;
+  forced: boolean;
+  createdAt: string;
+}
+
+/** The buyer can cancel until the seller confirms the order. */
+export const BUYER_CAN_CANCEL: readonly OrderStatus[] = ['pending', 'paid'];
+/** The seller can cancel until the order ships. */
+export const SELLER_CAN_CANCEL: readonly OrderStatus[] = ['pending', 'paid', 'confirmed'];
+
 export type Fulfillment = 'pickup' | 'delivery';
 export type PaymentMethod = 'cash_on_delivery' | 'qr_transfer';
 export type PaymentStatus = 'unpaid' | 'proof_uploaded' | 'paid' | 'rejected';
@@ -37,6 +53,8 @@ export interface Order {
   paidAt: string | null;
   createdAt: string;
   items: OrderItem[];
+  /** Status history, oldest first */
+  events?: OrderEvent[];
   seller?: {
     id: string;
     businessName: string;
@@ -95,9 +113,16 @@ export class OrderService {
       .pipe(map((r) => r.data));
   }
 
-  updateStatus(id: number, status: OrderStatus): Observable<Order> {
+  /** Buyer: cancel an order that the seller has not confirmed yet. */
+  cancel(id: number, reason?: string): Observable<Order> {
     return this.http
-      .patch<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/status`, { status })
+      .post<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/cancel`, reason ? { reason } : {})
+      .pipe(map((r) => r.data));
+  }
+
+  updateStatus(id: number, status: OrderStatus, reason?: string): Observable<Order> {
+    return this.http
+      .patch<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/status`, reason ? { status, reason } : { status })
       .pipe(map((r) => r.data));
   }
 }
