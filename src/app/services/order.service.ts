@@ -4,21 +4,75 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+export type OrderStatus = 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+
+/** One change of the order status (who, when, from/to, why) */
+export interface OrderEvent {
+  id: number;
+  actorRole: 'buyer' | 'seller' | 'admin';
+  from: OrderStatus;
+  to: OrderStatus;
+  reason: string | null;
+  forced: boolean;
+  createdAt: string;
+}
+
+/** The buyer can cancel until the seller confirms the order. */
+export const BUYER_CAN_CANCEL: readonly OrderStatus[] = ['pending', 'paid'];
+/** The seller can cancel until the order ships. */
+export const SELLER_CAN_CANCEL: readonly OrderStatus[] = ['pending', 'paid', 'confirmed'];
+
+export type Fulfillment = 'pickup' | 'delivery';
+export type PaymentMethod = 'cash_on_delivery' | 'qr_transfer';
+export type PaymentStatus = 'unpaid' | 'proof_uploaded' | 'paid' | 'rejected';
 
 export interface OrderItem {
   id: number;
   quantity: number;
-  unitPrice: number;
+  /** Unit price at purchase time (decimal string from the API) */
+  price: number | string;
   product: { id: number; name: string; image: string; unit: string };
 }
 
+/** An order belongs to one stand; the orders of one purchase share a `checkoutId`. */
 export interface Order {
   id: number;
+  sellerId: string;
+  checkoutId: string;
   status: OrderStatus;
-  total: number;
+  total: number | string;
+  fulfillment: Fulfillment;
+  address: string | null;
+  addressRef: string | null;
+  contactPhone: string;
+  note: string | null;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentProofUrl: string | null;
+  paymentRejectReason: string | null;
+  paidAt: string | null;
   createdAt: string;
   items: OrderItem[];
+  /** Status history, oldest first */
+  events?: OrderEvent[];
+  seller?: {
+    id: string;
+    businessName: string;
+    location: string | null;
+    paymentQrUrl?: string | null;
+    paymentInstructions?: string | null;
+  };
+  /** Seller view only: who bought */
+  user?: { firstName: string; lastName: string };
+}
+
+/** What the buyer sees: one purchase with its order per stand. */
+export interface Purchase {
+  checkoutId: string;
+  createdAt: string;
+  fulfillment: Fulfillment;
+  total: number;
+  orders: Order[];
 }
 
 interface ApiResponse<T> { ok: boolean; message: string; data: T; }
@@ -27,9 +81,9 @@ interface ApiResponse<T> { ok: boolean; message: string; data: T; }
 export class OrderService {
   private http = inject(HttpClient);
 
-  listMine(): Observable<Order[]> {
+  listMine(): Observable<Purchase[]> {
     return this.http
-      .get<ApiResponse<Order[]>>(`${environment.apiUrl}/order`)
+      .get<ApiResponse<Purchase[]>>(`${environment.apiUrl}/order`)
       .pipe(map((r) => r.data ?? []));
   }
 
@@ -45,9 +99,30 @@ export class OrderService {
       .pipe(map((r) => r.data ?? []));
   }
 
-  updateStatus(id: number, status: OrderStatus): Observable<Order> {
+  /** Buyer: attach the proof of a QR/transfer payment (or replace a rejected one). */
+  uploadProof(id: number, url: string): Observable<Order> {
     return this.http
-      .patch<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/status`, { status })
+      .post<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/payment-proof`, { url })
+      .pipe(map((r) => r.data));
+  }
+
+  /** Seller: confirm the payment, or reject the proof with a reason. */
+  updatePayment(id: number, action: 'confirm' | 'reject', reason?: string): Observable<Order> {
+    return this.http
+      .patch<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/payment`, { action, reason })
+      .pipe(map((r) => r.data));
+  }
+
+  /** Buyer: cancel an order that the seller has not confirmed yet. */
+  cancel(id: number, reason?: string): Observable<Order> {
+    return this.http
+      .post<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/cancel`, reason ? { reason } : {})
+      .pipe(map((r) => r.data));
+  }
+
+  updateStatus(id: number, status: OrderStatus, reason?: string): Observable<Order> {
+    return this.http
+      .patch<ApiResponse<Order>>(`${environment.apiUrl}/order/${id}/status`, reason ? { status, reason } : { status })
       .pipe(map((r) => r.data));
   }
 }

@@ -14,7 +14,77 @@ export interface CartItem {
     unit: string;
     image: string;
     stock: number;
+    sellerId?: string;
+    seller?: {
+      id: string;
+      businessName: string;
+      location: string | null;
+      acceptsCash?: boolean;
+      acceptsQr?: boolean;
+    };
   };
+}
+
+export type Fulfillment = 'pickup' | 'delivery';
+export type PaymentMethod = 'cash_on_delivery' | 'qr_transfer';
+
+/** Delivery data of a purchase; `delivery` needs address and reference. */
+export interface CheckoutRequest {
+  fulfillment: Fulfillment;
+  paymentMethod?: PaymentMethod;
+  address?: string;
+  addressRef?: string;
+  contactPhone?: string;
+  note?: string;
+}
+
+export interface CheckoutResult {
+  checkoutId: string;
+  orders: { id: number; sellerId: string; total: number | string }[];
+}
+
+/** The cart lines of one stand, with what they add up to. */
+export interface SellerGroup {
+  sellerId: string;
+  businessName: string;
+  location: string | null;
+  acceptsCash: boolean;
+  acceptsQr: boolean;
+  items: CartItem[];
+  subtotal: number;
+}
+
+/** Payment methods that every stand of the cart accepts (each stand charges on its own). */
+export function commonPaymentMethods(groups: SellerGroup[]): PaymentMethod[] {
+  const methods: PaymentMethod[] = [];
+  if (groups.length && groups.every((g) => g.acceptsCash)) methods.push('cash_on_delivery');
+  if (groups.length && groups.every((g) => g.acceptsQr)) methods.push('qr_transfer');
+  return methods;
+}
+
+/** Groups cart lines by stand, keeping the order in which each stand first appears. */
+export function groupBySeller(items: CartItem[]): SellerGroup[] {
+  const groups = new Map<string, SellerGroup>();
+  for (const item of items) {
+    const sellerId = item.product.seller?.id ?? item.product.sellerId ?? 'unknown';
+    let group = groups.get(sellerId);
+    if (!group) {
+      group = {
+        sellerId,
+        businessName: item.product.seller?.businessName ?? 'Puesto',
+        location: item.product.seller?.location ?? null,
+        // Stands that predate payments (or a partial cart payload) accept cash only
+        acceptsCash: item.product.seller?.acceptsCash ?? true,
+        acceptsQr: item.product.seller?.acceptsQr ?? false,
+        items: [],
+        subtotal: 0,
+      };
+      groups.set(sellerId, group);
+    }
+    group.items.push(item);
+    group.subtotal += item.quantity * item.product.price;
+  }
+  return [...groups.values()];
 }
 
 export interface Cart {
@@ -35,6 +105,7 @@ export class CartService {
 
   readonly items = computed(() => this._cart()?.items ?? []);
   readonly itemCount = computed(() => this.items().reduce((sum, i) => sum + i.quantity, 0));
+  readonly groups = computed(() => groupBySeller(this.items()));
   readonly total = computed(() =>
     this.items().reduce((sum, i) => sum + i.quantity * i.product.price, 0)
   );
@@ -84,12 +155,12 @@ export class CartService {
       );
   }
 
-  checkout(): Observable<{ orderId: number }> {
-    // The API answers with the created order (`id`), not with an `orderId` field
+  /** One order per stand; they all share the `checkoutId` of this purchase. */
+  checkout(delivery: CheckoutRequest): Observable<CheckoutResult> {
     return this.http
-      .post<ApiResponse<{ id: number }>>(`${environment.apiUrl}/cart/checkout`, {})
+      .post<ApiResponse<CheckoutResult>>(`${environment.apiUrl}/cart/checkout`, delivery)
       .pipe(
-        map((r) => ({ orderId: r.data.id })),
+        map((r) => r.data),
         tap(() => this._cart.set(null))
       );
   }

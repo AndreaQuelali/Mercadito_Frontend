@@ -380,7 +380,7 @@ describe('AssistantLauncherComponent', () => {
     it('confirming an order adds the order number with a link to /orders', async () => {
       await withAction('checkout');
       q('#assistant-confirm-a1')!.click();
-      http.expectOne(`${BASE}/actions/a1/confirm`).flush({ ok: true, message: '', data: { action: {}, result: { id: 42 } } });
+      http.expectOne(`${BASE}/actions/a1/confirm`).flush({ ok: true, message: '', data: { action: {}, result: { checkoutId: 'c', orders: [{ id: 42 }] } } });
       await settle();
 
       expect(q('[data-role="event"]')!.textContent).toContain('Pedido #42 creado.');

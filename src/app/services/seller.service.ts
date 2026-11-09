@@ -11,6 +11,10 @@ export interface Seller {
   description?: string | null;
   avatarUrl?: string | null;
   location?: string | null;
+  acceptsCash?: boolean;
+  acceptsQr?: boolean;
+  paymentQrUrl?: string | null;
+  paymentInstructions?: string | null;
   status: SellerStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -34,6 +38,10 @@ export interface UpdateSellerPayload {
   description?: string | null;
   avatarUrl?: string | null;
   location?: string | null;
+  acceptsCash?: boolean;
+  acceptsQr?: boolean;
+  paymentQrUrl?: string | null;
+  paymentInstructions?: string | null;
 }
 
 export type SalesStatus = 'pending' | 'paid' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';

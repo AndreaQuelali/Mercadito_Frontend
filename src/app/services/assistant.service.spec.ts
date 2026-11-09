@@ -289,10 +289,19 @@ describe('AssistantService', () => {
       setup();
       withAction('checkout');
       svc.confirm('a1');
-      http.expectOne(`${BASE}/actions/a1/confirm`).flush({ ok: true, message: '', data: { action: {}, result: { id: 42 } } });
+      http.expectOne(`${BASE}/actions/a1/confirm`).flush({ ok: true, message: '', data: { action: {}, result: { checkoutId: 'c', orders: [{ id: 42 }] } } });
 
       const event = svc.entries()[2];
       expect(event).toEqual({ kind: 'event', text: 'Pedido #42 creado.', link: { label: 'Ver mis pedidos', url: '/orders' } });
+    });
+
+    it('lists every order when the purchase was split between stands', () => {
+      setup();
+      withAction('checkout');
+      svc.confirm('a1');
+      http.expectOne(`${BASE}/actions/a1/confirm`).flush({ ok: true, message: '', data: { action: {}, result: { checkoutId: 'c', orders: [{ id: 42 }, { id: 43 }] } } });
+
+      expect(svc.entries()[2]).toEqual({ kind: 'event', text: 'Pedidos #42, #43 creados.', link: { label: 'Ver mis pedidos', url: '/orders' } });
     });
 
     const failWith = (status: number, message: string) => {

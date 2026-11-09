@@ -51,8 +51,26 @@ export class SocketService implements OnDestroy {
     });
 
     this.socket.on('order:status', (data: unknown) => {
-      const d = data as { orderId: number; status: string };
-      this.toast.info(`Tu pedido #${d.orderId} cambió a: ${d.status}`);
+      const d = data as { orderId: number; status: string; reason?: string };
+      const labels: Record<string, string> = {
+        pending: 'Pendiente', paid: 'Pagado', confirmed: 'Confirmado',
+        shipped: 'En camino', delivered: 'Entregado', cancelled: 'Cancelado',
+      };
+      this.toast.info(`Pedido #${d.orderId}: ${labels[d.status] ?? d.status}${d.reason ? ' — ' + d.reason : ''}`);
+    });
+
+    // Payments: the seller hears about proofs, the buyer about the verdict
+    this.socket.on('payment:proof', (data: unknown) => {
+      const d = data as { orderId: number };
+      this.toast.info(`El comprador subió el comprobante del pedido #${d.orderId}`);
+    });
+    this.socket.on('payment:confirmed', (data: unknown) => {
+      const d = data as { orderId: number };
+      this.toast.info(`Se confirmó el pago de tu pedido #${d.orderId}`);
+    });
+    this.socket.on('payment:rejected', (data: unknown) => {
+      const d = data as { orderId: number; reason?: string };
+      this.toast.show(`Rechazaron el comprobante del pedido #${d.orderId}${d.reason ? ': ' + d.reason : ''}`, 'info', 8000);
     });
 
     // Seller events

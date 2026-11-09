@@ -126,7 +126,7 @@ test.describe('Shopping assistant (API)', () => {
     const order = await say(request, token, 'hazme el pedido');
     const res = await confirm(request, token, order.pendingActions[0].id);
     expect(res.status()).toBe(200);
-    expect((await res.json()).data.result).toMatchObject({ status: 'pending' });
+    expect((await res.json()).data.result).toMatchObject({ orders: [{ status: 'pending', fulfillment: 'pickup' }] });
     expect(await cartOf(request, token)).toEqual([]);
   });
 

@@ -95,3 +95,47 @@ export async function listNotifications(request: APIRequestContext, token: strin
   expect(res.status(), 'list notifications').toBe(200);
   return (await res.json()).data.items as { type: string; payload: Record<string, unknown> }[];
 }
+
+export interface SellerOrder {
+  id: number;
+  status: string;
+  total: string;
+  checkoutId: string;
+  fulfillment: 'pickup' | 'delivery';
+  address: string | null;
+  addressRef: string | null;
+  contactPhone: string;
+  items: { productId: number }[];
+}
+
+/** Orders of the seller's own stand */
+export async function listSellerOrders(request: APIRequestContext, sellerToken: string) {
+  const res = await request.get(`${API}/order/seller/mine`, { headers: authHeader(sellerToken) });
+  expect(res.status(), 'list seller orders').toBe(200);
+  return (await res.json()).data as SellerOrder[];
+}
+
+/** Sets the payment data of a stand through the API */
+export async function configureSellerPayment(
+  request: APIRequestContext,
+  sellerToken: string,
+  data: { acceptsCash?: boolean; acceptsQr?: boolean; paymentQrUrl?: string; paymentInstructions?: string }
+) {
+  const res = await request.patch(`${API}/seller/mine`, { headers: authHeader(sellerToken), data });
+  expect(res.status(), 'configure seller payment').toBe(200);
+}
+
+/** Adds the products to the buyer cart and checks out through the API */
+export async function checkoutViaApi(
+  request: APIRequestContext,
+  buyerToken: string,
+  productIds: number[],
+  body: Record<string, unknown>
+) {
+  for (const productId of productIds) {
+    const added = await request.post(`${API}/cart/add`, { headers: authHeader(buyerToken), data: { productId, quantity: 1 } });
+    expect(added.status(), 'add to cart').toBe(200);
+  }
+  const res = await request.post(`${API}/cart/checkout`, { headers: authHeader(buyerToken), data: body });
+  return { status: res.status(), json: await res.json() };
+}
