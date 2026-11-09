@@ -40,6 +40,30 @@ import { ToastService } from '../../services/toast.service';
         <input id="st-avatar" [(ngModel)]="model.avatarUrl" name="avatarUrl" type="url" class="ui-field" />
       </label>
 
+      <fieldset class="space-y-4 border-t-2 border-dotted border-text-main pt-5" id="st-payments">
+        <legend class="ui-h2">Cobro</legend>
+        <label class="flex items-center gap-3">
+          <input id="st-cash" type="checkbox" [(ngModel)]="model.acceptsCash" name="acceptsCash" />
+          <span>Acepto pago contra entrega</span>
+        </label>
+        <label class="flex items-center gap-3">
+          <input id="st-qr" type="checkbox" [(ngModel)]="model.acceptsQr" name="acceptsQr" />
+          <span>Acepto QR o transferencia</span>
+        </label>
+        <ng-container *ngIf="model.acceptsQr">
+          <label class="block">
+            <span class="ui-label">URL de tu imagen de QR</span>
+            <input id="st-qr-url" [(ngModel)]="model.paymentQrUrl" name="paymentQrUrl" type="url" class="ui-field" placeholder="https://..." />
+          </label>
+          <label class="block">
+            <span class="ui-label">Instrucciones de pago</span>
+            <textarea id="st-pay-instr" [(ngModel)]="model.paymentInstructions" name="paymentInstructions" rows="3" maxlength="500" class="ui-field"
+                      placeholder="Titular, banco, número de cuenta o celular"></textarea>
+          </label>
+          <p class="ui-alert-warn">Estos datos son visibles para los compradores que elijan pagar por QR o transferencia.</p>
+        </ng-container>
+      </fieldset>
+
       <p *ngIf="errorMsg()" class="ui-alert-error" role="alert">{{ errorMsg() }}</p>
 
       <button id="st-submit" type="submit" [disabled]="saving()" class="ui-btn">
@@ -64,6 +88,10 @@ export class SellerSettingsComponent implements OnInit {
     description: '',
     location: '',
     avatarUrl: '',
+    acceptsCash: true,
+    acceptsQr: false,
+    paymentQrUrl: '',
+    paymentInstructions: '',
   };
 
   ngOnInit(): void {
@@ -75,6 +103,10 @@ export class SellerSettingsComponent implements OnInit {
           description: s.description ?? '',
           location: s.location ?? '',
           avatarUrl: s.avatarUrl ?? '',
+          acceptsCash: s.acceptsCash ?? true,
+          acceptsQr: s.acceptsQr ?? false,
+          paymentQrUrl: s.paymentQrUrl ?? '',
+          paymentInstructions: s.paymentInstructions ?? '',
         };
         this.loading.set(false);
       },
@@ -94,6 +126,10 @@ export class SellerSettingsComponent implements OnInit {
         description: this.model.description.trim() || null,
         location: this.model.location.trim() || null,
         avatarUrl: this.model.avatarUrl.trim() || null,
+        acceptsCash: this.model.acceptsCash,
+        acceptsQr: this.model.acceptsQr,
+        paymentQrUrl: this.model.paymentQrUrl.trim() || null,
+        paymentInstructions: this.model.paymentInstructions.trim() || null,
       })
       .subscribe({
         next: (s) => {
@@ -101,8 +137,8 @@ export class SellerSettingsComponent implements OnInit {
           this.toast.success('Perfil actualizado');
           this.saving.set(false);
         },
-        error: () => {
-          this.errorMsg.set('No se pudieron guardar los cambios.');
+        error: (err) => {
+          this.errorMsg.set(err?.error?.message ?? 'No se pudieron guardar los cambios.');
           this.saving.set(false);
         },
       });

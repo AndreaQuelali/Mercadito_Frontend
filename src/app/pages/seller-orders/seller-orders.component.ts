@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { OrderService, Order, OrderStatus } from '../../services/order.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
@@ -9,6 +10,7 @@ import { SellerService } from '../../services/seller.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string }> = {
   pending:   { label: 'Pendiente',   classes: 'st-pending' },
+  paid:      { label: 'Pagado',      classes: 'st-confirmed' },
   confirmed: { label: 'Confirmado',  classes: 'st-confirmed' },
   shipped:   { label: 'En camino',   classes: 'st-shipped' },
   delivered: { label: 'Entregado',   classes: 'st-delivered' },
@@ -17,6 +19,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string }> = {
 
 const NEXT_STATUS: Record<OrderStatus, OrderStatus | null> = {
   pending: 'confirmed',
+  paid: 'confirmed',
   confirmed: 'shipped',
   shipped: 'delivered',
   delivered: null,
@@ -25,6 +28,7 @@ const NEXT_STATUS: Record<OrderStatus, OrderStatus | null> = {
 
 const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
   pending: 'Confirmar',
+  paid: 'Confirmar',
   confirmed: 'Marcar en camino',
   shipped: 'Marcar entregado',
   delivered: '',
@@ -34,7 +38,7 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
 @Component({
   selector: 'app-seller-orders',
   standalone: true,
-  imports: [UiEmptyComponent, CommonModule, RouterLink],
+  imports: [UiEmptyComponent, CommonModule, FormsModule, RouterLink],
   template: `
   <main class="ui-page max-w-5xl">
     <header class="space-y-3 mb-8">
@@ -90,6 +94,37 @@ const NEXT_STATUS_LABEL: Record<OrderStatus, string> = {
           <p *ngIf="order.note" class="text-text-muted">Nota: {{ order.note }}</p>
         </div>
 
+        <div class="ui-panel space-y-3" [attr.data-payment]="order.paymentStatus">
+          <p class="font-semibold">
+            {{ order.paymentMethod === 'qr_transfer' ? 'QR o transferencia' : 'Pago contra entrega' }}
+            · {{ paymentLabel(order) }}
+          </p>
+          <p *ngIf="order.paymentMethod === 'qr_transfer' && order.paymentProofUrl">
+            <a [href]="order.paymentProofUrl" target="_blank" rel="noopener" class="ui-link">Ver comprobante</a>
+            <span class="text-text-muted block">Esperado: Bs {{ order.total | number:'1.2-2' }} · pedido del {{ order.createdAt | date:'d MMM y, HH:mm' }}. Verifica el pago en tu banco antes de confirmar.</span>
+          </p>
+          <p *ngIf="order.paymentStatus === 'rejected' && order.paymentRejectReason" class="text-text-muted">Motivo del rechazo: {{ order.paymentRejectReason }}</p>
+
+          <div *ngIf="auth.canManageStore()" class="flex flex-wrap gap-2">
+            <button *ngIf="canCollect(order)" type="button" class="ui-btn ui-btn-sm" id="collect-{{ order.id }}"
+                    [disabled]="updating() === order.id" (click)="confirmPayment(order)">Marcar cobrado</button>
+            <button *ngIf="order.paymentStatus === 'proof_uploaded'" type="button" class="ui-btn ui-btn-sm" id="confirm-pay-{{ order.id }}"
+                    [disabled]="updating() === order.id" (click)="confirmPayment(order)">Confirmar pago</button>
+            <button *ngIf="order.paymentStatus === 'proof_uploaded'" type="button" class="ui-btn ui-btn-sm ui-btn-danger" id="reject-pay-{{ order.id }}"
+                    (click)="rejecting.set(order.id)">Rechazar</button>
+          </div>
+
+          <form *ngIf="rejecting() === order.id" class="space-y-2" (ngSubmit)="rejectPayment(order)" novalidate>
+            <label [for]="'reject-reason-' + order.id" class="ui-label">Motivo del rechazo</label>
+            <input [id]="'reject-reason-' + order.id" name="reason" type="text" maxlength="300" class="ui-field"
+                   [ngModel]="reason()" (ngModelChange)="reason.set($event)" placeholder="El monto no coincide…" />
+            <div class="flex gap-2">
+              <button type="submit" class="ui-btn ui-btn-sm" [disabled]="!reason().trim() || updating() === order.id">Enviar rechazo</button>
+              <button type="button" class="ui-btn ui-btn-sm ui-btn-ghost" (click)="rejecting.set(null)">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
         <div class="flex gap-4 flex-wrap items-center">
           <div *ngFor="let item of order.items" class="flex items-center gap-3">
             <img [src]="item.product.image" [alt]="item.product.name" class="w-12 h-12 object-cover" />
@@ -111,6 +146,8 @@ export class SellerOrdersComponent implements OnInit {
   orders = signal<Order[]>([]);
   loading = signal(true);
   updating = signal<number | null>(null);
+  rejecting = signal<number | null>(null);
+  reason = signal('');
 
   ngOnInit(): void {
     this.sellerSvc.getMine().subscribe({ error: () => undefined });
@@ -123,6 +160,45 @@ export class SellerOrdersComponent implements OnInit {
   statusCfg(s: OrderStatus) { return STATUS_CONFIG[s]; }
   nextStatus(s: OrderStatus): OrderStatus | null { return NEXT_STATUS[s]; }
   nextStatusLabel(s: OrderStatus): string { return NEXT_STATUS_LABEL[s]; }
+
+  paymentLabel(o: Order): string {
+    return { unpaid: 'sin pagar', proof_uploaded: 'comprobante por revisar', paid: 'pagado', rejected: 'comprobante rechazado' }[o.paymentStatus];
+  }
+
+  /** Cash is collected by the seller when delivering; QR orders wait for a proof instead. */
+  canCollect(o: Order): boolean {
+    return this.auth.canManageStore() && o.paymentMethod === 'cash_on_delivery'
+      && o.paymentStatus === 'unpaid' && o.status !== 'cancelled';
+  }
+
+  private replace(updated: Order): void {
+    // The PATCH answer keeps the order shape but not the buyer: keep what the list already shows
+    this.orders.update((list) => list.map((o) => (o.id === updated.id ? { ...o, ...updated, user: o.user } : o)));
+  }
+
+  confirmPayment(order: Order): void {
+    this.updating.set(order.id);
+    this.orderSvc.updatePayment(order.id, 'confirm').subscribe({
+      next: (updated) => { this.replace(updated); this.toast.success(`Pago de la orden #${order.id} confirmado`); this.updating.set(null); },
+      error: () => { this.toast.error('No se pudo confirmar el pago'); this.updating.set(null); },
+    });
+  }
+
+  rejectPayment(order: Order): void {
+    const reason = this.reason().trim();
+    if (!reason) return;
+    this.updating.set(order.id);
+    this.orderSvc.updatePayment(order.id, 'reject', reason).subscribe({
+      next: (updated) => {
+        this.replace(updated);
+        this.toast.success(`Comprobante de la orden #${order.id} rechazado`);
+        this.rejecting.set(null);
+        this.reason.set('');
+        this.updating.set(null);
+      },
+      error: () => { this.toast.error('No se pudo rechazar el comprobante'); this.updating.set(null); },
+    });
+  }
 
   advanceStatus(order: Order): void {
     if (!this.auth.canManageStore()) return;

@@ -65,6 +65,11 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./pages/orders/orders.component').then((m) => m.OrdersComponent),
     canActivate: [authGuard],
   },
+  {
+    path: 'orders/:id/pay',
+    loadComponent: () => import('./pages/order-pay/order-pay.component').then((m) => m.OrderPayComponent),
+    canActivate: [authGuard],
+  },
 
   {
     path: 'seller/onboarding',

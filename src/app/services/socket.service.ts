@@ -55,6 +55,20 @@ export class SocketService implements OnDestroy {
       this.toast.info(`Tu pedido #${d.orderId} cambió a: ${d.status}`);
     });
 
+    // Payments: the seller hears about proofs, the buyer about the verdict
+    this.socket.on('payment:proof', (data: unknown) => {
+      const d = data as { orderId: number };
+      this.toast.info(`El comprador subió el comprobante del pedido #${d.orderId}`);
+    });
+    this.socket.on('payment:confirmed', (data: unknown) => {
+      const d = data as { orderId: number };
+      this.toast.info(`Se confirmó el pago de tu pedido #${d.orderId}`);
+    });
+    this.socket.on('payment:rejected', (data: unknown) => {
+      const d = data as { orderId: number; reason?: string };
+      this.toast.show(`Rechazaron el comprobante del pedido #${d.orderId}${d.reason ? ': ' + d.reason : ''}`, 'info', 8000);
+    });
+
     // Seller events
     this.socket.on('order:new', (data: unknown) => {
       const d = data as { orderId: number; items: { name: string; quantity: number }[] };

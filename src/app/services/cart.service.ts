@@ -15,15 +15,23 @@ export interface CartItem {
     image: string;
     stock: number;
     sellerId?: string;
-    seller?: { id: string; businessName: string; location: string | null };
+    seller?: {
+      id: string;
+      businessName: string;
+      location: string | null;
+      acceptsCash?: boolean;
+      acceptsQr?: boolean;
+    };
   };
 }
 
 export type Fulfillment = 'pickup' | 'delivery';
+export type PaymentMethod = 'cash_on_delivery' | 'qr_transfer';
 
 /** Delivery data of a purchase; `delivery` needs address and reference. */
 export interface CheckoutRequest {
   fulfillment: Fulfillment;
+  paymentMethod?: PaymentMethod;
   address?: string;
   addressRef?: string;
   contactPhone?: string;
@@ -40,8 +48,18 @@ export interface SellerGroup {
   sellerId: string;
   businessName: string;
   location: string | null;
+  acceptsCash: boolean;
+  acceptsQr: boolean;
   items: CartItem[];
   subtotal: number;
+}
+
+/** Payment methods that every stand of the cart accepts (each stand charges on its own). */
+export function commonPaymentMethods(groups: SellerGroup[]): PaymentMethod[] {
+  const methods: PaymentMethod[] = [];
+  if (groups.length && groups.every((g) => g.acceptsCash)) methods.push('cash_on_delivery');
+  if (groups.length && groups.every((g) => g.acceptsQr)) methods.push('qr_transfer');
+  return methods;
 }
 
 /** Groups cart lines by stand, keeping the order in which each stand first appears. */
@@ -55,6 +73,9 @@ export function groupBySeller(items: CartItem[]): SellerGroup[] {
         sellerId,
         businessName: item.product.seller?.businessName ?? 'Puesto',
         location: item.product.seller?.location ?? null,
+        // Stands that predate payments (or a partial cart payload) accept cash only
+        acceptsCash: item.product.seller?.acceptsCash ?? true,
+        acceptsQr: item.product.seller?.acceptsQr ?? false,
         items: [],
         subtotal: 0,
       };

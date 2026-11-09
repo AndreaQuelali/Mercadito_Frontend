@@ -3,7 +3,7 @@ import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { CartService, CheckoutRequest, Fulfillment } from '../../services/cart.service';
+import { CartService, CheckoutRequest, Fulfillment, PaymentMethod, commonPaymentMethods } from '../../services/cart.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -19,8 +19,12 @@ import { ToastService } from '../../services/toast.service';
         {{ doneFulfillment() === 'delivery' ? 'Coordina la entrega con cada puesto.' : 'Coordina el retiro con cada puesto.' }}
       </p>
       <ul class="space-y-2">
-        <li *ngFor="let id of orderIds()" class="ui-panel inline-block text-xl font-semibold mr-3">Orden #{{ id }}</li>
+        <li *ngFor="let id of orderIds()" class="ui-panel inline-block text-xl font-semibold mr-3">
+          Orden #{{ id }}
+          <a *ngIf="donePayment() === 'qr_transfer'" [routerLink]="['/orders', id, 'pay']" class="ui-btn ui-btn-sm ml-3">Pagar</a>
+        </li>
       </ul>
+      <p *ngIf="donePayment() === 'qr_transfer'" class="ui-lead">Paga cada pedido por QR o transferencia y sube el comprobante.</p>
       <div class="flex flex-wrap gap-3">
         <a routerLink="/orders" class="ui-btn">Ver mis pedidos</a>
         <a routerLink="/products" class="ui-btn ui-btn-ghost">Seguir comprando</a>
@@ -79,6 +83,25 @@ import { ToastService } from '../../services/toast.service';
           </label>
         </fieldset>
 
+        <fieldset class="ui-panel space-y-4" id="payment-methods">
+          <legend class="ui-h2 mb-2">¿Cómo pagas?</legend>
+          <p *ngIf="methods().length === 0" class="ui-alert-error" role="alert" id="payment-none">
+            Los puestos de tu compra no tienen un método de pago en común. Compra por separado en cada puesto.
+          </p>
+          <div *ngIf="methods().length > 0" class="grid gap-3 sm:grid-cols-2">
+            <label *ngIf="methods().includes('cash_on_delivery')" class="ui-panel flex items-start gap-3 cursor-pointer" [class.border-primary]="method() === 'cash_on_delivery'">
+              <input id="pay-cash" type="radio" name="paymentMethod" value="cash_on_delivery"
+                     [ngModel]="method()" (ngModelChange)="paymentChoice.set($event)" class="mt-1" />
+              <span><strong>Pago contra entrega</strong><br /><span class="text-text-muted">Pagas al recibir o al retirar.</span></span>
+            </label>
+            <label *ngIf="methods().includes('qr_transfer')" class="ui-panel flex items-start gap-3 cursor-pointer" [class.border-primary]="method() === 'qr_transfer'">
+              <input id="pay-qr" type="radio" name="paymentMethod" value="qr_transfer"
+                     [ngModel]="method()" (ngModelChange)="paymentChoice.set($event)" class="mt-1" />
+              <span><strong>QR o transferencia</strong><br /><span class="text-text-muted">Pagas ahora y subes el comprobante.</span></span>
+            </label>
+          </div>
+        </fieldset>
+
         <div class="ui-panel space-y-6">
           <h2 class="ui-h2">Resumen del pedido</h2>
           <section *ngFor="let group of cart.groups()" class="space-y-4" [attr.data-seller]="group.sellerId">
@@ -114,7 +137,7 @@ import { ToastService } from '../../services/toast.service';
         <p *ngIf="errorMsg()" class="ui-alert-error" role="alert">{{ errorMsg() }}</p>
 
         <div class="flex flex-wrap gap-3">
-          <button id="checkout-confirm" type="submit" [disabled]="placing()" class="ui-btn flex-1 sm:flex-none">
+          <button id="checkout-confirm" type="submit" [disabled]="placing() || methods().length === 0" class="ui-btn flex-1 sm:flex-none">
             <span *ngIf="placing()" class="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             Confirmar pedido
           </button>
@@ -135,6 +158,16 @@ export class CheckoutComponent implements OnInit {
   contactPhone = signal('');
   note = signal('');
 
+  /** Methods every stand of the cart accepts; the buyer picks one of them */
+  methods = computed(() => commonPaymentMethods(this.cart.groups()));
+  paymentChoice = signal<PaymentMethod | null>(null);
+  method = computed<PaymentMethod | null>(() => {
+    const options = this.methods();
+    const choice = this.paymentChoice();
+    return choice && options.includes(choice) ? choice : options[0] ?? null;
+  });
+  donePayment = signal<PaymentMethod>('cash_on_delivery');
+
   orderIds = signal<number[]>([]);
   doneFulfillment = signal<Fulfillment>('pickup');
   placing = signal(false);
@@ -144,6 +177,8 @@ export class CheckoutComponent implements OnInit {
   /** The delivery body the API expects; pickup never sends an address. */
   private request = computed<CheckoutRequest>(() => {
     const body: CheckoutRequest = { fulfillment: this.fulfillment() };
+    const method = this.method();
+    if (method) body.paymentMethod = method;
     if (this.fulfillment() === 'delivery') {
       body.address = this.address().trim();
       body.addressRef = this.addressRef().trim();
@@ -161,12 +196,14 @@ export class CheckoutComponent implements OnInit {
     this.submitted.set(true);
     this.errorMsg.set(null);
     const body = this.request();
+    if (!body.paymentMethod) return;
     if (body.fulfillment === 'delivery' && (!body.address || !body.addressRef)) return;
 
     this.placing.set(true);
     this.cart.checkout(body).subscribe({
       next: (res) => {
         this.doneFulfillment.set(body.fulfillment);
+        this.donePayment.set(body.paymentMethod ?? 'cash_on_delivery');
         this.orderIds.set(res.orders.map((o) => o.id));
         this.placing.set(false);
         this.toast.success('¡Pedido realizado exitosamente!');

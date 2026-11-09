@@ -2,10 +2,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { UiEmptyComponent } from '../../components/ui/ui-empty.component';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { OrderService, OrderStatus, Purchase } from '../../services/order.service';
+import { Order, OrderService, OrderStatus, PaymentStatus, Purchase } from '../../services/order.service';
 
 const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step: number }> = {
   pending:   { label: 'Pendiente',   classes: 'st-pending',  step: 1 },
+  paid:      { label: 'Pagado',      classes: 'st-confirmed', step: 1 },
   confirmed: { label: 'Confirmado',  classes: 'st-confirmed',     step: 2 },
   shipped:   { label: 'En camino',   classes: 'st-shipped', step: 3 },
   delivered: { label: 'Entregado',   classes: 'st-delivered',  step: 4 },
@@ -55,6 +56,14 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; classes: string; step:
           </div>
         </div>
 
+        <p class="flex flex-wrap items-center gap-3" [attr.data-payment]="order.paymentStatus">
+          <span class="font-semibold">{{ paymentLabel(order) }}</span>
+          <a *ngIf="order.paymentMethod === 'qr_transfer' && order.paymentStatus !== 'paid' && order.status !== 'cancelled'"
+             [routerLink]="['/orders', order.id, 'pay']" class="ui-btn ui-btn-sm">
+            {{ order.paymentStatus === 'unpaid' ? 'Pagar' : order.paymentStatus === 'rejected' ? 'Subir otro comprobante' : 'Ver pago' }}
+          </a>
+        </p>
+
         <p class="text-text-muted">
           <ng-container *ngIf="order.fulfillment === 'delivery'; else pickup">
             Entrega en: {{ order.address }}<span *ngIf="order.addressRef"> ({{ order.addressRef }})</span>
@@ -98,6 +107,16 @@ export class OrdersComponent implements OnInit {
       // The API answers 400 when the user has no orders yet: that is the empty state, not a failure
       error: (err) => { this.failed.set(err?.status >= 500 || err?.status === 0); this.loading.set(false); },
     });
+  }
+
+  paymentLabel(o: Order): string {
+    const labels: Record<PaymentStatus, string> = {
+      unpaid: o.paymentMethod === 'qr_transfer' ? 'Pago pendiente (QR o transferencia)' : 'Pago contra entrega',
+      proof_uploaded: 'Comprobante enviado, esperando al puesto',
+      paid: 'Pago confirmado',
+      rejected: 'Comprobante rechazado' + (o.paymentRejectReason ? ': ' + o.paymentRejectReason : ''),
+    };
+    return labels[o.paymentStatus];
   }
 
   statusCfg(s: OrderStatus) { return STATUS_CONFIG[s] ?? STATUS_CONFIG.pending; }

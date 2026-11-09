@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { Cart, CartService, groupBySeller } from './cart.service';
+import { Cart, CartService, commonPaymentMethods, groupBySeller } from './cart.service';
 import { environment } from '../../environments/environment';
 
 const API = environment.apiUrl;
@@ -182,5 +182,28 @@ describe('groupBySeller', () => {
     http.expectOne(`${API}/cart`).flush({ ok: true, message: 'ok', data: { id: 1, items: [line(1, 10, 1, a), line(2, 5, 1, b)] } });
 
     expect(svc.groups().length).toBe(2);
+  });
+});
+
+describe('commonPaymentMethods', () => {
+  const g = (acceptsCash: boolean, acceptsQr: boolean) =>
+    ({ sellerId: 's', businessName: 'P', location: null, acceptsCash, acceptsQr, items: [], subtotal: 0 });
+
+  it('offers what every stand accepts', () => {
+    expect(commonPaymentMethods([g(true, true), g(true, true)])).toEqual(['cash_on_delivery', 'qr_transfer']);
+    expect(commonPaymentMethods([g(true, true), g(true, false)])).toEqual(['cash_on_delivery']);
+    expect(commonPaymentMethods([g(false, true), g(true, true)])).toEqual(['qr_transfer']);
+  });
+
+  it('is empty when there is no method in common, or no stands', () => {
+    expect(commonPaymentMethods([g(true, false), g(false, true)])).toEqual([]);
+    expect(commonPaymentMethods([])).toEqual([]);
+  });
+
+  it('treats a stand without payment data as cash only', () => {
+    const groups = groupBySeller([
+      { id: 1, quantity: 1, product: { id: 1, name: 'A', price: 1, unit: 'kg', image: '', stock: 1, seller: { id: 's1', businessName: 'A', location: null } } },
+    ]);
+    expect(commonPaymentMethods(groups)).toEqual(['cash_on_delivery']);
   });
 });
